@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Real HR Simulation
 
-## Getting Started
+Web-based HR business simulation for higher education — built from `DESIGN_DOCUMENT.md`.
 
-First, run the development server:
+Teams make HR decisions across **7 modules** each round. The simulation engine computes HR metrics, financial outcomes, and **Balanced Scorecard (BSC)** scores (100 points per round).
+
+## Quick start
 
 ```bash
+cd "HR Simulation"
+npm install
+cp .env.example .env.local   # add Supabase keys
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Without Supabase:** http://localhost:3000/simulate (offline practice mode)
+- **With Supabase:** Register → configure database → run full class simulation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase setup (required for classes)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a project at [supabase.com](https://supabase.com)
+2. Fill `.env.local`:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=...
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+   SUPABASE_SERVICE_ROLE_KEY=...   # required for round compute
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   ```
+3. Run in SQL Editor (in order):
+   - `supabase/schema.sql`
+   - `supabase/rls.sql`
+4. Enable **Email** auth in Supabase → Authentication
 
-## Learn More
+## User flows
 
-To learn more about Next.js, take a look at the following resources:
+### Instructor
+1. Register as **Instructor** → `/sessions`
+2. **New session** → add teams (share **join codes**)
+3. **Open round** → set economy (Boom / Normal / Recession)
+4. **Close round** → auto-computes all team outcomes
+5. **Release leaderboard** → `/sessions/[id]/leaderboard`
+6. **Reports** → comparison, participation, PDF/Excel export, score overrides
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Student
+1. Register as **Student** → `/join/[code]`
+2. **Dashboard** → make decisions when round is open
+3. **Review & submit** → `/round/[id]/review`
+4. **Results** → BSC, metrics, feedback, reflection (after round closes)
+5. **Leaderboard** → when instructor releases it
+6. **History** → trends across rounds
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Feature checklist
 
-## Deploy on Vercel
+| Feature | Status |
+|---------|--------|
+| Simulation engine (14 metrics, financials, BSC) | ✅ |
+| 7-module decision UI + budget tracker | ✅ |
+| Offline simulator (`/simulate`) | ✅ |
+| Auth (login, register, middleware) | ✅ |
+| Sessions, teams, rounds | ✅ |
+| Auto-save & submit decisions | ✅ |
+| Round close → compute outcomes | ✅ |
+| Results (BSC, metrics, feedback, trends) | ✅ |
+| Team reflections (100–2000 chars) | ✅ |
+| Leaderboard (instructor release) | ✅ |
+| Instructor reports & participation | ✅ |
+| Score override with reason | ✅ |
+| PDF team report | ✅ |
+| Excel class export | ✅ |
+| Review page before submit | ✅ |
+| Round history & trend charts | ✅ |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+  app/              # Pages & API routes
+  components/       # UI (decisions, results, instructor, auth)
+  lib/
+    engine/         # Pure simulation engine
+    export/         # PDF & Excel generators
+    supabase/       # Clients
+supabase/
+  schema.sql        # Tables
+  rls.sql           # Row-level security
+```
+
+## Scripts
+
+```bash
+npm run dev      # Development server
+npm run build    # Production build
+npm run start    # Production server
+npm run lint     # ESLint
+```
+
+## Design reference
+
+- `../DESIGN_DOCUMENT.md` — full specification
+- `../Real_HR_Simulation_V1_Specification.md` — formulas & benchmarks
