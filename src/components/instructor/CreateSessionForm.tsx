@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { formInputClassName } from "@/components/ui/form-controls";
 
 export function CreateSessionForm() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export function CreateSessionForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
+    <form onSubmit={handleSubmit} className="w-full min-w-0 max-w-lg space-y-4">
       {error && (
         <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">
           {error}
@@ -46,7 +47,7 @@ export function CreateSessionForm() {
         <span className="font-medium">Session name</span>
         <input
           required
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formInputClassName}`}
           placeholder="MGMT 453 Fall 2026"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -55,7 +56,7 @@ export function CreateSessionForm() {
       <label className="block text-sm">
         <span className="font-medium">Course code (optional)</span>
         <input
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formInputClassName}`}
           value={courseCode}
           onChange={(e) => setCourseCode(e.target.value)}
         />
@@ -63,7 +64,7 @@ export function CreateSessionForm() {
       <label className="block text-sm">
         <span className="font-medium">Semester (optional)</span>
         <input
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formInputClassName}`}
           value={semester}
           onChange={(e) => setSemester(e.target.value)}
         />

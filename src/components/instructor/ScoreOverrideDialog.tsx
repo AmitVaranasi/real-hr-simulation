@@ -49,12 +49,12 @@ export function ScoreOverrideDialog({
     <div className="mt-2 flex flex-wrap items-end gap-2 rounded border bg-white p-2">
       <input
         type="number"
-        className="w-16 rounded border px-2 py-1 text-sm"
+        className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm text-slate-900 [color-scheme:light]"
         value={score}
         onChange={(e) => setScore(Number(e.target.value))}
       />
       <input
-        className="flex-1 rounded border px-2 py-1 text-sm"
+        className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm text-slate-900 [color-scheme:light]"
         placeholder="Reason"
         value={reason}
         onChange={(e) => setReason(e.target.value)}

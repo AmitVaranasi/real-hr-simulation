@@ -46,7 +46,7 @@ export function ReflectionForm({ teamId, roundId }: ReflectionFormProps) {
         100–2000 characters. Explain your HR decisions and what you learned.
       </p>
       <textarea
-        className="mt-4 w-full rounded-lg border border-slate-300 p-3 text-sm"
+        className="mt-4 w-full min-w-0 rounded-lg border border-slate-300 bg-white p-3 text-sm text-slate-900 [color-scheme:light]"
         rows={6}
         value={content}
         onChange={(e) => setContent(e.target.value)}

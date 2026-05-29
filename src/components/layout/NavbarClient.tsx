@@ -167,23 +167,23 @@ export function NavbarClient() {
   ) : null;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
+    <header className="sticky top-0 z-30 w-full min-w-0 border-b border-slate-200 bg-white">
+      <div className="mx-auto flex h-14 w-full min-w-0 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4">
         <Link
           href="/"
-          className="shrink-0 font-semibold text-indigo-700"
+          className="min-w-0 truncate text-sm font-semibold text-indigo-700 sm:text-base"
           onClick={() => setMobileOpen(false)}
         >
-          Real HR Simulation
+          <span className="sm:hidden">HR Simulation</span>
+          <span className="hidden sm:inline">Real HR Simulation</span>
         </Link>
 
-        <nav className="hidden items-center gap-5 text-sm md:flex">
+        <nav className="hidden min-w-0 items-center gap-5 text-sm md:flex">
           {navLinks}
           {authSection}
         </nav>
 
-        <div className="flex items-center gap-2 md:hidden">
-          {!loading && authSection}
+        <div className="flex shrink-0 items-center md:hidden">
           <button
             type="button"
             className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"
@@ -199,33 +199,49 @@ export function NavbarClient() {
         <nav className="border-t border-slate-200 bg-white px-4 py-4 md:hidden">
           <div className="flex flex-col gap-3 text-sm">
             {navLinks}
-            {!user && configured && (
-              <>
-                <Link
-                  href="/login"
-                  className="text-slate-600"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Sign in
-                </Link>
-                <Link
-                  href="/register"
-                  className="inline-flex h-10 items-center justify-center rounded-lg bg-indigo-600 font-medium text-white"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Register
-                </Link>
-              </>
-            )}
-            {user && (
-              <button
-                type="button"
-                onClick={signOut}
-                className="text-left text-sm text-red-600"
-              >
-                Sign out
-              </button>
-            )}
+            <div className="border-t border-slate-100 pt-3">
+              {loading ? (
+                <span className="block h-8 w-24 animate-pulse rounded bg-slate-200" />
+              ) : user ? (
+                <>
+                  <p className="mb-2 text-xs text-slate-500">
+                    {profile?.display_name ?? "Account"} ·{" "}
+                    {profile?.role === "instructor" ? "Instructor" : "Student"}
+                  </p>
+                  <Link
+                    href={homeHref}
+                    className="mb-2 block text-slate-700"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Go to {profile?.role === "instructor" ? "sessions" : "dashboard"}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={signOut}
+                    className="text-left text-sm text-red-600"
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : configured ? (
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href="/login"
+                    className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="inline-flex h-10 items-center justify-center rounded-lg bg-indigo-600 font-medium text-white"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Register
+                  </Link>
+                </div>
+              ) : null}
+            </div>
           </div>
         </nav>
       )}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { formSelectClassName } from "@/components/ui/form-controls";
 import type { EconomyCondition } from "@/lib/engine/types";
 
 interface Round {
@@ -68,7 +69,7 @@ export function RoundControls({ sessionId, rounds }: RoundControlsProps) {
               {round.status === "open" && (
                 <>
                   <select
-                    className="rounded-lg border border-slate-300 px-2 py-1 text-sm"
+                    className={formSelectClassName}
                     defaultValue={round.economy_condition}
                     onChange={(e) =>
                       updateRound(

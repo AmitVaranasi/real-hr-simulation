@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  formInputClassName,
+  formSelectClassName,
+} from "@/components/ui/form-controls";
 import type { Industry, Strategy } from "@/lib/engine/types";
 
 const INDUSTRIES: Industry[] = [
@@ -42,21 +46,21 @@ export function CreateTeamForm({ sessionId }: { sessionId: string }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-wrap items-end gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4"
+      className="mt-4 grid grid-cols-1 gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end"
     >
-      <label className="text-sm">
-        <span className="font-medium">Team name</span>
+      <label className="flex min-w-0 flex-col text-sm sm:col-span-2 lg:col-span-1">
+        <span className="font-medium text-slate-700">Team name</span>
         <input
           required
-          className="mt-1 block rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formInputClassName}`}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
       </label>
-      <label className="text-sm">
-        <span className="font-medium">Industry</span>
+      <label className="flex min-w-0 flex-col text-sm">
+        <span className="font-medium text-slate-700">Industry</span>
         <select
-          className="mt-1 block rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formSelectClassName}`}
           value={industry}
           onChange={(e) => setIndustry(e.target.value as Industry)}
         >
@@ -65,10 +69,10 @@ export function CreateTeamForm({ sessionId }: { sessionId: string }) {
           ))}
         </select>
       </label>
-      <label className="text-sm">
-        <span className="font-medium">Strategy</span>
+      <label className="flex min-w-0 flex-col text-sm">
+        <span className="font-medium text-slate-700">Strategy</span>
         <select
-          className="mt-1 block rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formSelectClassName}`}
           value={strategy}
           onChange={(e) => setStrategy(e.target.value as Strategy)}
         >
@@ -77,7 +81,12 @@ export function CreateTeamForm({ sessionId }: { sessionId: string }) {
           ))}
         </select>
       </label>
-      <Button type="submit" size="sm" disabled={loading}>
+      <Button
+        type="submit"
+        size="sm"
+        disabled={loading}
+        className="w-full sm:col-span-2 lg:col-span-1 lg:w-auto"
+      >
         Add team
       </Button>
     </form>

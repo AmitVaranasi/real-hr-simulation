@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { generateClassExcel, type ClassExportData } from "@/lib/export/excel";
 import { generateTeamPdf, outcomeToPdfData } from "@/lib/export/pdf";
 import { ScoreOverrideDialog } from "@/components/instructor/ScoreOverrideDialog";
+import { formSelectClassName } from "@/components/ui/form-controls";
 
 interface ReportsData {
   session: { id: string; name: string };
@@ -131,7 +132,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                     </td>
                     <td className="px-3 py-2">
                       <select
-                        className="text-xs rounded border px-1"
+                        className={`text-xs ${formSelectClassName}`}
                         onChange={(e) => {
                           setSelectedTeam(team.id);
                           setSelectedRound(e.target.value);
@@ -212,7 +213,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
       {tab === "decisions" && (
         <div className="mt-6 space-y-4">
           <select
-            className="rounded-lg border px-3 py-2"
+            className={formSelectClassName}
             value={selectedTeam}
             onChange={(e) => setSelectedTeam(e.target.value)}
           >

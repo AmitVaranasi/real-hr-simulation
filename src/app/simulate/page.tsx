@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DecisionForm } from "@/components/decisions/DecisionForm";
+import { formSelectClassName } from "@/components/ui/form-controls";
 import type { EconomyCondition, Industry, Strategy } from "@/lib/engine/types";
 
 const INDUSTRIES: Industry[] = [
@@ -28,7 +29,7 @@ export default function SimulatePage() {
   const [economy, setEconomy] = useState<EconomyCondition>("normal");
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-10">
+    <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-6 sm:py-10">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">
           Practice round — decision simulator
@@ -44,7 +45,7 @@ export default function SimulatePage() {
         <label className="text-sm">
           <span className="font-medium text-slate-700">Industry</span>
           <select
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+            className={`mt-1 ${formSelectClassName}`}
             value={industry}
             onChange={(e) => setIndustry(e.target.value as Industry)}
           >
@@ -58,7 +59,7 @@ export default function SimulatePage() {
         <label className="text-sm">
           <span className="font-medium text-slate-700">Strategy</span>
           <select
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+            className={`mt-1 ${formSelectClassName}`}
             value={strategy}
             onChange={(e) => setStrategy(e.target.value as Strategy)}
           >
@@ -72,7 +73,7 @@ export default function SimulatePage() {
         <label className="text-sm">
           <span className="font-medium text-slate-700">Economy</span>
           <select
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+            className={`mt-1 ${formSelectClassName}`}
             value={economy}
             onChange={(e) => setEconomy(e.target.value as EconomyCondition)}
           >

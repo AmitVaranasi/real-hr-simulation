@@ -36,7 +36,7 @@ const features = [
 
 export default function Home() {
   return (
-    <div className="bg-slate-50">
+    <div className="w-full min-w-0 overflow-x-hidden bg-slate-50">
       <section className="border-b border-slate-200 bg-gradient-to-br from-indigo-50 via-white to-slate-50">
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:py-20">
           <p className="mb-3 text-xs font-medium uppercase tracking-wide text-indigo-600 sm:text-sm">

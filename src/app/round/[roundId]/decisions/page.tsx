@@ -48,7 +48,7 @@ export default async function RoundDecisionsPage({
     .maybeSingle();
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-10">
       <Link href="/dashboard" className="text-sm text-indigo-600 hover:underline">
         ← Dashboard
       </Link>

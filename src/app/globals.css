@@ -16,10 +16,30 @@
 
 html {
   color-scheme: light;
+  overflow-x: hidden;
 }
 
 body {
   background-color: #f8fafc;
   color: #0f172a;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Keep native controls on light theme (macOS dark mode otherwise styles selects dark) */
+select,
+textarea,
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
+  color-scheme: light;
+}
+
+select {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+select option {
+  background-color: #ffffff;
+  color: #0f172a;
 }

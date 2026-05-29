@@ -20,6 +20,7 @@ import type {
   TrainingFocus,
 } from "@/lib/engine/types";
 import { BSCScorecard } from "@/components/results/BSCScorecard";
+import { formInputClassName } from "@/components/ui/form-controls";
 import { formatCurrency } from "@/lib/utils";
 
 const MODULES = [
@@ -66,8 +67,7 @@ function Field({
   );
 }
 
-const inputClass =
-  "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
+const inputClass = formInputClassName;
 
 export function DecisionForm({
   industry,
@@ -162,8 +162,8 @@ export function DecisionForm({
         </ul>
       )}
 
-      <div className="-mx-1 overflow-x-auto border-b border-slate-200 pb-2">
-        <div className="flex min-w-max gap-1 px-1">
+      <div className="overflow-x-auto border-b border-slate-200 pb-2 [-webkit-overflow-scrolling:touch]">
+        <div className="flex w-max min-w-full gap-1">
           {MODULES.map((mod, i) => (
             <button
               key={mod}

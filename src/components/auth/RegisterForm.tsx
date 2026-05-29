@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import {
+  formInputClassName,
+  formSelectClassName,
+} from "@/components/ui/form-controls";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -54,7 +58,7 @@ export function RegisterForm() {
         <span className="font-medium text-slate-700">Display name</span>
         <input
           required
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formInputClassName}`}
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
         />
@@ -62,7 +66,7 @@ export function RegisterForm() {
       <label className="block text-sm">
         <span className="font-medium text-slate-700">Role</span>
         <select
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formSelectClassName}`}
           value={role}
           onChange={(e) =>
             setRole(e.target.value as "student" | "instructor")
@@ -77,7 +81,7 @@ export function RegisterForm() {
         <input
           type="email"
           required
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formInputClassName}`}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -88,7 +92,7 @@ export function RegisterForm() {
           type="password"
           required
           minLength={6}
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formInputClassName}`}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />

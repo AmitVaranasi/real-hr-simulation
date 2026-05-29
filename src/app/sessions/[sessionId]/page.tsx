@@ -36,7 +36,7 @@ export default async function SessionDetailPage({
   const teams = session.teams ?? [];
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
+    <div className="mx-auto w-full min-w-0 max-w-4xl px-4 py-10">
       <Link href="/sessions" className="text-sm text-indigo-600 hover:underline">
         ← All sessions
       </Link>

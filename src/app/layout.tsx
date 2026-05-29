@@ -56,7 +56,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-slate-50 text-slate-900 antialiased`}
       >
         <Navbar />
-        <main className="min-h-[calc(100vh-3.5rem)]">{children}</main>
+        <main className="min-h-[calc(100vh-3.5rem)] w-full min-w-0 overflow-x-hidden">
+          {children}
+        </main>
         <Toaster position="top-right" />
       </body>
     </html>

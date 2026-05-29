@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { formInputClassName } from "@/components/ui/form-controls";
 
 export function LoginForm() {
   const router = useRouter();
@@ -47,7 +48,7 @@ export function LoginForm() {
         <input
           type="email"
           required
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formInputClassName}`}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -57,7 +58,7 @@ export function LoginForm() {
         <input
           type="password"
           required
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+          className={`mt-1 ${formInputClassName}`}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
