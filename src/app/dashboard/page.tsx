@@ -1,15 +1,18 @@
 import Link from "next/link";
+import { CurrentRoundCard } from "@/components/student/CurrentRoundCard";
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
+
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=/dashboard");
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -42,13 +45,18 @@ export default async function DashboardPage() {
 
   if (!team) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-16 text-center">
+      <div className="mx-auto w-full min-w-0 max-w-lg px-4 py-16 text-center">
         <h1 className="text-2xl font-bold text-slate-900">Welcome</h1>
         <p className="mt-2 text-slate-600">
-          You are not on a team yet. Ask your instructor for a join code.
+          Join your class team with the code from your instructor. You do not
+          need a special link — enter the code here.
         </p>
-        <p className="mt-6 font-mono text-sm text-slate-500">
-          Example: /join/a3f9bc21
+        <Link href="/join" className="mt-8 inline-block">
+          <Button size="lg">Join a team</Button>
+        </Link>
+        <p className="mt-6 text-sm text-slate-500">
+          Already have a link? It will work too — you will land on the same join
+          screen.
         </p>
       </div>
     );
@@ -56,7 +64,7 @@ export default async function DashboardPage() {
 
   const { data: openRound } = await supabase
     .from("rounds")
-    .select("*")
+    .select("id, round_number, round_type, status, economy_condition")
     .eq("session_id", team.session_id)
     .eq("status", "open")
     .maybeSingle();
@@ -70,7 +78,7 @@ export default async function DashboardPage() {
     .maybeSingle();
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
+    <div className="mx-auto w-full min-w-0 max-w-4xl px-4 py-10">
       <h1 className="text-2xl font-bold text-slate-900">
         Hello, {profile?.display_name}
       </h1>
@@ -98,23 +106,19 @@ export default async function DashboardPage() {
           </dl>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5">
-          <h2 className="font-semibold text-slate-900">Current round</h2>
-          {openRound ? (
-            <>
-              <p className="mt-2 text-sm text-emerald-700">
-                Round {openRound.round_number} ({openRound.round_type}) is open
-              </p>
-              <Link href={`/round/${openRound.id}/decisions`} className="mt-4 inline-block">
-                <Button>Make decisions →</Button>
-              </Link>
-            </>
-          ) : (
-            <p className="mt-2 text-sm text-slate-500">
-              No round open. Wait for your instructor.
-            </p>
-          )}
-        </div>
+        <CurrentRoundCard
+          initialOpenRound={
+            openRound
+              ? {
+                  id: openRound.id,
+                  round_number: openRound.round_number,
+                  round_type: openRound.round_type,
+                  status: openRound.status,
+                  economy_condition: openRound.economy_condition,
+                }
+              : null
+          }
+        />
 
         <div className="rounded-xl border border-slate-200 bg-white p-5 sm:col-span-2 flex flex-wrap gap-3 items-center">
           <Link href="/history" className="text-sm text-indigo-600 hover:underline">

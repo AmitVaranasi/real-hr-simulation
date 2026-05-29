@@ -46,7 +46,9 @@ export default async function SessionDetailPage({
       <section className="mt-10">
         <h2 className="text-lg font-semibold text-slate-900">Teams</h2>
         <p className="text-sm text-slate-500">
-          Share join codes with students so they can join at /join/[code]
+          Share each team&apos;s join code with students. They can enter it on{" "}
+          <strong className="font-medium text-slate-700">Join a team</strong>{" "}
+          from their dashboard after signing in, or use a direct link below.
         </p>
         <CreateTeamForm sessionId={sessionId} />
         <ul className="mt-4 space-y-2">
@@ -68,6 +70,9 @@ export default async function SessionDetailPage({
                 </p>
                 <p className="mt-1 font-mono text-sm text-indigo-600">
                   Join code: {t.join_code}
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Link: /join/{t.join_code}
                 </p>
               </li>
             )

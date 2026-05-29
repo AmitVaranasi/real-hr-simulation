@@ -20,6 +20,7 @@ export function NavbarClient() {
   const [loading, setLoading] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [studentHasTeam, setStudentHasTeam] = useState(true);
   const configured = isSupabaseConfigured();
 
   useEffect(() => {
@@ -42,8 +43,19 @@ export function NavbarClient() {
           .eq("id", u.id)
           .single();
         setProfile(p as Profile | null);
+        if (p?.role === "student") {
+          const { data: membership } = await supabase
+            .from("team_members")
+            .select("team_id")
+            .eq("user_id", u.id)
+            .maybeSingle();
+          setStudentHasTeam(!!membership);
+        } else {
+          setStudentHasTeam(true);
+        }
       } else {
         setProfile(null);
+        setStudentHasTeam(true);
       }
       setLoading(false);
     }
@@ -95,6 +107,15 @@ export function NavbarClient() {
           onClick={() => setMobileOpen(false)}
         >
           {profile?.role === "instructor" ? "Sessions" : "Dashboard"}
+        </Link>
+      )}
+      {user && profile?.role === "student" && !studentHasTeam && (
+        <Link
+          href="/join"
+          className="font-medium text-indigo-600 hover:text-indigo-800"
+          onClick={() => setMobileOpen(false)}
+        >
+          Join team
         </Link>
       )}
     </>

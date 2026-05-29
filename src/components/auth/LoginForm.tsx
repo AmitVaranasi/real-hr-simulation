@@ -1,13 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { formInputClassName } from "@/components/ui/form-controls";
 
+function safeRedirectPath(next: string | null): string | null {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return null;
+  return next;
+}
+
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextPath = safeRedirectPath(searchParams.get("next"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +39,9 @@ export function LoginForm() {
       .select("role")
       .eq("id", data.user.id)
       .single();
-    router.push(profile?.role === "instructor" ? "/sessions" : "/dashboard");
+    const defaultPath =
+      profile?.role === "instructor" ? "/sessions" : "/dashboard";
+    router.push(nextPath ?? defaultPath);
     router.refresh();
   }
 

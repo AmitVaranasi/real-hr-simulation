@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
@@ -25,7 +26,9 @@ export default function LoginPage() {
           </p>
         </div>
       ) : (
-        <LoginForm />
+        <Suspense fallback={<p className="mt-6 text-sm text-slate-500">Loading…</p>}>
+          <LoginForm />
+        </Suspense>
       )}
       <p className="mt-6 text-sm text-slate-500">
         No account?{" "}
