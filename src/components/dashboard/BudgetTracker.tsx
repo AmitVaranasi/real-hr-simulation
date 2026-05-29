@@ -35,6 +35,12 @@ export function BudgetTracker({ budget }: BudgetTrackerProps) {
         </span>
         {" · "}
         Adherence: {budget.adherence_pct.toFixed(0)}%
+        {over && (
+          <span className="block mt-1 text-red-600/90">
+            Total module spend exceeds the $500K discretionary pool — reduce
+            bonus %, hires, or training to balance the budget.
+          </span>
+        )}
       </p>
     </div>
   );
