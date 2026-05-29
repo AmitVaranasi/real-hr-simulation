@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
+/* Force light theme — avoids dark system preference hiding slate-900 text */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  color-scheme: light;
 }
 
 @theme inline {
@@ -12,15 +14,12 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: #f8fafc;
+  color: #0f172a;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }

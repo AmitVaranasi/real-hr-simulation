@@ -28,7 +28,7 @@ export default function SimulatePage() {
   const [economy, setEconomy] = useState<EconomyCondition>("normal");
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-10">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">
           Practice round — decision simulator
@@ -40,7 +40,7 @@ export default function SimulatePage() {
         </p>
       </div>
 
-      <div className="mb-8 grid gap-4 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-3">
+      <div className="mb-8 grid gap-4 rounded-xl border border-slate-200 bg-white p-4 grid-cols-1 sm:grid-cols-3">
         <label className="text-sm">
           <span className="font-medium text-slate-700">Industry</span>
           <select

@@ -162,21 +162,23 @@ export function DecisionForm({
         </ul>
       )}
 
-      <div className="flex flex-wrap gap-1 border-b border-slate-200 pb-2">
-        {MODULES.map((mod, i) => (
-          <button
-            key={mod}
-            type="button"
-            onClick={() => setActiveTab(i)}
-            className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              activeTab === i
-                ? "bg-indigo-600 text-white"
-                : "text-slate-600 hover:bg-slate-100"
-            }`}
-          >
-            {mod}
-          </button>
-        ))}
+      <div className="-mx-1 overflow-x-auto border-b border-slate-200 pb-2">
+        <div className="flex min-w-max gap-1 px-1">
+          {MODULES.map((mod, i) => (
+            <button
+              key={mod}
+              type="button"
+              onClick={() => setActiveTab(i)}
+              className={`shrink-0 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                activeTab === i
+                  ? "bg-indigo-600 text-white"
+                  : "text-slate-600 hover:bg-slate-100"
+              }`}
+            >
+              {mod}
+            </button>
+          ))}
+        </div>
       </div>
 
       <p className="text-xs text-indigo-600">
