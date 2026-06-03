@@ -1,40 +1,69 @@
-import { BASELINE_BENEFITS, DISCRETIONARY_BUDGET } from "./defaults";
-import type { BudgetBreakdown, Decision } from "./types";
+import { DISCRETIONARY_BUDGET } from "./defaults";
+import {
+  CONFLICT_CONFIG,
+  HR_TECH_ANNUAL_COST,
+  PROGRAM_COSTS,
+} from "./programs";
+import {
+  getRoleById,
+  roleHeadcount,
+  totalHires,
+} from "./roles";
+import type { BudgetBreakdown, Decision, IndustryConfig } from "./types";
 import { clamp } from "../utils";
 
-export function computeRecruitmentSpend(d: Decision): number {
-  return (
-    d.recruitment_budget_per_hire * d.positions_to_fill +
-    d.onboarding_investment * d.positions_to_fill +
-    (d.screening_rigor - 1) * 2000 * d.positions_to_fill +
-    d.diversity_goal_pct * 500 * d.positions_to_fill
-  );
+const SCREENING_COST: Record<1 | 2 | 3, number> = { 1: 0, 2: 2000, 3: 5000 };
+const REVIEW_FREQ_COST: Record<1 | 2 | 4, number> = { 1: 0, 2: 3000, 4: 6000 };
+
+export function computeRecruitmentCost(
+  d: Decision,
+  industryConfig: IndustryConfig
+): number {
+  let total = 0;
+  for (const pos of d.positions_to_fill) {
+    const role = getRoleById(pos.role_id);
+    if (!role || pos.count <= 0) continue;
+    const baseCost =
+      industryConfig.base_market_salary * role.recruitCostMult * 0.1;
+    const perHire =
+      baseCost +
+      d.onboarding_investment +
+      SCREENING_COST[d.screening_rigor];
+    const diversityAdder = perHire * (d.diversity_goal_pct / 100) * 0.15;
+    total += (perHire + diversityAdder) * pos.count;
+  }
+  return total;
 }
 
-export function computePerformanceSpend(d: Decision): number {
-  return (
-    d.kpi_investment +
-    d.pip_investment +
-    (d.review_frequency - 1) * 3000 +
-    (d.feedback_360 ? 8000 : 0)
-  );
+export function computeKPICost(
+  d: Decision,
+  headcount: number,
+  marketSalary: number
+): number {
+  let totalCost = 0;
+  for (const rp of d.role_performance) {
+    const role = getRoleById(rp.role_id);
+    if (!role) continue;
+    const roleHc = roleHeadcount(headcount, rp.role_id);
+    const avgCriteria =
+      (rp.productivity + rp.teamwork + rp.leadership + rp.communication) / 4;
+    const delta = Math.max(0, avgCriteria - 5);
+    const costPerPoint = marketSalary * role.defaultMarketSalaryMult * 0.005;
+    totalCost += delta * costPerPoint * roleHc;
+  }
+  return totalCost;
 }
 
 export function computeTrainingSpend(d: Decision, headcount: number): number {
-  return (
-    d.training_budget_per_ee *
-      headcount *
-      (d.pct_employees_trained / 100) +
-    d.succession_investment
+  const participants = headcount * (d.pct_employees_trained / 100);
+  const programCost = d.developmental_programs.reduce(
+    (sum, p) => sum + PROGRAM_COSTS[p],
+    0
   );
-}
-
-export function computeRelationsSpend(d: Decision): number {
   return (
-    d.engagement_investment +
-    d.conflict_budget +
-    d.flexibility_level * 5000 +
-    d.voice_mechanisms * 4000
+    programCost * participants +
+    d.training_budget_per_ee * participants +
+    d.succession_investment
   );
 }
 
@@ -43,53 +72,47 @@ export function computeCompensationBudgetSpend(
   headcount: number,
   marketSalary: number
 ): number {
-  return (
-    (headcount *
-      ((d.salary_vs_market_pct - 100) / 100) *
-      marketSalary *
-      0.01) +
-    headcount * (d.benefits_per_ee - BASELINE_BENEFITS) +
-    headcount * marketSalary * (d.bonus_pool_pct / 100) +
-    d.equity_level * 10000
-  );
-}
-
-export function computeOrgDesignSpend(d: Decision): number {
-  return (
-    d.restructuring_investment +
-    d.change_comm_effort * 3000 +
-    d.hr_tech_level * 15000
-  );
-}
-
-export function computeDEISpend(d: Decision, headcount: number): number {
-  return (
-    d.dei_training_per_ee *
-      headcount *
-      (d.pct_employees_trained / 100) +
-    d.inclusive_hiring_investment +
-    d.erg_budget +
-    d.public_commitment_level * 3000
-  );
+  let incremental = 0;
+  for (const rc of d.role_compensation) {
+    const role = getRoleById(rc.role_id);
+    if (!role) continue;
+    const hc = roleHeadcount(headcount, rc.role_id);
+    const roleSalary = marketSalary * role.defaultMarketSalaryMult;
+    incremental += hc * roleSalary * (Math.abs(rc.salary_band) / 100) * 0.5;
+  }
+  const benefitsDelta =
+    headcount * marketSalary * ((d.benefits_pct - 10) / 100) * 0.01;
+  const bonusDelta =
+    headcount * marketSalary * ((d.bonus_tier - 5) / 100);
+  const equityCost = d.equity_level * 10_000;
+  return Math.max(0, incremental + benefitsDelta + bonusDelta + equityCost);
 }
 
 export function computeBudgetBreakdown(
   d: Decision,
   headcount: number,
   marketSalary: number,
+  industryConfig: IndustryConfig,
   budgetCarryover = 0
 ): BudgetBreakdown {
-  const recruitment_spend = computeRecruitmentSpend(d);
-  const performance_spend = computePerformanceSpend(d);
+  const recruitment_spend = computeRecruitmentCost(d, industryConfig);
+  const performance_spend =
+    computeKPICost(d, headcount, marketSalary) +
+    REVIEW_FREQ_COST[d.review_frequency] +
+    (d.feedback_360 ? 8000 : 0);
   const training_spend = computeTrainingSpend(d, headcount);
-  const relations_spend = computeRelationsSpend(d);
+  const relations_spend =
+    d.engagement_investment +
+    CONFLICT_CONFIG[d.conflict_approach].cost +
+    d.flexibility_level * 5000 +
+    d.voice_mechanisms * 4000;
   const compensation_spend = computeCompensationBudgetSpend(
     d,
     headcount,
     marketSalary
   );
-  const org_design_spend = computeOrgDesignSpend(d);
-  const dei_spend = computeDEISpend(d, headcount);
+  const org_design_spend = HR_TECH_ANNUAL_COST[d.hr_tech_level];
+  const dei_spend = 0;
 
   const total_spend =
     recruitment_spend +
@@ -123,3 +146,5 @@ export function computeBudgetBreakdown(
     adherence_pct,
   };
 }
+
+export { totalHires };

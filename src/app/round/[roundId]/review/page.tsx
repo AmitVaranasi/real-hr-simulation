@@ -45,7 +45,8 @@ export default function ReviewPage() {
     return computeBudgetBreakdown(
       decision,
       headcount,
-      config.base_market_salary
+      config.base_market_salary,
+      config
     );
   }, [decision, industry, headcount]);
 

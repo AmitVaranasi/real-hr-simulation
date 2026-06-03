@@ -62,13 +62,16 @@ export async function POST(
 
     if (!decision) continue;
 
-    const { outcome, newCarryover } = computeTeamOutcome(
+    const { outcome, trace, newCarryover } = computeTeamOutcome(
       decision,
       team as Team,
       economy
     );
 
-    const outcomeRow = outcomeToDbRow(team.id, roundId, outcome);
+    const outcomeRow = {
+      ...outcomeToDbRow(team.id, roundId, outcome),
+      trace_json: trace,
+    };
 
     await admin.from("outcomes").upsert(outcomeRow, {
       onConflict: "team_id,round_id",

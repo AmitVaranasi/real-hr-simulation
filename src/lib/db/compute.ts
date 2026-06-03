@@ -1,15 +1,15 @@
-import { computeBudgetBreakdown } from "@/lib/engine/budget";
 import {
   getIndustryConfig,
   getStrategyConfig,
   priorStateFromIndustry,
 } from "@/lib/engine/config";
 import { DISCRETIONARY_BUDGET } from "@/lib/engine/defaults";
-import { runSimulation } from "@/lib/engine/engine";
+import { runSimulationWithTrace } from "@/lib/engine/engine";
 import { rowToDecision } from "@/lib/db/decisions";
 import type {
   EconomyCondition,
   Industry,
+  Outcome,
   PriorState,
   Strategy,
   Team,
@@ -43,7 +43,7 @@ export function computeTeamOutcome(
   const strategyConfig = getStrategyConfig(strategy);
   const carryover = Number(team.budget_carryover ?? 0);
 
-  const outcome = runSimulation(
+  const { outcome, trace } = runSimulationWithTrace(
     decision,
     prior,
     industryConfig,
@@ -52,24 +52,19 @@ export function computeTeamOutcome(
     carryover
   );
 
-  const budget = computeBudgetBreakdown(
-    decision,
-    prior.headcount,
-    industryConfig.base_market_salary,
-    carryover
-  );
+  const budget = trace.budget_breakdown;
   const newCarryover = Math.max(
     0,
     (budget.available_budget - budget.total_spend) * 0.2
   );
 
-  return { outcome, newCarryover, industry, strategy };
+  return { outcome, trace, newCarryover, industry, strategy };
 }
 
 export function outcomeToDbRow(
   teamId: string,
   roundId: string,
-  outcome: ReturnType<typeof runSimulation>
+  outcome: Outcome
 ) {
   const { hr_metrics: m, financial_metrics: f, bsc_scores: b, feedback } =
     outcome;
@@ -107,11 +102,18 @@ export function outcomeToDbRow(
     strategy_bonus: b.strategy_bonus,
     industry_penalty: b.industry_penalty,
     feedback_json: feedback,
+    productivity: m.productivity,
+    hiring_quality: m.hiring_quality,
+    turnover_cost: m.turnover_cost,
   };
 }
 
+export function traceToDbJson(trace: import("@/lib/engine/types").SimulationTrace) {
+  return trace;
+}
+
 export function teamStateUpdateFromOutcome(
-  outcome: ReturnType<typeof runSimulation>,
+  outcome: Outcome,
   budgetCarryover: number
 ) {
   const f = outcome.financial_metrics;
