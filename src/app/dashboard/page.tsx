@@ -141,6 +141,18 @@ export default async function DashboardPage() {
               {Number(lastOutcome.score_process).toFixed(0)} · L:{" "}
               {Number(lastOutcome.score_learning).toFixed(0)}
             </p>
+            {lastOutcome.feedback_json &&
+              typeof lastOutcome.feedback_json === "object" &&
+              "round_summary" in (lastOutcome.feedback_json as object) &&
+              (lastOutcome.feedback_json as { round_summary?: string })
+                .round_summary && (
+                <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                  {
+                    (lastOutcome.feedback_json as { round_summary: string })
+                      .round_summary
+                  }
+                </p>
+              )}
           </div>
         )}
       </div>

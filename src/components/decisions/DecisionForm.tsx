@@ -30,6 +30,8 @@ import type {
   SalaryBand,
   Strategy,
 } from "@/lib/engine/types";
+import { MetricPreview } from "@/components/decisions/MetricPreview";
+import { ScaffoldingText } from "@/components/decisions/ScaffoldingText";
 import { BSCScorecard } from "@/components/results/BSCScorecard";
 import { formatCurrency } from "@/lib/utils";
 
@@ -216,6 +218,7 @@ export function DecisionForm({
         <p className="text-xs font-medium uppercase tracking-wide text-indigo-600">
           SHRM BASK: {SHRM_BADGES[MODULES[activeTab]]}
         </p>
+        <ScaffoldingText module={MODULES[activeTab]} />
 
         {activeTab === 0 && (
           <div className="mt-4 space-y-4">
@@ -289,11 +292,22 @@ export function DecisionForm({
                 />
               </Field>
             </div>
-            <div className="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
-              Est. recruitment cost: {formatCurrency(liveMetrics.recruitmentCost)} ·
-              Cost/hire: {formatCurrency(liveMetrics.costPerHire)} · Time to fill:{" "}
-              {liveMetrics.timeToFill.toFixed(0)} days
-            </div>
+            <MetricPreview
+              items={[
+                {
+                  label: "Recruitment cost",
+                  value: formatCurrency(liveMetrics.recruitmentCost),
+                },
+                {
+                  label: "Cost per hire",
+                  value: formatCurrency(liveMetrics.costPerHire),
+                },
+                {
+                  label: "Time to fill",
+                  value: `${liveMetrics.timeToFill.toFixed(0)} days`,
+                },
+              ]}
+            />
           </div>
         )}
 
@@ -583,7 +597,10 @@ export function DecisionForm({
       {outcome && (
         <div className="space-y-6 border-t border-slate-200 pt-8">
           <h2 className="text-xl font-semibold text-slate-900">Round results</h2>
-          <BSCScorecard scores={outcome.bsc_scores} />
+          <BSCScorecard
+            scores={outcome.bsc_scores}
+            bscWeights={strategyConfig.bsc_weights}
+          />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <MetricCard label="Revenue" value={formatCurrency(outcome.financial_metrics.revenue)} />
             <MetricCard label="Profit" value={formatCurrency(outcome.financial_metrics.profit)} />

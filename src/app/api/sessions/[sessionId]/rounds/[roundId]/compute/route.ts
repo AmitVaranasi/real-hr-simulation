@@ -2,6 +2,7 @@ import { requireInstructor } from "@/lib/api/auth";
 import {
   computeTeamOutcome,
   outcomeToDbRow,
+  priorMetricsFromOutcome,
   teamStateUpdateFromOutcome,
 } from "@/lib/db/compute";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -40,6 +41,14 @@ export async function POST(
   }
 
   const economy = round.economy_condition as EconomyCondition;
+  const roundNumber = Number(round.round_number);
+
+  const { data: priorRound } = await admin
+    .from("rounds")
+    .select("id")
+    .eq("session_id", sessionId)
+    .eq("round_number", roundNumber - 1)
+    .maybeSingle();
 
   const { data: teams, error: teamsError } = await admin
     .from("teams")
@@ -62,10 +71,22 @@ export async function POST(
 
     if (!decision) continue;
 
+    let priorMetrics = null;
+    if (priorRound) {
+      const { data: priorOutcome } = await admin
+        .from("outcomes")
+        .select("*")
+        .eq("team_id", team.id)
+        .eq("round_id", priorRound.id)
+        .maybeSingle();
+      priorMetrics = priorMetricsFromOutcome(priorOutcome);
+    }
+
     const { outcome, trace, newCarryover } = computeTeamOutcome(
       decision,
       team as Team,
-      economy
+      economy,
+      priorMetrics
     );
 
     const outcomeRow = {

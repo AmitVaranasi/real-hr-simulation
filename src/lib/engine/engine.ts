@@ -39,7 +39,8 @@ export function runSimulationWithTrace(
   industryConfig: IndustryConfig,
   strategyConfig: StrategyConfig,
   economy: EconomyCondition,
-  budgetCarryover = 0
+  budgetCarryover = 0,
+  options?: { priorMetrics?: HRMetrics | null }
 ): { outcome: Outcome; trace: SimulationTrace } {
   const budget = computeBudgetBreakdown(
     decision,
@@ -80,7 +81,8 @@ export function runSimulationWithTrace(
     financials,
     bsc_scores,
     industryConfig,
-    strategyConfig
+    strategyConfig,
+    options?.priorMetrics ?? null
   );
 
   const normalized_metrics: Record<string, number> = {};

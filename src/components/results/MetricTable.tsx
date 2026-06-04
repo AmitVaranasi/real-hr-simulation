@@ -64,6 +64,9 @@ export function OutcomeMetricTable({
     ["HR tech score", outcome.hr_tech_score, "/100"],
     ["Compensation ratio (%)", outcome.compensation_ratio, ""],
     ["Budget adherence (%)", outcome.budget_adherence, ""],
+    ["Productivity index (%)", outcome.productivity, ""],
+    ["Hiring quality", outcome.hiring_quality, "/100"],
+    ["Turnover cost", outcome.turnover_cost, "$"],
   ];
 
   return (
@@ -84,7 +87,9 @@ export function OutcomeMetricTable({
                   ? `$${Number(val).toLocaleString()}`
                   : suffix === "/100"
                     ? `${Number(val).toFixed(1)}/100`
-                    : Number(val).toFixed(2)}
+                    : name === "Productivity index (%)"
+                      ? `${(Number(val) * 100).toFixed(1)}%`
+                      : Number(val).toFixed(2)}
               </td>
             </tr>
           ))}

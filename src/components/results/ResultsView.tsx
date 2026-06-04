@@ -8,7 +8,8 @@ import { ReflectionDisplay } from "@/components/reflection/ReflectionDisplay";
 import { ReflectionForm } from "@/components/reflection/ReflectionForm";
 import { FinancialCard } from "@/components/shared/FinancialCard";
 import { Button } from "@/components/ui/button";
-import type { BSCScores, FeedbackPayload } from "@/lib/engine/types";
+import { getStrategyConfig } from "@/lib/engine/config";
+import type { BSCScores, FeedbackPayload, Strategy } from "@/lib/engine/types";
 import { generateTeamPdf, outcomeToPdfData } from "@/lib/export/pdf";
 
 interface ResultsViewProps {
@@ -56,6 +57,7 @@ export function ResultsView({
   };
 
   const feedback = outcome.feedback_json as FeedbackPayload | undefined;
+  const strategyConfig = getStrategyConfig(team.strategy as Strategy);
 
   function handlePdf() {
     const data = outcomeToPdfData(sessionName, team, roundNumber, outcome);
@@ -80,7 +82,7 @@ export function ResultsView({
         </Button>
       </div>
 
-      <BSCScorecard scores={bsc} />
+      <BSCScorecard scores={bsc} bscWeights={strategyConfig.bsc_weights} />
 
       {trendData && trendData.length >= 2 && <TrendChart data={trendData} />}
 

@@ -8,12 +8,38 @@ import { runSimulationWithTrace } from "@/lib/engine/engine";
 import { rowToDecision } from "@/lib/db/decisions";
 import type {
   EconomyCondition,
+  HRMetrics,
   Industry,
   Outcome,
   PriorState,
   Strategy,
   Team,
 } from "@/lib/engine/types";
+
+export function priorMetricsFromOutcome(
+  row: Record<string, unknown> | null | undefined
+): HRMetrics | null {
+  if (!row) return null;
+  return {
+    cost_per_hire: Number(row.cost_per_hire),
+    time_to_fill: Number(row.time_to_fill),
+    turnover_rate: Number(row.turnover_rate),
+    employee_satisfaction: Number(row.employee_satisfaction),
+    training_roi: Number(row.training_roi),
+    engagement_level: Number(row.engagement_level),
+    dei_score: Number(row.dei_score),
+    absenteeism_rate: Number(row.absenteeism_rate),
+    review_coverage: Number(row.review_coverage),
+    training_effectiveness: Number(row.training_effectiveness),
+    succession_pipeline: Number(row.succession_pipeline),
+    hr_tech_score: Number(row.hr_tech_score),
+    compensation_ratio: Number(row.compensation_ratio),
+    budget_adherence: Number(row.budget_adherence),
+    productivity: Number(row.productivity ?? 0),
+    hiring_quality: Number(row.hiring_quality ?? 0),
+    turnover_cost: Number(row.turnover_cost ?? 0),
+  };
+}
 
 export function teamToPriorState(team: Team): PriorState {
   const industry = team.industry ?? "Manufacturing";
@@ -33,7 +59,8 @@ export function teamToPriorState(team: Team): PriorState {
 export function computeTeamOutcome(
   decisionRow: Record<string, unknown>,
   team: Team,
-  economy: EconomyCondition
+  economy: EconomyCondition,
+  priorMetrics: HRMetrics | null = null
 ) {
   const industry = (team.industry ?? "Manufacturing") as Industry;
   const strategy = (team.strategy ?? "Focus") as Strategy;
@@ -49,7 +76,8 @@ export function computeTeamOutcome(
     industryConfig,
     strategyConfig,
     economy,
-    carryover
+    carryover,
+    { priorMetrics }
   );
 
   const budget = trace.budget_breakdown;

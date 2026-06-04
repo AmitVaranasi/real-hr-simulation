@@ -3,6 +3,14 @@ import type { FeedbackPayload } from "@/lib/engine/types";
 export function FeedbackPanel({ feedback }: { feedback: FeedbackPayload }) {
   return (
     <div className="space-y-6">
+      {feedback.round_summary && (
+        <section className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+          <h3 className="font-semibold text-indigo-900">Round summary</h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            {feedback.round_summary}
+          </p>
+        </section>
+      )}
       <section>
         <h3 className="mb-3 font-semibold text-slate-900">Perspective summaries</h3>
         <div className="grid gap-3 sm:grid-cols-2">
