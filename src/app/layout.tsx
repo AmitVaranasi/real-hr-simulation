@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Real HR Simulation",
     description:
-      "Capsim-style HR business simulation for higher education.",
+      "HR business simulation for higher education.",
     type: "website",
   },
 };

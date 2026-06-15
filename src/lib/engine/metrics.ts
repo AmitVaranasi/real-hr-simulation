@@ -1,70 +1,88 @@
+import { computeRecruitmentCost, computeTrainingSpend } from "./budget";
+import {
+  CONFLICT_CONFIG,
+  PROGRAM_COSTS,
+  PROGRAM_EFFECTIVENESS,
+} from "./programs";
+import {
+  avgPerformanceCriteria,
+  computeVariance,
+  getRoleById,
+  roleHeadcount,
+  totalHires,
+  weightedAvgSalaryBand,
+} from "./roles";
 import type { Decision, HRMetrics, IndustryConfig, PriorState } from "./types";
 import { clamp } from "../utils";
 
-const SCREENING_MULT: Record<1 | 2 | 3, number> = { 1: 0.8, 2: 1.0, 3: 1.3 };
-const SCREENING_SLOW: Record<1 | 2 | 3, number> = { 1: -10, 2: 0, 3: 8 };
+const SCREENING_SLOW: Record<1 | 2 | 3, number> = { 1: -5, 2: 0, 3: 8 };
 const TECH_SPEED: Record<0 | 1 | 2, number> = { 0: 0, 1: -3, 2: -7 };
-const FLEX_TURNOVER: Record<0 | 1 | 2, number> = { 0: 2, 1: 0, 2: -3 };
-const FLEX_SAT: Record<0 | 1 | 2, number> = { 0: -5, 1: 3, 2: 8 };
-const VOICE_SAT: Record<0 | 1 | 2, number> = { 0: -3, 1: 2, 2: 5 };
-const VOICE_ENG: Record<0 | 1 | 2, number> = { 0: -4, 1: 2, 2: 6 };
-const REVIEW_SAT: Record<1 | 2 | 4, number> = { 1: -2, 2: 1, 4: 3 };
-const REVIEW_ENG: Record<1 | 2 | 4, number> = { 1: -1, 2: 1, 4: 3 };
 const REVIEW_BASE: Record<1 | 2 | 4, number> = { 1: 70, 2: 85, 4: 95 };
 const REVIEW_PIPE: Record<1 | 2 | 4, number> = { 1: 0, 2: 5, 4: 8 };
 const EQUITY_TURN: Record<0 | 1 | 2, number> = { 0: 0, 1: -1, 2: -2 };
-const FOCUS_MULT: Record<string, number> = {
-  Technical: 1.2,
-  Leadership: 1.0,
-  "Soft Skills": 0.8,
-  Compliance: 0.6,
-};
-const FOCUS_QUALITY: Record<string, number> = {
-  Technical: 1.3,
-  Leadership: 1.1,
-  "Soft Skills": 0.9,
-  Compliance: 0.7,
-};
 
-export function computeCostPerHire(d: Decision): number {
-  const base = d.recruitment_budget_per_hire;
-  const screening = SCREENING_MULT[d.screening_rigor];
-  const diversity = 1 + (d.diversity_goal_pct / 100) * 0.15;
-  const value =
-    base * screening * diversity + d.onboarding_investment;
-  return clamp(value, 2000, 30000);
+export function computeCostPerHire(
+  d: Decision,
+  industryConfig: IndustryConfig
+): number {
+  const hires = totalHires(d.positions_to_fill);
+  if (hires === 0) return 0;
+  return computeRecruitmentCost(d, industryConfig) / hires;
 }
 
 export function computeTimeToFill(d: Decision): number {
-  const budgetSpeedup =
-    Math.min((d.recruitment_budget_per_hire - 3000) / 2000, 5) * -2;
-  const value =
-    45 +
-    SCREENING_SLOW[d.screening_rigor] +
-    budgetSpeedup +
-    d.diversity_goal_pct * 0.2 +
-    TECH_SPEED[d.hr_tech_level];
-  return clamp(value, 10, 120);
+  const hires = totalHires(d.positions_to_fill);
+  if (hires === 0) return 0;
+
+  let weightedDays = 0;
+  for (const pos of d.positions_to_fill) {
+    const role = getRoleById(pos.role_id);
+    if (!role || pos.count <= 0) continue;
+    const days =
+      role.timeToFillBase +
+      SCREENING_SLOW[d.screening_rigor] +
+      d.diversity_goal_pct * 0.2 +
+      TECH_SPEED[d.hr_tech_level];
+    weightedDays += clamp(days, 10, 120) * pos.count;
+  }
+  return weightedDays / hires;
 }
 
 export function computeSatisfaction(
   d: Decision,
   prior: PriorState
 ): number {
-  const value =
-    prior.satisfaction +
-    (d.salary_vs_market_pct - 100) * 0.5 +
-    (d.benefits_per_ee - 3000) / 500 +
-    FLEX_SAT[d.flexibility_level] +
-    VOICE_SAT[d.voice_mechanisms] +
-    Math.min(d.engagement_investment / 3000, 5) +
-    Math.min(d.conflict_budget / 5000, 4) +
-    REVIEW_SAT[d.review_frequency] +
-    (d.feedback_360 ? 3 : 0) +
-    Math.min(d.training_budget_per_ee / 1000, 4) +
-    d.public_commitment_level * 2 +
-    Math.min(d.erg_budget / 5000, 2);
-  return clamp(value, 20, 100);
+  const avgSalaryBand = weightedAvgSalaryBand(d.role_compensation);
+  const compensation = clamp(
+    50 + avgSalaryBand * 2 + (d.benefits_pct - 10) * 2 + d.bonus_tier,
+    20,
+    100
+  );
+  const training = clamp(
+    30 + d.developmental_programs.length * 8 + d.pct_employees_trained * 0.3,
+    20,
+    100
+  );
+  const avgLeadership = avgPerformanceCriteria(d.role_performance, "leadership");
+  const leadership = clamp(avgLeadership * 10, 20, 100);
+  const cultureBase =
+    CONFLICT_CONFIG[d.conflict_approach].satisfaction_impact * 5;
+  const culture = clamp(
+    50 +
+      cultureBase +
+      d.voice_mechanisms * 8 +
+      d.engagement_investment / 1000,
+    20,
+    100
+  );
+  const workEnv = clamp(
+    40 + d.flexibility_level * 15 + d.hr_tech_level * 10,
+    20,
+    100
+  );
+  const raw =
+    (compensation + training + leadership + culture + workEnv) / 5;
+  return clamp(raw * 0.7 + prior.satisfaction * 0.3, 20, 100);
 }
 
 export function computeEngagement(
@@ -72,61 +90,171 @@ export function computeEngagement(
   prior: PriorState,
   satisfaction: number
 ): number {
-  const value =
-    prior.engagement +
-    Math.min(d.engagement_investment / 3000, 6) +
-    VOICE_ENG[d.voice_mechanisms] +
-    FLEX_SAT[d.flexibility_level] +
-    Math.min(d.conflict_budget / 5000, 3) +
-    (satisfaction - 65) * 0.15 +
-    REVIEW_ENG[d.review_frequency] +
-    Math.min(d.performance_pay_pct, 15) * 0.2 +
-    Math.min(d.erg_budget / 5000, 2);
-  return clamp(value, 20, 100);
+  const recognition = clamp(
+    30 + d.bonus_tier * 3 + d.equity_level * 10,
+    20,
+    100
+  );
+  const development = clamp(
+    30 +
+      d.developmental_programs.length * 10 +
+      d.succession_investment / 1000,
+    20,
+    100
+  );
+  const communication = clamp(
+    30 +
+      d.voice_mechanisms * 15 +
+      (d.feedback_360 ? 15 : 0) +
+      d.review_frequency * 5,
+    20,
+    100
+  );
+  const cultureImpact =
+    CONFLICT_CONFIG[d.conflict_approach].engagement_impact * 5;
+  const culture = clamp(
+    50 +
+      cultureImpact +
+      d.flexibility_level * 10 +
+      d.engagement_investment / 1000,
+    20,
+    100
+  );
+  const raw = (recognition + development + communication + culture) / 4;
+  return clamp(
+    raw * 0.6 + prior.engagement * 0.3 + (satisfaction - 50) * 0.1,
+    20,
+    100
+  );
 }
 
 export function computeTurnoverRate(
   d: Decision,
   prior: PriorState,
-  satisfaction: number
+  satisfaction: number,
+  industryConfig: IndustryConfig
 ): number {
-  const value =
+  const avgBand = weightedAvgSalaryBand(d.role_compensation);
+  let value =
     prior.turnover_rate +
-    (d.salary_vs_market_pct - 100) * -0.3 +
-    ((d.benefits_per_ee - 3000) / 1000) * -0.8 +
-    FLEX_TURNOVER[d.flexibility_level] +
-    Math.min(d.engagement_investment / 5000, 3) * -1 +
-    (d.bonus_pool_pct / 100) * -5 +
-    (satisfaction - 65) * -0.1 +
+    avgBand * -0.25 +
+    (d.benefits_pct - 10) * -0.3 +
+    (d.bonus_tier - 5) * -0.4 +
+    (satisfaction - 65) * -0.12 +
     EQUITY_TURN[d.equity_level];
+
+  if (industryConfig.industry === "High-Tech" && 100 + avgBand < 95) {
+    value += 8;
+  }
+
   return clamp(value, 3, 50);
+}
+
+export function computeTurnoverByRole(
+  d: Decision,
+  prior: PriorState,
+  satisfaction: number
+): number[] {
+  return d.role_compensation.map((rc) => {
+    const bandPenalty = rc.salary_band < 0 ? Math.abs(rc.salary_band) * 0.15 : 0;
+    return clamp(
+      prior.turnover_rate + bandPenalty + (satisfaction - 65) * -0.05,
+      3,
+      50
+    );
+  });
+}
+
+export function computeTrainingEffectiveness(d: Decision): number {
+  const preTraining = 50;
+  const programBoost = d.developmental_programs.reduce((sum, prog) => {
+    return sum + (PROGRAM_EFFECTIVENESS[prog] ?? 1) * 3;
+  }, 0);
+  const budgetBoost = clamp(d.training_budget_per_ee / 500, 0, 5);
+  const coverageBoost = (d.pct_employees_trained / 100) * 5;
+  const postTraining = preTraining + programBoost + budgetBoost + coverageBoost;
+  return clamp(((postTraining - preTraining) / preTraining) * 100, 0, 40);
+}
+
+export function computeProductivity(
+  d: Decision,
+  engagement: number,
+  retention: number,
+  trainingEffectiveness: number
+): number {
+  const trainingNorm = clamp(trainingEffectiveness / 30, 0, 1);
+  const engagementNorm = clamp(engagement / 100, 0, 1);
+  const retentionNorm = clamp(retention / 100, 0, 1);
+  const leadershipNorm = clamp(
+    avgPerformanceCriteria(d.role_performance, "leadership") / 10,
+    0,
+    1
+  );
+  const techNorm = clamp(d.hr_tech_level / 2, 0, 1);
+
+  return (
+    0.3 * trainingNorm +
+    0.25 * engagementNorm +
+    0.2 * retentionNorm +
+    0.15 * leadershipNorm +
+    0.1 * techNorm
+  );
+}
+
+export function computeHiringQuality(d: Decision, turnoverRate: number): number {
+  const selectionAccuracy = ({ 1: 50, 2: 70, 3: 90 } as const)[
+    d.screening_rigor
+  ];
+  const trainingReadiness = clamp(
+    30 +
+      d.developmental_programs.length * 8 +
+      d.onboarding_investment / 100,
+    0,
+    100
+  );
+  const retentionProbability = clamp(100 - turnoverRate * 2, 0, 100);
+  return (selectionAccuracy + trainingReadiness + retentionProbability) / 3;
+}
+
+export function computeDEIScore(
+  d: Decision,
+  turnoverByRole: number[]
+): number {
+  const targets = clamp((d.diversity_goal_pct / 50) * 25, 0, 25);
+  const deiPrograms = d.developmental_programs.filter((p) =>
+    ["Leadership Development", "Compliance"].includes(p)
+  ).length;
+  const programs = clamp((deiPrograms / 2) * 25, 0, 25);
+
+  let leadershipSupport = 0;
+  if (d.conflict_approach === "coaching") leadershipSupport += 10;
+  if (d.voice_mechanisms >= 1) leadershipSupport += 8;
+  if (d.engagement_investment > 3000) leadershipSupport += 7;
+  leadershipSupport = clamp(leadershipSupport, 0, 25);
+
+  const variance = computeVariance(turnoverByRole);
+  const retentionEquity = clamp(25 - variance * 5, 0, 25);
+
+  return clamp(
+    (targets + programs + leadershipSupport + retentionEquity) * 4,
+    0,
+    100
+  );
 }
 
 export function computeTrainingROI(
   d: Decision,
   prior: PriorState,
-  headcount: number
+  headcount: number,
+  productivity: number
 ): number {
-  const trainingCost =
-    d.training_budget_per_ee *
-    headcount *
-    (d.pct_employees_trained / 100);
-  const effectiveness =
-    (d.training_budget_per_ee / 200) * (FOCUS_MULT[d.training_focus] ?? 1);
-  const productivityGain = (effectiveness / 100) * prior.revenue * 0.02;
-  const roi =
-    ((productivityGain - trainingCost) / Math.max(trainingCost, 1)) * 100;
-  return clamp(roi, -50, 200);
-}
-
-export function computeDEIScore(d: Decision): number {
-  const value =
-    Math.min(d.dei_training_per_ee / 300, 25) +
-    Math.min(d.inclusive_hiring_investment / 5000, 20) +
-    Math.min(d.erg_budget / 5000, 15) +
-    ({ 0: 0, 1: 15, 2: 25 } as const)[d.public_commitment_level] +
-    Math.min(d.diversity_goal_pct / 2.5, 15);
-  return clamp(value, 0, 100);
+  const trainingCost = computeTrainingSpend(d, headcount);
+  const productivityGain = prior.revenue * productivity * 0.02;
+  return clamp(
+    ((productivityGain - trainingCost) / Math.max(trainingCost, 1)) * 100,
+    -50,
+    200
+  );
 }
 
 export function computeAbsenteeism(
@@ -139,35 +267,31 @@ export function computeAbsenteeism(
     (satisfaction - 65) * -0.08 +
     ({ 0: 1, 1: -1, 2: -2 } as const)[d.flexibility_level] +
     (engagement - 60) * -0.05 +
-    Math.min(d.conflict_budget / 10000, 1) * -1;
+    CONFLICT_CONFIG[d.conflict_approach].satisfaction_impact * -0.2;
   return clamp(value, 1, 20);
 }
 
 export function computeReviewCoverage(d: Decision): number {
+  const kpiBoost = Math.min(
+    avgPerformanceCriteria(d.role_performance, "productivity") - 5,
+    5
+  );
   const value =
     REVIEW_BASE[d.review_frequency] +
-    Math.min(d.kpi_investment / 5000, 5) +
-    (d.feedback_360 ? 3 : 0) +
-    Math.min(d.pip_investment / 5000, 2);
+    kpiBoost +
+    (d.feedback_360 ? 3 : 0);
   return clamp(value, 40, 100);
 }
 
-export function computeTrainingEffectiveness(d: Decision): number {
-  const value =
-    Math.min(d.training_budget_per_ee / 1000, 3) *
-      (d.pct_employees_trained / 100) *
-      (FOCUS_QUALITY[d.training_focus] ?? 1) *
-      8 +
-    Math.min(d.succession_investment / 20000, 0.3) * 5;
-  return clamp(value, 0, 40);
-}
-
 export function computeSuccessionPipeline(d: Decision): number {
+  const hasLeadership = d.developmental_programs.includes(
+    "Leadership Development"
+  );
   const value =
     20 +
     Math.min(d.succession_investment / 10000, 40) +
     Math.min(d.training_budget_per_ee / 2000, 15) +
-    (d.training_focus === "Leadership" ? 10 : 0) +
+    (hasLeadership ? 10 : 0) +
     REVIEW_PIPE[d.review_frequency] +
     (d.feedback_360 ? 5 : 0);
   return clamp(value, 5, 100);
@@ -177,39 +301,88 @@ export function computeHRTechScore(d: Decision): number {
   return ({ 0: 20, 1: 60, 2: 95 } as const)[d.hr_tech_level];
 }
 
+export function computeTurnoverCost(
+  headcount: number,
+  turnoverRate: number,
+  industryConfig: IndustryConfig
+): number {
+  const employeesLost = Math.floor(headcount * (turnoverRate / 100));
+  const replacementCost = industryConfig.base_market_salary * 0.5;
+  return employeesLost * replacementCost;
+}
+
+export function applyIndustryMultipliers(
+  metrics: HRMetrics,
+  industryConfig: IndustryConfig
+): HRMetrics {
+  const m = industryConfig.module_multipliers;
+
+  return {
+    ...metrics,
+    cost_per_hire: metrics.cost_per_hire / m.recruitment,
+    time_to_fill: metrics.time_to_fill / m.recruitment,
+    review_coverage: metrics.review_coverage * (0.5 + m.performance * 0.5),
+    training_effectiveness:
+      metrics.training_effectiveness * m.training,
+    training_roi: metrics.training_roi * m.training,
+    employee_satisfaction:
+      metrics.employee_satisfaction * (0.5 + m.relations * 0.5),
+    engagement_level: metrics.engagement_level * (0.5 + m.relations * 0.5),
+    turnover_rate: metrics.turnover_rate / m.compensation,
+    dei_score: metrics.dei_score * (0.5 + m.dei * 0.5),
+  };
+}
+
 export function computeAllMetrics(
   d: Decision,
   prior: PriorState,
-  _config: IndustryConfig
+  industryConfig: IndustryConfig
 ): HRMetrics {
   const headcount = prior.headcount;
   const satisfaction = computeSatisfaction(d, prior);
   const engagement = computeEngagement(d, prior, satisfaction);
-  const turnover_rate = computeTurnoverRate(d, prior, satisfaction);
-  const dei_score = computeDEIScore(d);
+  const turnover_rate = computeTurnoverRate(
+    d,
+    prior,
+    satisfaction,
+    industryConfig
+  );
+  const retention = 100 - turnover_rate;
+  const training_effectiveness = computeTrainingEffectiveness(d);
+  const productivity = computeProductivity(
+    d,
+    engagement,
+    retention,
+    training_effectiveness
+  );
+  const turnoverByRole = computeTurnoverByRole(d, prior, satisfaction);
+  const dei_score = computeDEIScore(d, turnoverByRole);
+  const hiring_quality = computeHiringQuality(d, turnover_rate);
+  const turnover_cost = computeTurnoverCost(
+    headcount,
+    turnover_rate,
+    industryConfig
+  );
 
-  let turnover = turnover_rate;
-  if (
-    _config.industry === "High-Tech" &&
-    d.salary_vs_market_pct < 95
-  ) {
-    turnover = clamp(turnover + 8, 3, 50);
-  }
-
-  return {
-    cost_per_hire: computeCostPerHire(d),
+  const raw: HRMetrics = {
+    cost_per_hire: computeCostPerHire(d, industryConfig),
     time_to_fill: computeTimeToFill(d),
-    turnover_rate: turnover,
+    turnover_rate,
     employee_satisfaction: satisfaction,
-    training_roi: computeTrainingROI(d, prior, headcount),
+    training_roi: computeTrainingROI(d, prior, headcount, productivity),
     engagement_level: engagement,
     dei_score,
     absenteeism_rate: computeAbsenteeism(satisfaction, engagement, d),
     review_coverage: computeReviewCoverage(d),
-    training_effectiveness: computeTrainingEffectiveness(d),
+    training_effectiveness,
     succession_pipeline: computeSuccessionPipeline(d),
     hr_tech_score: computeHRTechScore(d),
     compensation_ratio: 0,
     budget_adherence: 0,
+    productivity,
+    hiring_quality,
+    turnover_cost,
   };
+
+  return applyIndustryMultipliers(raw, industryConfig);
 }

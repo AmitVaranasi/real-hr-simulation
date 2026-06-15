@@ -51,11 +51,34 @@ export type Strategy =
 
 export type EconomyCondition = "boom" | "normal" | "recession";
 
-export type TrainingFocus =
-  | "Technical"
-  | "Leadership"
-  | "Soft Skills"
-  | "Compliance";
+export type SalaryBand = -20 | -10 | 0 | 10 | 20;
+export type BonusTier = 5 | 10 | 15;
+export type ConflictApproach = "mediation" | "disciplinary" | "coaching";
+export type DevelopmentalProgram =
+  | "Leadership Development"
+  | "Time Management"
+  | "Managerial Skills"
+  | "Technical Skills"
+  | "Compliance"
+  | "Project Management";
+
+export interface PositionToFill {
+  role_id: string;
+  count: number;
+}
+
+export interface RoleCompensation {
+  role_id: string;
+  salary_band: SalaryBand;
+}
+
+export interface RolePerformance {
+  role_id: string;
+  productivity: number;
+  teamwork: number;
+  leadership: number;
+  communication: number;
+}
 
 export interface Decision {
   id?: string;
@@ -65,42 +88,31 @@ export interface Decision {
   submitted_at?: string | null;
   is_submitted?: boolean;
 
-  recruitment_budget_per_hire: number;
-  positions_to_fill: number;
+  positions_to_fill: PositionToFill[];
   screening_rigor: 1 | 2 | 3;
   diversity_goal_pct: number;
   onboarding_investment: number;
 
   review_frequency: 1 | 2 | 4;
-  performance_pay_pct: number;
-  kpi_investment: number;
+  role_performance: RolePerformance[];
   feedback_360: boolean;
-  pip_investment: number;
 
-  training_budget_per_ee: number;
+  developmental_programs: DevelopmentalProgram[];
   pct_employees_trained: number;
-  training_focus: TrainingFocus;
+  training_budget_per_ee: number;
   succession_investment: number;
 
   engagement_investment: number;
-  conflict_budget: number;
+  conflict_approach: ConflictApproach;
   flexibility_level: 0 | 1 | 2;
   voice_mechanisms: 0 | 1 | 2;
 
-  salary_vs_market_pct: number;
-  benefits_per_ee: number;
-  bonus_pool_pct: number;
+  role_compensation: RoleCompensation[];
+  benefits_pct: number;
+  bonus_tier: BonusTier;
   equity_level: 0 | 1 | 2;
 
-  span_of_control: number;
-  restructuring_investment: number;
-  change_comm_effort: 1 | 2 | 3 | 4 | 5;
   hr_tech_level: 0 | 1 | 2;
-
-  dei_training_per_ee: number;
-  inclusive_hiring_investment: number;
-  erg_budget: number;
-  public_commitment_level: 0 | 1 | 2;
 }
 
 export interface PriorState {
@@ -171,6 +183,9 @@ export interface HRMetrics {
   hr_tech_score: number;
   compensation_ratio: number;
   budget_adherence: number;
+  productivity: number;
+  hiring_quality: number;
+  turnover_cost: number;
 }
 
 export interface FinancialMetrics {
@@ -183,6 +198,7 @@ export interface FinancialMetrics {
   profit_margin: number;
   total_compensation: number;
   total_budget_spent: number;
+  turnover_cost: number;
 }
 
 export interface BSCScores {
@@ -221,6 +237,38 @@ export interface PerspectiveFeedback {
 export interface FeedbackPayload {
   metrics: MetricFeedback[];
   perspectives: PerspectiveFeedback[];
+  round_summary?: string;
+}
+
+export interface SimulationTrace {
+  budget_breakdown: BudgetBreakdown;
+  raw_metrics: HRMetrics;
+  normalized_metrics: Record<string, number>;
+  industry_adjusted_metrics: HRMetrics;
+  productivity_components: {
+    training: number;
+    engagement: number;
+    retention: number;
+    leadership: number;
+    technology: number;
+    total: number;
+  };
+  financial_cascade: {
+    revenue: number;
+    total_compensation: number;
+    turnover_cost: number;
+    other_hr_costs: number;
+    non_hr_expenses: number;
+    profit: number;
+  };
+  bsc_component_scores: {
+    financial_components: number[];
+    employee_components: number[];
+    process_components: number[];
+    learning_components: number[];
+  };
+  bsc_scores: BSCScores;
+  feedback: FeedbackPayload;
 }
 
 export interface Outcome {

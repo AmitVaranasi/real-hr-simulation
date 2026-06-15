@@ -98,6 +98,12 @@ export default async function SessionDetailPage({
         >
           Leaderboard control →
         </Link>
+        <Link
+          href={`/sessions/${sessionId}/inspect`}
+          className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+        >
+          Formula inspector →
+        </Link>
       </section>
     </div>
   );

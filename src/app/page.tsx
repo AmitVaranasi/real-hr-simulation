@@ -46,9 +46,10 @@ export default function Home() {
             Real HR Simulation
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
-            A Capsim-style HR business simulation where student teams make
-            recruitment, compensation, training, and DEI decisions — then see
-            how choices affect metrics, financials, and the Balanced Scorecard.
+            An HR business simulation where student teams make recruitment,
+            compensation, training, and engagement decisions — then see how
+            those choices affect workforce metrics, financial outcomes, and the
+            Balanced Scorecard.
           </p>
           <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
             <Link href="/simulate" className="w-full sm:w-auto">

@@ -92,6 +92,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                 ))}
                 <th className="px-3 py-2">Avg (competitive)</th>
                 <th className="px-3 py-2">Override</th>
+                <th className="px-3 py-2">Inspect</th>
               </tr>
             </thead>
             <tbody>
@@ -162,6 +163,16 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                             ) || 0
                           }
                         />
+                      )}
+                    </td>
+                    <td className="px-3 py-2">
+                      {teamOutcomes.length > 0 && (
+                        <a
+                          href={`/sessions/${sessionId}/inspect?team=${team.id}&round=${teamOutcomes[teamOutcomes.length - 1]!.round_id}`}
+                          className="text-xs text-indigo-600 hover:underline"
+                        >
+                          Latest
+                        </a>
                       )}
                     </td>
                   </tr>

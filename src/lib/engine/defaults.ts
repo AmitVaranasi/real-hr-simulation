@@ -1,53 +1,50 @@
-import type { Decision } from "./types";
+import { ROLE_GROUPS } from "./roles";
+import type { BonusTier, Decision, SalaryBand } from "./types";
 
 export const DISCRETIONARY_BUDGET = 500_000;
-export const BASELINE_BENEFITS = 3000;
 
-/**
- * Starting decisions tuned to fit the $500K discretionary budget for typical
- * industry headcount/salary (bonus pool scales with headcount × market salary).
- */
 export function createDefaultDecision(
   overrides: Partial<Decision> = {}
 ): Decision {
   return {
-    recruitment_budget_per_hire: 4500,
-    positions_to_fill: 5,
+    positions_to_fill: [
+      { role_id: "entry", count: 2 },
+      { role_id: "professional", count: 2 },
+      { role_id: "technical", count: 1 },
+    ],
     screening_rigor: 2,
-    diversity_goal_pct: 10,
+    diversity_goal_pct: 15,
     onboarding_investment: 500,
 
     review_frequency: 2,
-    performance_pay_pct: 5,
-    kpi_investment: 5000,
+    role_performance: ROLE_GROUPS.map((r) => ({
+      role_id: r.id,
+      productivity: 5,
+      teamwork: 5,
+      leadership: r.id === "manager" || r.id === "executive" ? 7 : 4,
+      communication: 5,
+    })),
     feedback_360: false,
-    pip_investment: 3000,
 
+    developmental_programs: ["Technical Skills"],
+    pct_employees_trained: 40,
     training_budget_per_ee: 700,
-    pct_employees_trained: 35,
-    training_focus: "Technical",
     succession_investment: 5000,
 
     engagement_investment: 5000,
-    conflict_budget: 5000,
+    conflict_approach: "mediation",
     flexibility_level: 1,
     voice_mechanisms: 1,
 
-    salary_vs_market_pct: 100,
-    benefits_per_ee: 3000,
-    // Full bonus $ = bonus_pool_pct% × marketSalary × headcount (counts against $500K)
-    bonus_pool_pct: 0.5,
+    role_compensation: ROLE_GROUPS.map((r) => ({
+      role_id: r.id,
+      salary_band: 0 as SalaryBand,
+    })),
+    benefits_pct: 10,
+    bonus_tier: 5 as BonusTier,
     equity_level: 0,
 
-    span_of_control: 8,
-    restructuring_investment: 0,
-    change_comm_effort: 3,
     hr_tech_level: 0,
-
-    dei_training_per_ee: 100,
-    inclusive_hiring_investment: 3000,
-    erg_budget: 2000,
-    public_commitment_level: 1,
 
     ...overrides,
   };

@@ -4,16 +4,31 @@ import type { BSCScores } from "@/lib/engine/types";
 
 interface BSCScorecardProps {
   scores: BSCScores;
+  bscWeights?: {
+    financial: number;
+    employee: number;
+    process: number;
+    learning: number;
+  };
 }
 
-const perspectives = [
-  { key: "score_financial" as const, label: "Financial", max: 30 },
-  { key: "score_employee" as const, label: "Employee", max: 35 },
-  { key: "score_process" as const, label: "Internal Process", max: 30 },
-  { key: "score_learning" as const, label: "Learning & Growth", max: 35 },
+const PERSPECTIVE_KEYS = [
+  { key: "score_financial" as const, label: "Financial", weightKey: "financial" as const },
+  { key: "score_employee" as const, label: "Employee", weightKey: "employee" as const },
+  { key: "score_process" as const, label: "Internal Process", weightKey: "process" as const },
+  { key: "score_learning" as const, label: "Learning & Growth", weightKey: "learning" as const },
 ];
 
-export function BSCScorecard({ scores }: BSCScorecardProps) {
+const DEFAULT_WEIGHTS = {
+  financial: 30,
+  employee: 35,
+  process: 30,
+  learning: 35,
+};
+
+export function BSCScorecard({ scores, bscWeights }: BSCScorecardProps) {
+  const weights = bscWeights ?? DEFAULT_WEIGHTS;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between rounded-xl bg-indigo-600 px-6 py-4 text-white">
@@ -31,9 +46,10 @@ export function BSCScorecard({ scores }: BSCScorecardProps) {
         </div>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        {perspectives.map((p) => {
+        {PERSPECTIVE_KEYS.map((p) => {
           const value = scores[p.key];
-          const pct = (value / p.max) * 100;
+          const max = weights[p.weightKey];
+          const pct = max > 0 ? (value / max) * 100 : 0;
           return (
             <div
               key={p.key}
@@ -42,7 +58,7 @@ export function BSCScorecard({ scores }: BSCScorecardProps) {
               <div className="mb-2 flex justify-between text-sm">
                 <span className="font-medium text-slate-700">{p.label}</span>
                 <span className="text-slate-500">
-                  {value.toFixed(1)} / {p.max}
+                  {value.toFixed(1)} / {max}
                 </span>
               </div>
               <div className="h-2 rounded-full bg-slate-100">

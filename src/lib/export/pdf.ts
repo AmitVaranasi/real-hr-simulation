@@ -75,6 +75,19 @@ export function generateTeamPdf(data: PdfReportData): void {
     body: data.financials.map((f) => [f.label, f.value]),
   });
 
+  if (data.feedback?.round_summary) {
+    if (y > 220) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFontSize(14);
+    doc.text("Round Summary", 14, y + 8);
+    doc.setFontSize(10);
+    const summaryLines = doc.splitTextToSize(data.feedback.round_summary, 180);
+    doc.text(summaryLines, 14, y + 16);
+    y += 16 + summaryLines.length * 5;
+  }
+
   if (data.reflection) {
     doc.addPage();
     doc.setFontSize(14);
@@ -118,6 +131,18 @@ export function outcomeToPdfData(
       { name: "Training ROI", value: formatPercent(Number(outcome.training_roi)) },
       { name: "DEI score", value: `${Number(outcome.dei_score).toFixed(0)}/100` },
       { name: "Budget adherence", value: formatPercent(Number(outcome.budget_adherence)) },
+      {
+        name: "Productivity",
+        value: `${(Number(outcome.productivity ?? 0) * 100).toFixed(1)}%`,
+      },
+      {
+        name: "Hiring quality",
+        value: `${Number(outcome.hiring_quality ?? 0).toFixed(0)}/100`,
+      },
+      {
+        name: "Turnover cost",
+        value: formatCurrency(Number(outcome.turnover_cost ?? 0)),
+      },
     ],
     financials: [
       { label: "Revenue", value: formatCurrency(Number(outcome.revenue)) },

@@ -1,23 +1,29 @@
 import type { Decision, Warning } from "./types";
 import { computeBudgetBreakdown } from "./budget";
+import { totalHires, weightedAvgSalaryBand } from "./roles";
+import type { IndustryConfig } from "./types";
 
 export function validateDecision(d: Decision): {
   valid: boolean;
   errors: string[];
 } {
   const errors: string[] = [];
+  const hires = totalHires(d.positions_to_fill);
 
-  if (d.recruitment_budget_per_hire < 3000 || d.recruitment_budget_per_hire > 25000) {
-    errors.push("Recruitment budget per hire must be between $3,000 and $25,000");
+  if (hires < 0 || hires > 50) {
+    errors.push("Total positions to fill must be between 0 and 50");
   }
-  if (d.positions_to_fill < 0 || d.positions_to_fill > 50) {
-    errors.push("Positions to fill must be between 0 and 50");
-  }
-  if (d.salary_vs_market_pct < 80 || d.salary_vs_market_pct > 120) {
-    errors.push("Salary vs market must be between 80% and 120%");
+  if (d.diversity_goal_pct < 0 || d.diversity_goal_pct > 50) {
+    errors.push("Diversity goal must be between 0% and 50%");
   }
   if (d.pct_employees_trained < 20 || d.pct_employees_trained > 100) {
     errors.push("% employees trained must be between 20% and 100%");
+  }
+  if (d.benefits_pct < 6 || d.benefits_pct > 20) {
+    errors.push("Benefits percentage must be between 6% and 20%");
+  }
+  if (![5, 10, 15].includes(d.bonus_tier)) {
+    errors.push("Bonus tier must be 5%, 10%, or 15%");
   }
 
   return { valid: errors.length === 0, errors };
@@ -26,17 +32,24 @@ export function validateDecision(d: Decision): {
 export function generateWarnings(
   d: Decision,
   headcount: number,
-  marketSalary: number
+  marketSalary: number,
+  industryConfig: IndustryConfig
 ): Warning[] {
   const warnings: Warning[] = [];
-  const budget = computeBudgetBreakdown(d, headcount, marketSalary);
+  const budget = computeBudgetBreakdown(
+    d,
+    headcount,
+    marketSalary,
+    industryConfig
+  );
+  const avgBand = weightedAvgSalaryBand(d.role_compensation);
 
-  if (d.salary_vs_market_pct < 90) {
+  if (avgBand < -10) {
     warnings.push({
       severity: "warning",
       module: "Compensation",
       message:
-        "Salary below 90% of market may increase turnover, especially in High-Tech.",
+        "Below-market salary bands may increase turnover, especially in High-Tech.",
     });
   }
   if (d.training_budget_per_ee < 200) {
@@ -51,14 +64,6 @@ export function generateWarnings(
       severity: "critical",
       module: "Budget",
       message: `Overspent discretionary budget by ${Math.abs(budget.remaining).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}.`,
-    });
-  }
-  if (budget.compensation_spend < 100000) {
-    warnings.push({
-      severity: "warning",
-      module: "Compensation",
-      message:
-        "Compensation spend below $100K minimum may trigger satisfaction and turnover penalties.",
     });
   }
 
