@@ -36,6 +36,7 @@ import { MetricPreview } from "@/components/decisions/MetricPreview";
 import { ScaffoldingText } from "@/components/decisions/ScaffoldingText";
 import { BSCScorecard } from "@/components/results/BSCScorecard";
 import { deriveTrainingBudgetPerEe } from "@/lib/engine/training";
+import { useSimulationConfig } from "@/hooks/useSimulationConfig";
 import { formatCurrency } from "@/lib/utils";
 
 const MODULES = [
@@ -94,6 +95,7 @@ export function DecisionForm({
   onDecisionChange,
   hideRunButton = false,
 }: DecisionFormProps) {
+  const { ready: configReady } = useSimulationConfig();
   const [activeTab, setActiveTab] = useState(0);
   const [internalDecision, setInternalDecision] = useState<Decision>(() =>
     createDefaultDecision()
@@ -113,7 +115,7 @@ export function DecisionForm({
         industryConfig.base_market_salary,
         industryConfig
       ),
-    [decision, prior.headcount, industryConfig]
+    [decision, prior.headcount, industryConfig, configReady]
   );
 
   const warnings = useMemo(
@@ -125,7 +127,7 @@ export function DecisionForm({
         industryConfig,
         industry
       ),
-    [decision, prior.headcount, industryConfig, industry]
+    [decision, prior.headcount, industryConfig, industry, configReady]
   );
 
   const derivedTrainingPerEe = useMemo(
@@ -179,6 +181,9 @@ export function DecisionForm({
 
   return (
     <div className="space-y-6">
+      {!configReady && (
+        <p className="text-xs text-slate-500">Loading simulation parameters…</p>
+      )}
       <div className="flex flex-wrap gap-2 text-sm text-slate-600">
         <span className="rounded-full bg-slate-100 px-3 py-1">Industry: {industry}</span>
         <span className="rounded-full bg-slate-100 px-3 py-1">Strategy: {strategy}</span>

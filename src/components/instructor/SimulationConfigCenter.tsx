@@ -3,10 +3,18 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { formInputClassName, formSelectClassName } from "@/components/ui/form-controls";
+import { formSelectClassName } from "@/components/ui/form-controls";
+import {
+  ConfigBenchmarkPanel,
+  ConfigIndustryNormsPanel,
+  ConfigIndustryPanel,
+  ConfigParametersPanel,
+  ConfigStrategyPanel,
+} from "@/components/instructor/config/ConfigEditors";
+import { EngineDiagnosticPanel } from "@/components/instructor/EngineDiagnosticPanel";
 import { FormulaInspector } from "@/components/instructor/FormulaInspector";
-import { INDUSTRY_CONFIGS, STRATEGY_CONFIGS } from "@/lib/engine/config";
 import { createDefaultDecision } from "@/lib/engine/defaults";
+import type { SimulationConfigOverrides } from "@/lib/engine/simulation-config";
 import type {
   EconomyCondition,
   Industry,
@@ -15,17 +23,24 @@ import type {
 } from "@/lib/engine/types";
 import { formatCurrency } from "@/lib/utils";
 
-type Tab = "parameters" | "scenarios" | "process" | "diagnostics";
-
-const INDUSTRIES = Object.keys(INDUSTRY_CONFIGS) as Industry[];
-const STRATEGIES = Object.keys(STRATEGY_CONFIGS) as Strategy[];
+type Tab =
+  | "parameters"
+  | "industries"
+  | "norms"
+  | "strategies"
+  | "benchmarks"
+  | "scenarios"
+  | "process"
+  | "diagnostics"
+  | "export";
 
 export function SimulationConfigCenter() {
   const [tab, setTab] = useState<Tab>("parameters");
-  const [config, setConfig] = useState<{ overrides: Record<string, unknown> }>({
-    overrides: {},
-  });
+  const [overrides, setOverrides] = useState<SimulationConfigOverrides>({});
   const [discretionaryBudget, setDiscretionaryBudget] = useState(500_000);
+  const [effective, setEffective] = useState<Record<string, unknown> | null>(
+    null
+  );
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -48,10 +63,10 @@ export function SimulationConfigCenter() {
     const res = await fetch("/api/simulation-config");
     if (!res.ok) return;
     const data = await res.json();
-    setConfig(data.config);
-    setDiscretionaryBudget(
-      Number(data.config?.overrides?.discretionary_budget ?? 500_000)
-    );
+    const o = (data.config?.overrides ?? {}) as SimulationConfigOverrides;
+    setOverrides(o);
+    setDiscretionaryBudget(Number(o.discretionary_budget ?? 500_000));
+    setEffective(data.effective ?? null);
   }, []);
 
   useEffect(() => {
@@ -59,36 +74,40 @@ export function SimulationConfigCenter() {
     void fetch("/api/sessions")
       .then((r) => r.json())
       .then((data) => {
-        const list = (data.sessions ?? []).map(
-          (s: { id: string; name: string; rounds?: Array<{ id: string; round_number: number }> }) => ({
-            id: s.id,
-            name: s.name,
-            rounds: s.rounds ?? [],
-          })
+        setSessions(
+          (data.sessions ?? []).map(
+            (s: {
+              id: string;
+              name: string;
+              rounds?: Array<{ id: string; round_number: number }>;
+            }) => ({
+              id: s.id,
+              name: s.name,
+              rounds: s.rounds ?? [],
+            })
+          )
         );
-        setSessions(list);
       });
   }, [loadConfig]);
 
   async function saveConfig() {
     setSaving(true);
     setMessage(null);
+    const payload = {
+      version: 3 as const,
+      overrides: {
+        ...overrides,
+        discretionary_budget: discretionaryBudget,
+      },
+    };
     const res = await fetch("/api/simulation-config", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        config: {
-          version: 3,
-          overrides: {
-            ...config.overrides,
-            discretionary_budget: discretionaryBudget,
-          },
-        },
-      }),
+      body: JSON.stringify({ config: payload }),
     });
     setSaving(false);
     if (res.ok) {
-      setMessage("Configuration saved.");
+      setMessage("Configuration saved. Students will see updates on next page load.");
       void loadConfig();
     } else {
       setMessage("Save failed — run supabase/migration-v3.sql if the table is missing.");
@@ -97,8 +116,9 @@ export function SimulationConfigCenter() {
 
   async function resetConfig() {
     await fetch("/api/simulation-config", { method: "POST" });
-    void loadConfig();
+    setOverrides({});
     setDiscretionaryBudget(500_000);
+    void loadConfig();
     setMessage("Reset to code defaults.");
   }
 
@@ -142,14 +162,66 @@ export function SimulationConfigCenter() {
     );
   }
 
+  async function exportScenarios(format: "json" | "csv") {
+    const res = await fetch("/api/simulation-config/export-scenarios", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        strategy: scenarioStrategy,
+        economy: scenarioEconomy,
+        format,
+      }),
+    });
+    if (!res.ok) {
+      setMessage("Export failed.");
+      return;
+    }
+    if (format === "csv") {
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "scenario-export.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      const data = await res.json();
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "simulation-config-export.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    setMessage(`Exported scenarios as ${format.toUpperCase()}.`);
+  }
+
   const tabs: { id: Tab; label: string }[] = [
-    { id: "parameters", label: "Parameters" },
+    { id: "parameters", label: "Budget & economy" },
+    { id: "industries", label: "Industries" },
+    { id: "norms", label: "Industry norms" },
+    { id: "strategies", label: "Strategies" },
+    { id: "benchmarks", label: "BSC benchmarks" },
     { id: "scenarios", label: "Scenario test" },
     { id: "process", label: "Process round" },
     { id: "diagnostics", label: "Diagnostics" },
+    { id: "export", label: "Export" },
   ];
 
   const selectedSession = sessions.find((s) => s.id === processSessionId);
+  const saveBar = (
+    <div className="flex flex-wrap gap-3 border-t border-slate-200 pt-4">
+      <Button onClick={saveConfig} disabled={saving}>
+        {saving ? "Saving…" : "Save all configuration"}
+      </Button>
+      <Button variant="outline" onClick={resetConfig}>
+        Reset to defaults
+      </Button>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -161,7 +233,8 @@ export function SimulationConfigCenter() {
           Simulation Configuration Center
         </h1>
         <p className="text-slate-600">
-          Edit engine assumptions, run scenarios, and inspect formulas (V3 professor sandbox).
+          Edit engine assumptions without code changes. Save before running scenarios
+          or processing rounds.
         </p>
       </div>
 
@@ -188,33 +261,33 @@ export function SimulationConfigCenter() {
         </p>
       )}
 
-      {tab === "parameters" && (
+      {(tab === "parameters" ||
+        tab === "industries" ||
+        tab === "norms" ||
+        tab === "strategies" ||
+        tab === "benchmarks") && (
         <div className="space-y-6 rounded-xl border border-slate-200 bg-white p-6">
-          <label className="block text-sm">
-            <span className="font-medium text-slate-700">
-              Discretionary HR budget (starting pool)
-            </span>
-            <input
-              type="number"
-              step={10000}
-              className={`mt-1 w-full max-w-xs ${formInputClassName}`}
-              value={discretionaryBudget}
-              onChange={(e) => setDiscretionaryBudget(Number(e.target.value))}
+          {tab === "parameters" && (
+            <ConfigParametersPanel
+              overrides={overrides}
+              onChange={setOverrides}
+              discretionaryBudget={discretionaryBudget}
+              onBudgetChange={setDiscretionaryBudget}
             />
-          </label>
-          <p className="text-sm text-slate-500">
-            Industry multipliers, strategy BSC weights, and benchmark tables remain
-            in code defaults for now. Saved budget applies on the next round compute.
-            Full JSON overrides can be extended in <code className="text-xs">simulation_config.config_json</code>.
-          </p>
-          <div className="flex gap-3">
-            <Button onClick={saveConfig} disabled={saving}>
-              {saving ? "Saving…" : "Save configuration"}
-            </Button>
-            <Button variant="outline" onClick={resetConfig}>
-              Reset to defaults
-            </Button>
-          </div>
+          )}
+          {tab === "industries" && (
+            <ConfigIndustryPanel overrides={overrides} onChange={setOverrides} />
+          )}
+          {tab === "norms" && (
+            <ConfigIndustryNormsPanel overrides={overrides} onChange={setOverrides} />
+          )}
+          {tab === "strategies" && (
+            <ConfigStrategyPanel overrides={overrides} onChange={setOverrides} />
+          )}
+          {tab === "benchmarks" && (
+            <ConfigBenchmarkPanel overrides={overrides} onChange={setOverrides} />
+          )}
+          {saveBar}
         </div>
       )}
 
@@ -230,7 +303,15 @@ export function SimulationConfigCenter() {
                   setScenarioStrategy(e.target.value as Strategy)
                 }
               >
-                {STRATEGIES.map((s) => (
+                {(
+                  [
+                    "Cost Leadership",
+                    "Differentiation",
+                    "Innovation",
+                    "Customer Intimacy",
+                    "Focus",
+                  ] as Strategy[]
+                ).map((s) => (
                   <option key={s} value={s}>
                     {s}
                   </option>
@@ -253,10 +334,18 @@ export function SimulationConfigCenter() {
             </label>
           </div>
           <p className="text-sm text-slate-600">
-            One-click scenario runs use default decisions for each industry:
+            Run simulation as each industry (uses saved config + default decisions):
           </p>
           <div className="flex flex-wrap gap-2">
-            {INDUSTRIES.map((ind) => (
+            {(
+              [
+                "Manufacturing",
+                "Service",
+                "High-Tech",
+                "Banking",
+                "Retail",
+              ] as Industry[]
+            ).map((ind) => (
               <Button
                 key={ind}
                 variant="outline"
@@ -281,7 +370,7 @@ export function SimulationConfigCenter() {
       {tab === "process" && (
         <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-6">
           <p className="text-sm text-slate-600">
-            Manually process a round (same as close-round compute) for testing.
+            Manually process a round using saved configuration.
           </p>
           <label className="block text-sm">
             <span className="font-medium">Session</span>
@@ -327,19 +416,44 @@ export function SimulationConfigCenter() {
         </div>
       )}
 
-      {tab === "diagnostics" && scenarioTrace && (
-        <FormulaInspector
-          teamName={`Scenario: ${scenarioIndustry}`}
-          roundLabel={`${scenarioStrategy} · ${scenarioEconomy}`}
-          decision={createDefaultDecision()}
-          trace={scenarioTrace}
-        />
+      {tab === "diagnostics" && (
+        <div className="space-y-6">
+          <EngineDiagnosticPanel
+            effective={
+              effective as {
+                discretionary_budget: number;
+                economy_multipliers: typeof import("@/lib/engine/config").ECONOMY_MULTIPLIERS;
+                industries: typeof import("@/lib/engine/config").INDUSTRY_CONFIGS;
+              } | null
+            }
+            scenarioTrace={scenarioTrace}
+            scenarioLabel={`${scenarioIndustry} · ${scenarioStrategy}`}
+          />
+          {scenarioTrace && (
+            <FormulaInspector
+              teamName={`Scenario: ${scenarioIndustry}`}
+              roundLabel={`${scenarioStrategy} · ${scenarioEconomy}`}
+              decision={createDefaultDecision()}
+              trace={scenarioTrace}
+            />
+          )}
+        </div>
       )}
 
-      {tab === "diagnostics" && !scenarioTrace && (
-        <p className="text-slate-500">
-          Run a scenario from the Scenario test tab to view formula diagnostics.
-        </p>
+      {tab === "export" && (
+        <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-6">
+          <p className="text-sm text-slate-600">
+            Export all-industry scenario results using current saved configuration.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="outline" onClick={() => void exportScenarios("json")}>
+              Download JSON (full)
+            </Button>
+            <Button variant="outline" onClick={() => void exportScenarios("csv")}>
+              Download CSV summary
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );

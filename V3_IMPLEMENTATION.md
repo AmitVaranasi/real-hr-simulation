@@ -1,40 +1,46 @@
 # V3 Implementation Progress
 
 Branch: `feature/design-v3`  
-Spec: `062726 Design Decisions Real HR Simulation Cooper V3 Amit.docx`
+Spec: Cooper V3 design document
 
 ## Completed (excluding auth)
 
-### Simulation Configuration Center
-- [x] `/sessions/config` — professor sandbox UI
-- [x] `GET/PATCH/POST /api/simulation-config` — persisted overrides (`simulation_config` table)
-- [x] Editable discretionary HR budget (more parameters via JSON extensible)
+### Simulation Configuration Center (`/sessions/config`)
+- [x] Discretionary HR budget editor
+- [x] Economy multiplier editor (boom / normal / recession)
+- [x] Per-industry editor (salary, headcount, turnover, profit margin, module multipliers)
+- [x] Per-strategy BSC weight editor
+- [x] BSC benchmark table editor (16 metrics)
 - [x] One-click industry scenario testing
-- [x] Manual **Process round** for testing
-- [x] Formula diagnostics tab (reuses Formula Inspector)
+- [x] Manual process round
+- [x] Diagnostics panel + formula inspector
+- [x] Export scenarios (JSON full + CSV summary)
+- [x] Persisted overrides in `simulation_config` table
 
-### Engine & explainability
-- [x] Runtime config merge (`simulation-config.ts`) with code defaults fallback
-- [x] Industry budget norm ranges + recommendation warnings
-- [x] Causal factors + learning insights (`went_well`, `hurt_performance`, `next_round`)
-- [x] Derived training budget per employee (0–50% coverage slider)
+### Client/server config sync
+- [x] `GET /api/simulation-config/effective` — public read, applies to client engine
+- [x] `useSimulationConfig` hook on DecisionForm, review page, simulate page
+- [x] Server compute/process uses `withSimulationConfig`
+
+### Engine
+- [x] Benchmark overrides wired into BSC scoring
+- [x] Industry norm warnings + guidance (configurable via overrides)
+- [x] Learning insights + causal explanations on results
+- [x] Derived training budget (0–50% slider)
 
 ### Student UI
-- [x] Industry guidance on each decision tab
-- [x] Compensation breakdown panel
-- [x] Expanded review page (budget summary, forecasts, recommendations)
-- [x] Results: learning insights + HR Coach placeholders
+- [x] Industry guidance per tab
+- [x] Compensation breakdown
+- [x] Expanded review page with forecasts
+- [x] HR Coach placeholders
+
+## Not done
+
+- [ ] Auth / browser login / admin reset / backup login
+- [ ] Override formulas in UI (parameters only, not expression editor)
+- [x] Industry norm range editor (per industry, per module)
+- [ ] Assign industry/strategy per team from config center (still per-team at creation)
 
 ## Deploy
 
-Run in Supabase SQL Editor (after v2 migration):
-
-```sql
--- supabase/migration-v3.sql
-```
-
-## Not in scope (per user)
-
-- Auth / browser login fixes
-- Full JSON editor for all industry multipliers (foundation in place)
-- Live AI coach
+Run `supabase/migration-v3.sql` after v2 migration.

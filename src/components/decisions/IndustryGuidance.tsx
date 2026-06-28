@@ -6,6 +6,7 @@ import {
   formatNormRange,
   type BudgetModuleKey,
 } from "@/lib/engine/industry-norms";
+import { getIndustryNormsResolved } from "@/lib/engine/simulation-config";
 import type { Industry } from "@/lib/engine/types";
 
 interface IndustryGuidanceProps {
@@ -17,7 +18,7 @@ export function IndustryGuidance({ industry, module }: IndustryGuidanceProps) {
   const keys = MODULE_TAB_GUIDANCE[module];
   if (!keys?.length) return null;
 
-  const norms = DEFAULT_INDUSTRY_NORMS[industry];
+  const norms = getIndustryNormsResolved()[industry] ?? DEFAULT_INDUSTRY_NORMS[industry];
   const lines = keys
     .map((key) => {
       const norm = norms[key as BudgetModuleKey];

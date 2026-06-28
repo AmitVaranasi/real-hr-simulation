@@ -17,8 +17,10 @@ import { runSimulation } from "@/lib/engine/engine";
 import { generateWarnings } from "@/lib/engine/validation";
 import type { EconomyCondition, Industry, Strategy } from "@/lib/engine/types";
 import { formatCurrency, formatPercent } from "@/lib/utils";
+import { useSimulationConfig } from "@/hooks/useSimulationConfig";
 
 export default function ReviewPage() {
+  const { ready: configReady } = useSimulationConfig();
   const { roundId } = useParams<{ roundId: string }>();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -56,17 +58,17 @@ export default function ReviewPage() {
   );
 
   const budget = useMemo(() => {
-    if (!decision) return null;
+    if (!decision || !configReady) return null;
     return computeBudgetBreakdown(
       decision,
       headcount,
       industryConfig.base_market_salary,
       industryConfig
     );
-  }, [decision, headcount, industryConfig]);
+  }, [decision, headcount, industryConfig, configReady]);
 
   const forecast = useMemo(() => {
-    if (!decision) return null;
+    if (!decision || !configReady) return null;
     const prior = priorStateFromIndustry(industry);
     return runSimulation(
       decision,
@@ -75,7 +77,7 @@ export default function ReviewPage() {
       getStrategyConfig(strategy),
       economy
     );
-  }, [decision, industry, industryConfig, strategy, economy]);
+  }, [decision, industry, industryConfig, strategy, economy, configReady]);
 
   const warnings = useMemo(() => {
     if (!decision) return [];
@@ -108,7 +110,7 @@ export default function ReviewPage() {
     }
   }
 
-  if (loading) return <p className="p-8">Loading…</p>;
+  if (loading || !configReady) return <p className="p-8">Loading…</p>;
   if (!decision || !budget || !forecast) {
     return (
       <p className="p-8">

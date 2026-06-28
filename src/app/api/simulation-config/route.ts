@@ -2,7 +2,8 @@ import { requireInstructor } from "@/lib/api/auth";
 import {
   defaultSimulationConfig,
   mergeSimulationConfig,
-  type SimulationConfigDocument,
+  setRuntimeSimulationConfig,
+  buildEffectiveConfigSnapshot,
 } from "@/lib/engine/simulation-config";
 import {
   loadSimulationConfigFromDb,
@@ -14,8 +15,13 @@ export async function GET() {
   const { error } = await requireInstructor();
   if (error) return error;
 
-  const config = await loadSimulationConfigFromDb();
-  return NextResponse.json({ config });
+  const stored = await loadSimulationConfigFromDb();
+  const config = mergeSimulationConfig(stored);
+  setRuntimeSimulationConfig(config);
+  const effective = buildEffectiveConfigSnapshot();
+  setRuntimeSimulationConfig(null);
+
+  return NextResponse.json({ config, effective });
 }
 
 export async function PATCH(request: Request) {

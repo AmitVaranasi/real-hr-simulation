@@ -4,7 +4,12 @@ import {
   STRATEGY_CONFIGS,
 } from "./config";
 import { DISCRETIONARY_BUDGET } from "./defaults";
-import { DEFAULT_INDUSTRY_NORMS } from "./industry-norms";
+import {
+  DEFAULT_INDUSTRY_NORMS,
+  type BudgetModuleKey,
+  type IndustryNormProfile,
+} from "./industry-norms";
+import type { BenchmarkOverride } from "./benchmarks";
 import type {
   EconomyCondition,
   Industry,
@@ -20,7 +25,8 @@ export interface SimulationConfigOverrides {
   >;
   industries?: Partial<Record<Industry, Partial<IndustryConfig>>>;
   strategies?: Partial<Record<Strategy, Partial<StrategyConfig>>>;
-  industry_norms?: typeof DEFAULT_INDUSTRY_NORMS;
+  industry_norms?: Partial<Record<Industry, Partial<IndustryNormProfile>>>;
+  benchmarks?: Record<string, BenchmarkOverride>;
 }
 
 export interface SimulationConfigDocument {
@@ -91,10 +97,72 @@ export function getStrategyConfigResolved(strategy: Strategy): StrategyConfig {
   };
 }
 
+function mergeIndustryNormProfile(
+  base: IndustryNormProfile,
+  patch?: Partial<IndustryNormProfile>
+): IndustryNormProfile {
+  if (!patch) return base;
+  const merged: IndustryNormProfile = { ...base };
+  if (patch.benefits_pct_of_comp) {
+    merged.benefits_pct_of_comp = {
+      min: patch.benefits_pct_of_comp.min ?? base.benefits_pct_of_comp?.min ?? 20,
+      max: patch.benefits_pct_of_comp.max ?? base.benefits_pct_of_comp?.max ?? 40,
+    };
+  }
+  for (const key of Object.keys(patch) as BudgetModuleKey[]) {
+    const value = patch[key];
+    if (value == null) continue;
+    merged[key] = {
+      ...base[key],
+      ...value,
+      suggested: value.suggested ?? base[key]?.suggested,
+    };
+  }
+  return merged;
+}
+
 export function getIndustryNormsResolved(): typeof DEFAULT_INDUSTRY_NORMS {
+  const custom = runtimeOverrides.industry_norms ?? {};
+  return (Object.keys(DEFAULT_INDUSTRY_NORMS) as Industry[]).reduce(
+    (acc, industry) => {
+      acc[industry] = mergeIndustryNormProfile(
+        DEFAULT_INDUSTRY_NORMS[industry],
+        custom[industry]
+      );
+      return acc;
+    },
+    {} as typeof DEFAULT_INDUSTRY_NORMS
+  );
+}
+
+export function getBenchmarkOverrides(): Record<string, BenchmarkOverride> {
+  return runtimeOverrides.benchmarks ?? {};
+}
+
+export function buildEffectiveConfigSnapshot() {
+  const industries = (Object.keys(INDUSTRY_CONFIGS) as Industry[]).reduce(
+    (acc, key) => {
+      acc[key] = getIndustryConfigResolved(key);
+      return acc;
+    },
+    {} as Record<Industry, IndustryConfig>
+  );
+
+  const strategies = (Object.keys(STRATEGY_CONFIGS) as Strategy[]).reduce(
+    (acc, key) => {
+      acc[key] = getStrategyConfigResolved(key);
+      return acc;
+    },
+    {} as Record<Strategy, StrategyConfig>
+  );
+
   return {
-    ...DEFAULT_INDUSTRY_NORMS,
-    ...(runtimeOverrides.industry_norms ?? {}),
+    discretionary_budget: getDiscretionaryBudget(),
+    economy_multipliers: getEconomyMultipliers(),
+    industries,
+    strategies,
+    industry_norms: getIndustryNormsResolved(),
+    benchmarks: getBenchmarkOverrides(),
   };
 }
 
@@ -115,8 +183,12 @@ export function mergeSimulationConfig(
       industries: { ...base.overrides.industries, ...stored.overrides.industries },
       strategies: { ...base.overrides.strategies, ...stored.overrides.strategies },
       industry_norms: {
-        ...DEFAULT_INDUSTRY_NORMS,
+        ...base.overrides.industry_norms,
         ...stored.overrides.industry_norms,
+      },
+      benchmarks: {
+        ...base.overrides.benchmarks,
+        ...stored.overrides.benchmarks,
       },
     },
   };

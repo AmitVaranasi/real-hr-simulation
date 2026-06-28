@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DecisionForm } from "@/components/decisions/DecisionForm";
 import { formSelectClassName } from "@/components/ui/form-controls";
+import { useSimulationConfig } from "@/hooks/useSimulationConfig";
 import type { EconomyCondition, Industry, Strategy } from "@/lib/engine/types";
 
 const INDUSTRIES: Industry[] = [
@@ -24,6 +25,7 @@ const STRATEGIES: Strategy[] = [
 const ECONOMIES: EconomyCondition[] = ["boom", "normal", "recession"];
 
 export default function SimulatePage() {
+  useSimulationConfig();
   const [industry, setIndustry] = useState<Industry>("High-Tech");
   const [strategy, setStrategy] = useState<Strategy>("Innovation");
   const [economy, setEconomy] = useState<EconomyCondition>("normal");
