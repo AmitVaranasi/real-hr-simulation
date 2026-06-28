@@ -2,6 +2,8 @@
 
 import { BSCScorecard } from "@/components/results/BSCScorecard";
 import { FeedbackPanel } from "@/components/results/FeedbackPanel";
+import { HRCoachPlaceholder } from "@/components/results/HRCoachPlaceholder";
+import { LearningInsightsPanel } from "@/components/results/LearningInsightsPanel";
 import { OutcomeMetricTable } from "@/components/results/MetricTable";
 import { TrendChart } from "@/components/results/TrendChart";
 import { ReflectionDisplay } from "@/components/reflection/ReflectionDisplay";
@@ -129,12 +131,21 @@ export function ResultsView({
         <OutcomeMetricTable outcome={outcome} />
       </section>
 
+      {feedback?.learning_insights && (
+        <section>
+          <h2 className="mb-3 text-lg font-semibold">Learning insights</h2>
+          <LearningInsightsPanel insights={feedback.learning_insights} />
+        </section>
+      )}
+
       {feedback && (
         <section>
           <h2 className="mb-3 text-lg font-semibold">Feedback</h2>
           <FeedbackPanel feedback={feedback} />
         </section>
       )}
+
+      <HRCoachPlaceholder />
 
       <section>
         {reflection ? (

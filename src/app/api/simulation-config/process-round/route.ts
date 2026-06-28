@@ -10,15 +10,18 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { EconomyCondition, Team } from "@/lib/engine/types";
 import { NextResponse } from "next/server";
 
-export async function POST(
-  _request: Request,
-  {
-    params,
-  }: { params: Promise<{ sessionId: string; roundId: string }> }
-) {
-  const { sessionId, roundId } = await params;
+/** Manual round processing from Simulation Configuration Center (V3). */
+export async function POST(request: Request) {
   const { error } = await requireInstructor();
   if (error) return error;
+
+  const { sessionId, roundId } = await request.json();
+  if (!sessionId || !roundId) {
+    return NextResponse.json(
+      { error: "sessionId and roundId required" },
+      { status: 400 }
+    );
+  }
 
   let admin;
   try {
@@ -30,14 +33,14 @@ export async function POST(
     );
   }
 
-  const { data: round, error: roundError } = await admin
+  const { data: round } = await admin
     .from("rounds")
     .select("*")
     .eq("id", roundId)
     .eq("session_id", sessionId)
     .single();
 
-  if (roundError || !round) {
+  if (!round) {
     return NextResponse.json({ error: "Round not found" }, { status: 404 });
   }
 
@@ -51,18 +54,13 @@ export async function POST(
     .eq("round_number", roundNumber - 1)
     .maybeSingle();
 
-  const { data: teams, error: teamsError } = await admin
+  const { data: teams } = await admin
     .from("teams")
     .select("*")
     .eq("session_id", sessionId);
 
-  if (teamsError) {
-    return NextResponse.json({ error: teamsError.message }, { status: 500 });
-  }
-
-  return withSimulationConfig(async () => {
-    const results = [];
-
+  const results = await withSimulationConfig(async () => {
+    const computed = [];
     for (const team of teams ?? []) {
       const { data: decision } = await admin
         .from("decisions")
@@ -91,27 +89,27 @@ export async function POST(
         priorMetrics
       );
 
-      const outcomeRow = {
-        ...outcomeToDbRow(team.id, roundId, outcome),
-        trace_json: trace,
-      };
-
-      await admin.from("outcomes").upsert(outcomeRow, {
-        onConflict: "team_id,round_id",
-      });
+      await admin.from("outcomes").upsert(
+        {
+          ...outcomeToDbRow(team.id, roundId, outcome),
+          trace_json: trace,
+        },
+        { onConflict: "team_id,round_id" }
+      );
 
       await admin
         .from("teams")
         .update(teamStateUpdateFromOutcome(outcome, newCarryover))
         .eq("id", team.id);
 
-      results.push({
+      computed.push({
         team_id: team.id,
         team_name: team.name,
         total_score: outcome.bsc_scores.total_score,
       });
     }
-
-    return NextResponse.json({ computed: results.length, results });
+    return computed;
   });
+
+  return NextResponse.json({ computed: results.length, results });
 }

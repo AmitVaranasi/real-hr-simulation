@@ -21,12 +21,19 @@ export async function GET(request: Request) {
   const team = membership?.teams as unknown as {
     id: string;
     industry: Industry;
+    strategy: string | null;
     headcount: number | null;
   } | null;
 
   if (!team) {
     return NextResponse.json({ error: "No team" }, { status: 404 });
   }
+
+  const { data: round } = await supabase
+    .from("rounds")
+    .select("economy_condition")
+    .eq("id", roundId)
+    .maybeSingle();
 
   const { data: decision } = await supabase
     .from("decisions")
@@ -44,6 +51,8 @@ export async function GET(request: Request) {
   return NextResponse.json({
     team_id: team.id,
     industry: team.industry,
+    strategy: team.strategy,
+    economy: round?.economy_condition ?? "normal",
     headcount: team.headcount ?? prior.headcount,
     decision,
   });

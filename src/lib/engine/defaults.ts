@@ -27,8 +27,8 @@ export function createDefaultDecision(
     feedback_360: false,
 
     developmental_programs: ["Technical Skills"],
-    pct_employees_trained: 40,
-    training_budget_per_ee: 700,
+    pct_employees_trained: 35,
+    training_budget_per_ee: 380,
     succession_investment: 5000,
 
     engagement_investment: 5000,

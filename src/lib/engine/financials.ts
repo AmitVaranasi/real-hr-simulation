@@ -1,4 +1,4 @@
-import { ECONOMY_MULTIPLIERS } from "./config";
+import { getEconomyMultipliers } from "./simulation-config";
 import { computeRecruitmentCost, computeTrainingSpend } from "./budget";
 import { CONFLICT_CONFIG, HR_TECH_ANNUAL_COST } from "./programs";
 import { getRoleById, roleHeadcount, totalHires } from "./roles";
@@ -39,7 +39,7 @@ export function computeRevenue(
   economy: EconomyCondition
 ): number {
   const retentionFactor = clamp(retention / 100, 0.5, 1);
-  const econ = ECONOMY_MULTIPLIERS[economy];
+  const econ = getEconomyMultipliers()[economy];
   return prior.revenue * (0.5 + productivity) * retentionFactor * econ.revenue;
 }
 
@@ -90,7 +90,7 @@ export function computeFinancials(
 
   const non_hr_expenses =
     revenue * (1 - industryConfig.base_profit_margin / 100);
-  const econ = ECONOMY_MULTIPLIERS[economy];
+  const econ = getEconomyMultipliers()[economy];
   const profit =
     revenue -
     total_compensation -

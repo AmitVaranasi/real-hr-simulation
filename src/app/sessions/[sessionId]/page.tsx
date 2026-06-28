@@ -104,6 +104,12 @@ export default async function SessionDetailPage({
         >
           Formula inspector →
         </Link>
+        <Link
+          href="/sessions/config"
+          className="rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 hover:bg-indigo-100"
+        >
+          Simulation config center →
+        </Link>
       </section>
     </div>
   );

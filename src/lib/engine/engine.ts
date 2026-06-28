@@ -1,9 +1,11 @@
 import { computeBudgetBreakdown } from "./budget";
 import { computeFinancials, applyBudgetAdherenceToMetrics } from "./financials";
 import { generateFeedback } from "./feedback";
+import { generateLearningInsights } from "./explainability";
 import { computeAllMetrics } from "./metrics";
 import { normalizeMetric } from "./normalize";
 import { computeBSCScores } from "./scoring";
+import { withDerivedTrainingBudget } from "./training";
 import type {
   Decision,
   EconomyCondition,
@@ -42,22 +44,23 @@ export function runSimulationWithTrace(
   budgetCarryover = 0,
   options?: { priorMetrics?: HRMetrics | null }
 ): { outcome: Outcome; trace: SimulationTrace } {
+  const d = withDerivedTrainingBudget(decision);
   const budget = computeBudgetBreakdown(
-    decision,
+    d,
     prior.headcount,
     industryConfig.base_market_salary,
     industryConfig,
     budgetCarryover
   );
 
-  const raw_metrics = computeAllMetrics(decision, prior, industryConfig);
+  const raw_metrics = computeAllMetrics(d, prior, industryConfig);
   let hrMetrics: HRMetrics = {
     ...raw_metrics,
     budget_adherence: budget.adherence_pct,
   };
 
   const financials = computeFinancials(
-    decision,
+    d,
     hrMetrics,
     prior,
     industryConfig,
@@ -73,10 +76,10 @@ export function runSimulationWithTrace(
     budget,
     industryConfig,
     strategyConfig,
-    decision
+    d
   );
 
-  const feedback = generateFeedback(
+  let feedback = generateFeedback(
     hrMetrics,
     financials,
     bsc_scores,
@@ -104,10 +107,10 @@ export function runSimulationWithTrace(
       engagement: hrMetrics.engagement_level / 100,
       retention: retention / 100,
       leadership:
-        decision.role_performance.reduce((s, r) => s + r.leadership, 0) /
-        Math.max(decision.role_performance.length, 1) /
+        d.role_performance.reduce((s, r) => s + r.leadership, 0) /
+        Math.max(d.role_performance.length, 1) /
         10,
-      technology: decision.hr_tech_level / 2,
+      technology: d.hr_tech_level / 2,
       total: hrMetrics.productivity,
     },
     financial_cascade: {
@@ -129,6 +132,17 @@ export function runSimulationWithTrace(
     feedback,
   };
 
+  const learning_insights = generateLearningInsights(
+    hrMetrics,
+    bsc_scores,
+    trace,
+    d,
+    options?.priorMetrics ?? null
+  );
+  feedback = { ...feedback, learning_insights };
+
+  trace.feedback = feedback;
+
   return {
     outcome: {
       hr_metrics: hrMetrics,
@@ -136,6 +150,6 @@ export function runSimulationWithTrace(
       bsc_scores,
       feedback,
     },
-    trace,
+    trace: { ...trace, feedback },
   };
 }

@@ -1,3 +1,7 @@
+import {
+  getIndustryConfigResolved,
+  getStrategyConfigResolved,
+} from "./simulation-config";
 import type { EconomyCondition, Industry, IndustryConfig, PriorState, Strategy, StrategyConfig } from "./types";
 
 export const ECONOMY_MULTIPLIERS: Record<
@@ -229,9 +233,9 @@ export function priorStateFromIndustry(
 }
 
 export function getIndustryConfig(industry: Industry): IndustryConfig {
-  return INDUSTRY_CONFIGS[industry];
+  return getIndustryConfigResolved(industry);
 }
 
 export function getStrategyConfig(strategy: Strategy): StrategyConfig {
-  return STRATEGY_CONFIGS[strategy];
+  return getStrategyConfigResolved(strategy);
 }
