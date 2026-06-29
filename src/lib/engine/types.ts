@@ -238,6 +238,12 @@ export interface FeedbackPayload {
   metrics: MetricFeedback[];
   perspectives: PerspectiveFeedback[];
   round_summary?: string;
+  learning_insights?: {
+    went_well: string[];
+    hurt_performance: string[];
+    next_round: string[];
+    causal_factors: string[];
+  };
 }
 
 export interface SimulationTrace {

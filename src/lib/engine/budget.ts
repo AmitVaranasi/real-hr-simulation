@@ -1,4 +1,4 @@
-import { DISCRETIONARY_BUDGET } from "./defaults";
+import { getDiscretionaryBudget } from "./simulation-config";
 import {
   CONFLICT_CONFIG,
   HR_TECH_ANNUAL_COST,
@@ -123,7 +123,7 @@ export function computeBudgetBreakdown(
     org_design_spend +
     dei_spend;
 
-  const available_budget = DISCRETIONARY_BUDGET + budgetCarryover;
+  const available_budget = getDiscretionaryBudget() + budgetCarryover;
   const remaining = available_budget - total_spend;
   const adherence_pct = clamp(
     100 -

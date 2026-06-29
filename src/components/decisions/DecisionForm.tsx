@@ -30,9 +30,13 @@ import type {
   SalaryBand,
   Strategy,
 } from "@/lib/engine/types";
+import { CompensationBreakdown } from "@/components/decisions/CompensationBreakdown";
+import { IndustryGuidance } from "@/components/decisions/IndustryGuidance";
 import { MetricPreview } from "@/components/decisions/MetricPreview";
 import { ScaffoldingText } from "@/components/decisions/ScaffoldingText";
 import { BSCScorecard } from "@/components/results/BSCScorecard";
+import { deriveTrainingBudgetPerEe } from "@/lib/engine/training";
+import { useSimulationConfig } from "@/hooks/useSimulationConfig";
 import { formatCurrency } from "@/lib/utils";
 
 const MODULES = [
@@ -91,6 +95,7 @@ export function DecisionForm({
   onDecisionChange,
   hideRunButton = false,
 }: DecisionFormProps) {
+  const { ready: configReady } = useSimulationConfig();
   const [activeTab, setActiveTab] = useState(0);
   const [internalDecision, setInternalDecision] = useState<Decision>(() =>
     createDefaultDecision()
@@ -110,7 +115,7 @@ export function DecisionForm({
         industryConfig.base_market_salary,
         industryConfig
       ),
-    [decision, prior.headcount, industryConfig]
+    [decision, prior.headcount, industryConfig, configReady]
   );
 
   const warnings = useMemo(
@@ -119,9 +124,15 @@ export function DecisionForm({
         decision,
         prior.headcount,
         industryConfig.base_market_salary,
-        industryConfig
+        industryConfig,
+        industry
       ),
-    [decision, prior.headcount, industryConfig]
+    [decision, prior.headcount, industryConfig, industry, configReady]
+  );
+
+  const derivedTrainingPerEe = useMemo(
+    () => deriveTrainingBudgetPerEe(decision),
+    [decision]
   );
 
   const liveMetrics = useMemo(
@@ -170,6 +181,9 @@ export function DecisionForm({
 
   return (
     <div className="space-y-6">
+      {!configReady && (
+        <p className="text-xs text-slate-500">Loading simulation parameters…</p>
+      )}
       <div className="flex flex-wrap gap-2 text-sm text-slate-600">
         <span className="rounded-full bg-slate-100 px-3 py-1">Industry: {industry}</span>
         <span className="rounded-full bg-slate-100 px-3 py-1">Strategy: {strategy}</span>
@@ -219,6 +233,7 @@ export function DecisionForm({
           SHRM BASK: {SHRM_BADGES[MODULES[activeTab]]}
         </p>
         <ScaffoldingText module={MODULES[activeTab]} />
+        <IndustryGuidance industry={industry} module={MODULES[activeTab]} />
 
         {activeTab === 0 && (
           <div className="mt-4 space-y-4">
@@ -403,8 +418,8 @@ export function DecisionForm({
               <Field label={`% employees trained (${decision.pct_employees_trained}%)`}>
                 <input
                   type="range"
-                  min={20}
-                  max={100}
+                  min={0}
+                  max={50}
                   className="w-full"
                   value={decision.pct_employees_trained}
                   onChange={(e) =>
@@ -412,15 +427,11 @@ export function DecisionForm({
                   }
                 />
               </Field>
-              <Field label="Training budget per employee ($)">
-                <input
-                  type="number"
-                  className={formInputClassName}
-                  value={decision.training_budget_per_ee}
-                  onChange={(e) =>
-                    update("training_budget_per_ee", Number(e.target.value))
-                  }
-                />
+              <Field label="Derived training budget per employee">
+                <p className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-sm font-medium text-slate-800">
+                  {formatCurrency(derivedTrainingPerEe)} (calculated from coverage
+                  & programs)
+                </p>
               </Field>
               <Field label="Succession investment ($)">
                 <input
@@ -574,6 +585,12 @@ export function DecisionForm({
                 </select>
               </Field>
             </div>
+            <CompensationBreakdown
+              decision={decision}
+              budget={budget}
+              headcount={prior.headcount}
+              marketSalary={industryConfig.base_market_salary}
+            />
           </div>
         )}
       </div>
