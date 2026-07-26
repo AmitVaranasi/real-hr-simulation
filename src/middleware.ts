@@ -6,10 +6,14 @@ const PUBLIC_PREFIXES = [
   "/",
   "/login",
   "/register",
+  "/forgot-password",
+  "/auth",
   "/simulate",
   "/about",
   "/api/auth",
 ];
+
+// /dashboard/getting-started and /sessions/manage are protected like other portal routes.
 
 function isPublic(path: string): boolean {
   if (path === "/") return true;

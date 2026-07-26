@@ -29,7 +29,11 @@ npm run dev
 3. Run in SQL Editor (in order):
    - `supabase/schema.sql`
    - `supabase/rls.sql`
+   - `supabase/migration-v2.sql`
+   - `supabase/migration-v3.sql`
+   - `supabase/migration-v4.sql`
 4. Enable **Email** auth in Supabase → Authentication
+5. Add `{APP_URL}/auth/callback` to Auth redirect URLs (password reset)
 
 ## User flows
 

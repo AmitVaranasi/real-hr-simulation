@@ -34,6 +34,7 @@ CREATE TABLE public.sessions (
   practice_rounds INTEGER NOT NULL DEFAULT 1,
   status TEXT NOT NULL DEFAULT 'setup'
     CHECK (status IN ('setup', 'active', 'complete')),
+  announcement TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

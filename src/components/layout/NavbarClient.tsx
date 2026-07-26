@@ -2,11 +2,26 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { Menu, X } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
+
+const PORTAL_PREFIXES = [
+  "/dashboard",
+  "/round",
+  "/history",
+  "/leaderboard",
+  "/join",
+  "/sessions",
+];
+
+function isPortalPath(path: string) {
+  return PORTAL_PREFIXES.some(
+    (p) => path === p || path.startsWith(`${p}/`)
+  );
+}
 
 type Profile = {
   role: "instructor" | "student";
@@ -15,6 +30,7 @@ type Profile = {
 
 export function NavbarClient() {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -71,6 +87,11 @@ export function NavbarClient() {
     return () => subscription.unsubscribe();
   }, [configured]);
 
+  // Portal pages use Capsim-style shell chrome instead of the marketing navbar.
+  if (!loading && user && isPortalPath(pathname)) {
+    return null;
+  }
+
   async function signOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -93,29 +114,63 @@ export function NavbarClient() {
 
   const navLinks = (
     <>
-      <Link
-        href="/simulate"
-        className="text-slate-600 hover:text-slate-900"
-        onClick={() => setMobileOpen(false)}
-      >
-        Simulator
-      </Link>
-      {user && (
+      {user && profile?.role === "instructor" ? (
+        <>
+          <Link
+            href="/sessions"
+            className="text-slate-600 hover:text-slate-900"
+            onClick={() => setMobileOpen(false)}
+          >
+            Dashboard
+          </Link>
+          <Link
+            href="/sessions/config"
+            className="text-slate-600 hover:text-slate-900"
+            onClick={() => setMobileOpen(false)}
+          >
+            Configuration
+          </Link>
+          <Link
+            href="/sessions/testing"
+            className="text-slate-600 hover:text-slate-900"
+            onClick={() => setMobileOpen(false)}
+          >
+            Testing
+          </Link>
+        </>
+      ) : user && profile?.role === "student" ? (
+        <>
+          <Link
+            href="/dashboard"
+            className="text-slate-600 hover:text-slate-900"
+            onClick={() => setMobileOpen(false)}
+          >
+            Dashboard
+          </Link>
+          <Link
+            href="/history"
+            className="text-slate-600 hover:text-slate-900"
+            onClick={() => setMobileOpen(false)}
+          >
+            Reports
+          </Link>
+          {!studentHasTeam && (
+            <Link
+              href="/join"
+              className="font-medium text-indigo-600 hover:text-indigo-800"
+              onClick={() => setMobileOpen(false)}
+            >
+              Join team
+            </Link>
+          )}
+        </>
+      ) : (
         <Link
-          href={homeHref}
+          href="/simulate"
           className="text-slate-600 hover:text-slate-900"
           onClick={() => setMobileOpen(false)}
         >
-          {profile?.role === "instructor" ? "Sessions" : "Dashboard"}
-        </Link>
-      )}
-      {user && profile?.role === "student" && !studentHasTeam && (
-        <Link
-          href="/join"
-          className="font-medium text-indigo-600 hover:text-indigo-800"
-          onClick={() => setMobileOpen(false)}
-        >
-          Join team
+          Simulator
         </Link>
       )}
     </>
@@ -191,7 +246,7 @@ export function NavbarClient() {
     <header className="sticky top-0 z-30 w-full min-w-0 border-b border-slate-200 bg-white">
       <div className="mx-auto flex h-14 w-full min-w-0 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4">
         <Link
-          href="/"
+          href={user ? homeHref : "/"}
           className="min-w-0 truncate text-sm font-semibold text-indigo-700 sm:text-base"
           onClick={() => setMobileOpen(false)}
         >
@@ -211,7 +266,11 @@ export function NavbarClient() {
             onClick={() => setMobileOpen((o) => !o)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
@@ -234,7 +293,7 @@ export function NavbarClient() {
                     className="mb-2 block text-slate-700"
                     onClick={() => setMobileOpen(false)}
                   >
-                    Go to {profile?.role === "instructor" ? "sessions" : "dashboard"}
+                    Go to dashboard
                   </Link>
                   <button
                     type="button"

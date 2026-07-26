@@ -10,6 +10,8 @@ export function CreateSessionForm() {
   const [name, setName] = useState("");
   const [courseCode, setCourseCode] = useState("");
   const [semester, setSemester] = useState("");
+  const [practiceRounds, setPracticeRounds] = useState(1);
+  const [roundsTotal, setRoundsTotal] = useState(3);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,6 +26,8 @@ export function CreateSessionForm() {
         name,
         course_code: courseCode || undefined,
         semester: semester || undefined,
+        practice_rounds: practiceRounds,
+        rounds_total: roundsTotal,
       }),
     });
     const data = await res.json();
@@ -69,6 +73,36 @@ export function CreateSessionForm() {
           onChange={(e) => setSemester(e.target.value)}
         />
       </label>
+      <div className="grid grid-cols-2 gap-4">
+        <label className="block text-sm">
+          <span className="font-medium">Practice rounds</span>
+          <input
+            type="number"
+            min={0}
+            max={5}
+            required
+            className={`mt-1 ${formInputClassName}`}
+            value={practiceRounds}
+            onChange={(e) => setPracticeRounds(Number(e.target.value))}
+          />
+        </label>
+        <label className="block text-sm">
+          <span className="font-medium">Competitive rounds</span>
+          <input
+            type="number"
+            min={1}
+            max={12}
+            required
+            className={`mt-1 ${formInputClassName}`}
+            value={roundsTotal}
+            onChange={(e) => setRoundsTotal(Number(e.target.value))}
+          />
+        </label>
+      </div>
+      <p className="text-xs text-slate-500">
+        Creates {practiceRounds} practice + {roundsTotal} competitive rounds (
+        {practiceRounds + roundsTotal} total).
+      </p>
       <Button type="submit" disabled={loading}>
         {loading ? "Creating…" : "Create session"}
       </Button>

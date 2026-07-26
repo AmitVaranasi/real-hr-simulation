@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { BudgetTracker } from "@/components/dashboard/BudgetTracker";
+import { CompensationBreakdown } from "@/components/decisions/CompensationBreakdown";
 import { Button } from "@/components/ui/button";
 import { rowToDecision } from "@/lib/db/decisions";
 import { computeBudgetBreakdown } from "@/lib/engine/budget";
@@ -90,6 +91,11 @@ export default function ReviewPage() {
     );
   }, [decision, headcount, industryConfig, industry]);
 
+  const criticalWarnings = warnings.filter(
+    (w) => w.severity === "critical" || w.severity === "warning"
+  );
+  const recommendations = warnings.filter((w) => w.severity === "info");
+
   async function submitFinal() {
     if (!decision || !teamId) return;
     if (!confirm("Submit final decision? Your team cannot edit after this.")) {
@@ -133,6 +139,7 @@ export default function ReviewPage() {
 
   const m = forecast.hr_metrics;
   const f = forecast.financial_metrics;
+  const bsc = forecast.bsc_scores;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
@@ -144,7 +151,8 @@ export default function ReviewPage() {
       </Link>
       <h1 className="mt-4 text-2xl font-bold">Review & submit</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Projected outcomes below use the same engine as round scoring (preview only).
+        Final quality-control checkpoint. Review budget, projected consequences,
+        and warnings before your team submits.
       </p>
 
       <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
@@ -183,13 +191,25 @@ export default function ReviewPage() {
             </li>
           ))}
         </ul>
+        <div className="mt-4">
+          <CompensationBreakdown
+            decision={decision}
+            budget={budget}
+            headcount={headcount}
+            marketSalary={industryConfig.base_market_salary}
+            revenue={f.revenue}
+          />
+        </div>
       </section>
 
-      {warnings.length > 0 && (
+      {criticalWarnings.length > 0 && (
         <section className="mt-6">
-          <h2 className="font-semibold text-slate-900">Recommendations</h2>
+          <h2 className="font-semibold text-slate-900">Warnings</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Unrealistic or high-risk allocations relative to industry norms.
+          </p>
           <ul className="mt-2 space-y-2">
-            {warnings.map((w, i) => (
+            {criticalWarnings.map((w, i) => (
               <li
                 key={i}
                 className={`rounded-lg px-3 py-2 text-sm ${
@@ -205,8 +225,33 @@ export default function ReviewPage() {
         </section>
       )}
 
+      {recommendations.length > 0 && (
+        <section className="mt-6">
+          <h2 className="font-semibold text-slate-900">Recommendations</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Coaching notes — educational guidance, not hard blocks.
+          </p>
+          <ul className="mt-2 space-y-2">
+            {recommendations.map((w, i) => (
+              <li
+                key={i}
+                className="rounded-lg bg-sky-50 px-3 py-2 text-sm text-sky-900"
+              >
+                <strong>{w.module}:</strong> {w.message}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section className="mt-6 rounded-xl border border-indigo-100 bg-indigo-50/40 p-5">
-        <h2 className="font-semibold text-indigo-900">Metric forecasts</h2>
+        <h2 className="font-semibold text-indigo-900">
+          Expected consequences
+        </h2>
+        <p className="mt-1 text-sm text-indigo-800/80">
+          Preview using the same engine as round scoring. Actual results depend
+          on economy, carry-forward state, and final compute.
+        </p>
         <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
           <dt>Turnover (projected)</dt>
           <dd className="font-medium">{formatPercent(m.turnover_rate)}</dd>
@@ -214,11 +259,23 @@ export default function ReviewPage() {
           <dd className="font-medium">{m.engagement_level.toFixed(0)}/100</dd>
           <dt>Productivity index</dt>
           <dd className="font-medium">{formatPercent(m.productivity * 100)}</dd>
+          <dt>Revenue (projected)</dt>
+          <dd className="font-medium">{formatCurrency(f.revenue)}</dd>
           <dt>Profit (projected)</dt>
           <dd className="font-medium">{formatCurrency(f.profit)}</dd>
-          <dt>BSC score (projected)</dt>
+          <dt>Stock price (projected)</dt>
+          <dd className="font-medium">${f.stock_price.toFixed(2)}</dd>
+          <dt>BSC Financial</dt>
+          <dd className="font-medium">{bsc.score_financial.toFixed(1)}</dd>
+          <dt>BSC Employee</dt>
+          <dd className="font-medium">{bsc.score_employee.toFixed(1)}</dd>
+          <dt>BSC Process</dt>
+          <dd className="font-medium">{bsc.score_process.toFixed(1)}</dd>
+          <dt>BSC Learning</dt>
+          <dd className="font-medium">{bsc.score_learning.toFixed(1)}</dd>
+          <dt className="font-semibold text-indigo-900">BSC total (projected)</dt>
           <dd className="font-semibold text-indigo-700">
-            {forecast.bsc_scores.total_score.toFixed(1)} / 100
+            {bsc.total_score.toFixed(1)} / 100
           </dd>
         </dl>
       </section>

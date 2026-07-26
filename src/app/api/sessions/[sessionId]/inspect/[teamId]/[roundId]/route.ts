@@ -77,26 +77,28 @@ export async function GET(
   let trace: SimulationTrace | null =
     (storedOutcome?.trace_json as SimulationTrace | null) ?? null;
 
-  if (!trace && decision) {
-    const roundNumber = Number(round.round_number);
-    const { data: priorRound } = await admin
-      .from("rounds")
-      .select("id")
-      .eq("session_id", sessionId)
-      .eq("round_number", roundNumber - 1)
+  const roundNumber = Number(round.round_number);
+  const { data: priorRound } = await admin
+    .from("rounds")
+    .select("id, round_number")
+    .eq("session_id", sessionId)
+    .eq("round_number", roundNumber - 1)
+    .maybeSingle();
+
+  let priorMetrics = null;
+  let priorOutcomeRow: Record<string, unknown> | null = null;
+  if (priorRound) {
+    const { data: priorOutcome } = await admin
+      .from("outcomes")
+      .select("*")
+      .eq("team_id", teamId)
+      .eq("round_id", priorRound.id)
       .maybeSingle();
+    priorOutcomeRow = priorOutcome;
+    priorMetrics = priorMetricsFromOutcome(priorOutcome);
+  }
 
-    let priorMetrics = null;
-    if (priorRound) {
-      const { data: priorOutcome } = await admin
-        .from("outcomes")
-        .select("*")
-        .eq("team_id", teamId)
-        .eq("round_id", priorRound.id)
-        .maybeSingle();
-      priorMetrics = priorMetricsFromOutcome(priorOutcome);
-    }
-
+  if (!trace && decision) {
     trace = await withSimulationConfig(async () => {
       const computed = computeTeamOutcome(
         decision,
@@ -122,12 +124,40 @@ export async function GET(
       name: team.name,
       industry: team.industry,
       strategy: team.strategy,
+      budget_carryover: Number(team.budget_carryover ?? 0),
+      headcount: team.headcount,
+      revenue: team.revenue,
+      stock_price: team.stock_price,
+      satisfaction: team.satisfaction,
+      engagement: team.engagement,
+      turnover_rate: team.turnover_rate,
     },
     round: {
       id: round.id,
       round_number: round.round_number,
       round_type: round.round_type,
       economy_condition: round.economy_condition,
+    },
+    carryForward: {
+      prior_round_number: priorRound?.round_number ?? null,
+      budget_carryover: Number(team.budget_carryover ?? 0),
+      prior_metrics: priorMetrics,
+      prior_financials: priorOutcomeRow
+        ? {
+            revenue: Number(priorOutcomeRow.revenue ?? 0),
+            profit: Number(priorOutcomeRow.profit ?? 0),
+            stock_price: Number(priorOutcomeRow.stock_price ?? 0),
+            total_score: Number(priorOutcomeRow.total_score ?? 0),
+          }
+        : null,
+      team_rolling_state: {
+        headcount: team.headcount,
+        revenue: team.revenue,
+        stock_price: team.stock_price,
+        satisfaction: team.satisfaction,
+        engagement: team.engagement,
+        turnover_rate: team.turnover_rate,
+      },
     },
     decision: decision ? rowToDecision(decision) : null,
     trace,

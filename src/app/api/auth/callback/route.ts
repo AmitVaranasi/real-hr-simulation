@@ -1,23 +1,40 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
+function safeNext(next: string | null): string {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) {
+    return "/dashboard";
+  }
+  return next;
+}
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
+  const next = safeNext(searchParams.get("next"));
 
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // Password recovery always lands on the reset form.
+      if (next.startsWith("/auth/reset-password")) {
+        return NextResponse.redirect(`${origin}${next}`);
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const { data: profile } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", (await supabase.auth.getUser()).data.user?.id ?? "")
+        .eq("id", user?.id ?? "")
         .single();
 
       const redirect =
-        profile?.role === "instructor" ? "/sessions" : next;
+        profile?.role === "instructor" && next === "/dashboard"
+          ? "/sessions"
+          : next;
       return NextResponse.redirect(`${origin}${redirect}`);
     }
   }

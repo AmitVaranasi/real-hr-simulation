@@ -1,13 +1,38 @@
 "use client";
 
-import type { Decision, SimulationTrace } from "@/lib/engine/types";
+import type {
+  Decision,
+  HRMetrics,
+  SimulationTrace,
+} from "@/lib/engine/types";
 import { formatCurrency, formatPercent } from "@/lib/utils";
+
+export type CarryForwardInfo = {
+  prior_round_number: number | null;
+  budget_carryover: number;
+  prior_metrics: HRMetrics | null;
+  prior_financials: {
+    revenue: number;
+    profit: number;
+    stock_price: number;
+    total_score: number;
+  } | null;
+  team_rolling_state: {
+    headcount: number | null;
+    revenue: number | null;
+    stock_price: number | null;
+    satisfaction: number | null;
+    engagement: number | null;
+    turnover_rate: number | null;
+  };
+};
 
 interface FormulaInspectorProps {
   teamName: string;
   roundLabel: string;
   decision: Decision | null;
   trace: SimulationTrace;
+  carryForward?: CarryForwardInfo | null;
 }
 
 export function FormulaInspector({
@@ -15,6 +40,7 @@ export function FormulaInspector({
   roundLabel,
   decision,
   trace,
+  carryForward,
 }: FormulaInspectorProps) {
   const b = trace.budget_breakdown;
   const m = trace.industry_adjusted_metrics;
@@ -28,7 +54,69 @@ export function FormulaInspector({
         <p className="text-slate-600">
           {teamName} · {roundLabel}
         </p>
+        <p className="mt-1 text-sm text-slate-500">
+          Inputs → budget → HR metrics → financials → BSC → final score
+        </p>
       </div>
+
+      {carryForward && (
+        <section className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
+          <h2 className="font-semibold text-slate-900">
+            0. Carry-forward (prior → current)
+          </h2>
+          <p className="mt-1 text-sm text-slate-600">
+            {carryForward.prior_round_number != null
+              ? `Prior round ${carryForward.prior_round_number} feeds rolling team state and metric momentum.`
+              : "First scored round — using industry baseline as prior state."}
+          </p>
+          <dl className="mt-3 grid gap-1 text-sm sm:grid-cols-2">
+            <dt className="text-slate-500">Budget carryover into this round</dt>
+            <dd className="font-medium">
+              {formatCurrency(carryForward.budget_carryover)}
+            </dd>
+            <dt className="text-slate-500">Rolling headcount</dt>
+            <dd>{carryForward.team_rolling_state.headcount ?? "—"}</dd>
+            <dt className="text-slate-500">Rolling revenue</dt>
+            <dd>
+              {carryForward.team_rolling_state.revenue != null
+                ? formatCurrency(Number(carryForward.team_rolling_state.revenue))
+                : "—"}
+            </dd>
+            <dt className="text-slate-500">Rolling stock</dt>
+            <dd>
+              {carryForward.team_rolling_state.stock_price != null
+                ? `$${Number(carryForward.team_rolling_state.stock_price).toFixed(2)}`
+                : "—"}
+            </dd>
+          </dl>
+          {carryForward.prior_metrics && (
+            <div className="mt-3 grid gap-2 text-xs text-slate-600 sm:grid-cols-3">
+              <p>
+                Prior turnover:{" "}
+                {(carryForward.prior_metrics.turnover_rate * 100).toFixed(1)}%
+              </p>
+              <p>
+                Prior engagement:{" "}
+                {(carryForward.prior_metrics.engagement_level * 100).toFixed(0)}%
+              </p>
+              <p>
+                Prior satisfaction:{" "}
+                {(
+                  carryForward.prior_metrics.employee_satisfaction * 100
+                ).toFixed(0)}
+                %
+              </p>
+            </div>
+          )}
+          {carryForward.prior_financials && (
+            <p className="mt-2 text-sm text-slate-600">
+              Prior BSC: {carryForward.prior_financials.total_score.toFixed(1)} ·
+              Prior profit:{" "}
+              {formatCurrency(carryForward.prior_financials.profit)}
+            </p>
+          )}
+        </section>
+      )}
 
       {decision && (
         <section className="rounded-xl border border-slate-200 bg-white p-4">
