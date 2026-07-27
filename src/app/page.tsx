@@ -37,9 +37,9 @@ const features = [
 export default function Home() {
   return (
     <div className="w-full min-w-0 overflow-x-hidden bg-slate-50">
-      <section className="border-b border-slate-200 bg-gradient-to-br from-indigo-50 via-white to-slate-50">
+      <section className="border-b border-slate-200 bg-gradient-to-br from-[#fff4e8] via-white to-slate-50">
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:py-20">
-          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-indigo-600 sm:text-sm">
+          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[#e67e22] sm:text-sm">
             Higher Education Business Simulation
           </p>
           <h1 className="mx-auto max-w-3xl text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">
@@ -77,7 +77,7 @@ export default function Home() {
                 key={f.title}
                 className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
               >
-                <f.icon className="mb-3 h-8 w-8 text-indigo-600" />
+                <f.icon className="mb-3 h-8 w-8 text-[#e67e22]" />
                 <h3 className="font-semibold text-slate-900">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">
                   {f.description}
@@ -104,7 +104,7 @@ export default function Home() {
             ))}
           </ul>
           <p className="mt-10 text-center text-sm text-slate-500">
-            <Link href="/about" className="text-indigo-600 hover:underline">
+            <Link href="/about" className="text-[#e67e22] hover:underline">
               About this application
             </Link>
           </p>

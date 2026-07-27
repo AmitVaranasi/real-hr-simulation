@@ -7,8 +7,8 @@ interface MetricPreviewProps {
 export function MetricPreview({ items }: MetricPreviewProps) {
   if (items.length === 0) return null;
   return (
-    <div className="rounded-lg border border-indigo-100 bg-indigo-50/50 p-3">
-      <p className="text-xs font-medium uppercase tracking-wide text-indigo-700">
+    <div className="rounded-lg border border-[#f5d0a9] bg-[#fff4e8]/70 p-3">
+      <p className="text-xs font-medium uppercase tracking-wide text-[#c45f12]">
         Live preview
       </p>
       <dl className="mt-2 grid gap-1 text-sm sm:grid-cols-2">

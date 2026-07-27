@@ -34,7 +34,7 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
             <YAxis domain={[0, 100]} />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="total" stroke="#4f46e5" strokeWidth={2} />
+            <Line type="monotone" dataKey="total" stroke="#e67e22" strokeWidth={2} />
             <Line type="monotone" dataKey="financial" stroke="#10b981" />
             <Line type="monotone" dataKey="employee" stroke="#f59e0b" />
             <Line type="monotone" dataKey="process" stroke="#6366f1" />

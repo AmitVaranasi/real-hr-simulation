@@ -22,7 +22,7 @@ export default function AboutPage() {
       <p className="mt-4 text-slate-600 leading-relaxed">
         <strong>Contact:</strong> Course instructor or project administrator.
       </p>
-      <Link href="/" className="mt-8 inline-block text-indigo-600 hover:underline">
+      <Link href="/" className="mt-8 inline-block text-[#e67e22] hover:underline">
         ← Back to home
       </Link>
     </div>

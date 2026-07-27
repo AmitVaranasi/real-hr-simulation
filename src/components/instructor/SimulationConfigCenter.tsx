@@ -226,7 +226,7 @@ export function SimulationConfigCenter() {
   return (
     <div className="space-y-6">
       <div>
-        <Link href="/sessions" className="text-sm text-indigo-600 hover:underline">
+        <Link href="/sessions" className="text-sm text-[#e67e22] hover:underline">
           ← Sessions
         </Link>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">
@@ -246,7 +246,7 @@ export function SimulationConfigCenter() {
             onClick={() => setTab(t.id)}
             className={`rounded-lg px-3 py-2 text-sm font-medium ${
               tab === t.id
-                ? "bg-indigo-600 text-white"
+                ? "bg-[#e67e22] text-white"
                 : "text-slate-600 hover:bg-slate-100"
             }`}
           >
@@ -256,7 +256,7 @@ export function SimulationConfigCenter() {
       </div>
 
       {message && (
-        <p className="rounded-lg bg-indigo-50 px-3 py-2 text-sm text-indigo-900">
+        <p className="rounded-lg bg-[#fff4e8] px-3 py-2 text-sm text-[#9a3412]">
           {message}
         </p>
       )}

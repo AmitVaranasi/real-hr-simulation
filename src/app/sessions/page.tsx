@@ -1,7 +1,8 @@
-import Link from "next/link";
+import { ProfessorDashboard } from "@/components/instructor/ProfessorDashboard";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+
+export const dynamic = "force-dynamic";
 
 export default async function SessionsPage() {
   const supabase = await createClient();
@@ -10,50 +11,70 @@ export default async function SessionsPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if (profile?.role !== "instructor") redirect("/dashboard");
+
   const { data: sessions } = await supabase
     .from("sessions")
-    .select("*")
+    .select("*, rounds(*), teams(id)")
     .eq("instructor_id", user.id)
     .order("created_at", { ascending: false });
 
-  return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Your sessions</h1>
-          <p className="text-slate-600">Manage course simulations</p>
-        </div>
-        <Link href="/sessions/new">
-          <Button>New session</Button>
-        </Link>
-        <Link
-          href="/sessions/config"
-          className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-        >
-          Simulation config
-        </Link>
-      </div>
-      <div className="space-y-3">
-        {(sessions ?? []).length === 0 && (
-          <p className="text-slate-500">
-            No sessions yet. Create one to add teams and open rounds.
-          </p>
-        )}
-        {(sessions ?? []).map((s) => (
-          <Link
-            key={s.id}
-            href={`/sessions/${s.id}`}
-            className="block rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
-          >
-            <p className="font-semibold text-slate-900">{s.name}</p>
-            <p className="text-sm text-slate-500">
-              {s.course_code && `${s.course_code} · `}
-              {s.semester && `${s.semester} · `}
-              Status: {s.status}
-            </p>
-          </Link>
-        ))}
-      </div>
-    </div>
+  const summaries = await Promise.all(
+    (sessions ?? []).map(async (s) => {
+      const rounds = ((s.rounds ?? []) as Array<{
+        id: string;
+        round_number: number;
+        round_type: string;
+        status: string;
+      }>).map((r) => ({
+        id: r.id,
+        round_number: r.round_number,
+        round_type: r.round_type,
+        status: r.status,
+      }));
+      const teams = (s.teams ?? []) as Array<{ id: string }>;
+      const openRound = rounds.find((r) => r.status === "open") ?? null;
+      const closed = rounds.filter((r) => r.status === "closed");
+      const latestClosed = closed.sort(
+        (a, b) => b.round_number - a.round_number
+      )[0];
+
+      let submittedCount = 0;
+      if (openRound && teams.length > 0) {
+        const { count } = await supabase
+          .from("decisions")
+          .select("id", { count: "exact", head: true })
+          .eq("round_id", openRound.id)
+          .eq("is_submitted", true);
+        submittedCount = count ?? 0;
+      }
+
+      return {
+        id: s.id as string,
+        name: s.name as string,
+        course_code: (s.course_code as string | null) ?? null,
+        semester: (s.semester as string | null) ?? null,
+        status: s.status as string,
+        rounds_total: Number(s.rounds_total ?? 3),
+        practice_rounds: Number(s.practice_rounds ?? 1),
+        teamCount: teams.length,
+        openRound,
+        rounds,
+        currentRoundLabel: openRound
+          ? `Round ${openRound.round_number} open`
+          : latestClosed
+            ? `Round ${latestClosed.round_number} closed`
+            : "No rounds started",
+        submittedCount,
+        decisionsExpected: openRound ? teams.length : 0,
+      };
+    })
   );
+
+  return <ProfessorDashboard sessions={summaries} />;
 }

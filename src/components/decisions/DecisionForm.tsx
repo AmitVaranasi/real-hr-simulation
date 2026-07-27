@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BudgetTracker } from "@/components/dashboard/BudgetTracker";
 import { Button } from "@/components/ui/button";
 import { formInputClassName, formSelectClassName } from "@/components/ui/form-controls";
@@ -87,7 +88,19 @@ function Field({
   );
 }
 
-export function DecisionForm({
+export function DecisionForm(props: DecisionFormProps) {
+  return (
+    <Suspense
+      fallback={
+        <p className="p-4 text-sm text-slate-500">Loading decision form…</p>
+      }
+    >
+      <DecisionFormInner {...props} />
+    </Suspense>
+  );
+}
+
+function DecisionFormInner({
   industry,
   strategy,
   economy = "normal",
@@ -96,7 +109,32 @@ export function DecisionForm({
   hideRunButton = false,
 }: DecisionFormProps) {
   const { ready: configReady } = useSimulationConfig();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(0);
+
+  const TAB_KEYS = [
+    "recruitment",
+    "performance",
+    "training",
+    "relations",
+    "compensation",
+  ] as const;
+
+  // Deep-link from Capsim-style sidebar: ?tab=recruitment|performance|...
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    const idx = TAB_KEYS.indexOf(tab as (typeof TAB_KEYS)[number]);
+    if (idx >= 0) setActiveTab(idx);
+  }, [searchParams]);
+
+  function selectTab(i: number) {
+    setActiveTab(i);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", TAB_KEYS[i] ?? "recruitment");
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
   const [internalDecision, setInternalDecision] = useState<Decision>(() =>
     createDefaultDecision()
   );
@@ -215,10 +253,10 @@ export function DecisionForm({
             <button
               key={mod}
               type="button"
-              onClick={() => setActiveTab(i)}
+              onClick={() => selectTab(i)}
               className={`whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium ${
                 activeTab === i
-                  ? "bg-indigo-600 text-white"
+                  ? "bg-[#e67e22] text-white"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
@@ -229,7 +267,7 @@ export function DecisionForm({
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
-        <p className="text-xs font-medium uppercase tracking-wide text-indigo-600">
+        <p className="text-xs font-medium uppercase tracking-wide text-[#e67e22]">
           SHRM BASK: {SHRM_BADGES[MODULES[activeTab]]}
         </p>
         <ScaffoldingText module={MODULES[activeTab]} />

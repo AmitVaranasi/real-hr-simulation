@@ -4,8 +4,8 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackPayload }) {
   return (
     <div className="space-y-6">
       {feedback.round_summary && (
-        <section className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
-          <h3 className="font-semibold text-indigo-900">Round summary</h3>
+        <section className="rounded-xl border border-[#f5d0a9] bg-[#fff4e8] p-4">
+          <h3 className="font-semibold text-[#9a3412]">Round summary</h3>
           <p className="mt-2 text-sm leading-relaxed text-slate-700">
             {feedback.round_summary}
           </p>
@@ -21,7 +21,7 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackPayload }) {
             >
               <div className="flex justify-between">
                 <span className="font-medium">{p.display_name}</span>
-                <span className="text-indigo-600">
+                <span className="text-[#e67e22]">
                   {p.score.toFixed(1)} / {p.max_score}
                 </span>
               </div>

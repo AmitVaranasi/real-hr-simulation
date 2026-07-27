@@ -1,6 +1,11 @@
 import { requireAuth } from "@/lib/api/auth";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 
+/**
+ * Join a team by code.
+ * One active team at a time: joining another session switches the student.
+ */
 export async function POST(request: Request) {
   const { error, supabase, user, profile } = await requireAuth();
   if (error) return error;
@@ -20,38 +25,61 @@ export async function POST(request: Request) {
   const { data: team, error: teamError } = await supabase
     .from("teams")
     .select("*, sessions(id, name)")
-    .eq("join_code", join_code.toLowerCase().trim())
+    .eq("join_code", String(join_code).toLowerCase().trim())
     .single();
 
   if (teamError || !team) {
     return NextResponse.json({ error: "Invalid join code" }, { status: 404 });
   }
 
-  const { data: myTeams } = await supabase
+  const { data: myMemberships } = await supabase
     .from("team_members")
-    .select("team_id")
+    .select("id, team_id, teams(id, session_id, name)")
     .eq("user_id", user!.id);
 
-  const teamIds = (myTeams ?? []).map((m) => m.team_id);
-  let alreadyInSession = false;
-  if (teamIds.length > 0) {
-    const { data: theirTeams } = await supabase
-      .from("teams")
-      .select("session_id")
-      .in("id", teamIds);
-    alreadyInSession = (theirTeams ?? []).some(
-      (t) => t.session_id === team.session_id
+  const memberships = myMemberships ?? [];
+  if (memberships.some((m) => m.team_id === team.id)) {
+    return NextResponse.json(
+      { error: "You are already on this team" },
+      { status: 400 }
     );
   }
 
-  if (alreadyInSession) {
+  const sameSession = memberships.some((m) => {
+    const t = m.teams as unknown as { session_id: string } | null;
+    return t?.session_id === team.session_id;
+  });
+  if (sameSession) {
     return NextResponse.json(
       { error: "You are already on a team in this session" },
       { status: 400 }
     );
   }
 
-  const { error: joinError } = await supabase.from("team_members").insert({
+  const switched = memberships.length > 0;
+
+  // Service role: students have INSERT but not DELETE on team_members under RLS.
+  let admin;
+  try {
+    admin = createAdminClient();
+  } catch {
+    return NextResponse.json(
+      { error: "Server is missing service role configuration" },
+      { status: 500 }
+    );
+  }
+
+  if (switched) {
+    const { error: leaveError } = await admin
+      .from("team_members")
+      .delete()
+      .eq("user_id", user!.id);
+    if (leaveError) {
+      return NextResponse.json({ error: leaveError.message }, { status: 500 });
+    }
+  }
+
+  const { error: joinError } = await admin.from("team_members").insert({
     team_id: team.id,
     user_id: user!.id,
   });
@@ -60,5 +88,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: joinError.message }, { status: 500 });
   }
 
-  return NextResponse.json({ team });
+  return NextResponse.json({ team, switched });
 }

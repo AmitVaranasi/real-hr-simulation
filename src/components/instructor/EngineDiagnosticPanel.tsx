@@ -45,8 +45,8 @@ export function EngineDiagnosticPanel({
       </section>
 
       {scenarioTrace && (
-        <section className="rounded-xl border border-indigo-200 bg-indigo-50/30 p-4">
-          <h2 className="font-semibold text-indigo-900">
+        <section className="rounded-xl border border-[#f5d0a9] bg-[#fff4e8]/50 p-4">
+          <h2 className="font-semibold text-[#9a3412]">
             Scenario trace {scenarioLabel ? `— ${scenarioLabel}` : ""}
           </h2>
           <dl className="mt-3 grid gap-1 text-sm sm:grid-cols-2">

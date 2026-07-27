@@ -1,4 +1,4 @@
-import { requireInstructor } from "@/lib/api/auth";
+import { requireInstructorOrAdmin } from "@/lib/api/auth";
 import { withSimulationConfig } from "@/lib/db/simulation-config";
 import {
   getIndustryConfig,
@@ -20,7 +20,7 @@ const INDUSTRIES: Industry[] = [
 ];
 
 export async function POST(request: Request) {
-  const { error } = await requireInstructor();
+  const { error } = await requireInstructorOrAdmin();
   if (error) return error;
 
   const body = await request.json().catch(() => ({}));

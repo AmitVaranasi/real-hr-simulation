@@ -5,7 +5,7 @@ export async function GET() {
   const { error, supabase, user, profile } = await requireAuth();
   if (error) return error;
 
-  if (profile?.role === "instructor") {
+  if (profile?.role === "instructor" || profile?.role === "admin") {
     return NextResponse.json({ error: "Students only" }, { status: 403 });
   }
 
@@ -21,7 +21,11 @@ export async function GET() {
   } | null;
 
   if (!team) {
-    return NextResponse.json({ hasTeam: false, openRound: null });
+    return NextResponse.json({
+      hasTeam: false,
+      openRound: null,
+      decision: null,
+    });
   }
 
   const { data: openRound } = await supabase
@@ -31,8 +35,22 @@ export async function GET() {
     .eq("status", "open")
     .maybeSingle();
 
+  let decision: { exists: boolean; is_submitted: boolean } | null = null;
+  if (openRound) {
+    const { data: row } = await supabase
+      .from("decisions")
+      .select("is_submitted")
+      .eq("team_id", team.id)
+      .eq("round_id", openRound.id)
+      .maybeSingle();
+    decision = row
+      ? { exists: true, is_submitted: !!row.is_submitted }
+      : { exists: false, is_submitted: false };
+  }
+
   return NextResponse.json({
     hasTeam: true,
     openRound: openRound ?? null,
+    decision,
   });
 }

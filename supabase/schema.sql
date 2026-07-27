@@ -2,23 +2,37 @@
 
 CREATE TABLE public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  role TEXT NOT NULL CHECK (role IN ('instructor', 'student')),
+  role TEXT NOT NULL CHECK (role IN ('instructor', 'student', 'admin')),
   display_name TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  requested TEXT := COALESCE(NEW.raw_user_meta_data->>'role', 'student');
+  safe_role TEXT;
 BEGIN
+  -- Admin is never self-serve at signup
+  IF requested IN ('instructor', 'student') THEN
+    safe_role := requested;
+  ELSE
+    safe_role := 'student';
+  END IF;
+
   INSERT INTO public.profiles (id, role, display_name)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'role', 'student'),
-    COALESCE(NEW.raw_user_meta_data->>'display_name', NEW.email)
+    safe_role,
+    COALESCE(NEW.raw_user_meta_data->>'display_name', split_part(NEW.email, '@', 1))
   );
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
@@ -34,6 +48,7 @@ CREATE TABLE public.sessions (
   practice_rounds INTEGER NOT NULL DEFAULT 1,
   status TEXT NOT NULL DEFAULT 'setup'
     CHECK (status IN ('setup', 'active', 'complete')),
+  announcement TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

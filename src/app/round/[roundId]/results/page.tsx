@@ -45,7 +45,7 @@ export default async function RoundResultsPage({
         <p className="mt-2 text-slate-600">
           Results appear after your instructor closes this round.
         </p>
-        <Link href="/dashboard" className="mt-4 inline-block text-indigo-600">
+        <Link href="/dashboard" className="mt-4 inline-block text-[#e67e22]">
           Back to dashboard
         </Link>
       </div>
@@ -105,7 +105,7 @@ export default async function RoundResultsPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <Link href="/dashboard" className="text-sm text-indigo-600 hover:underline">
+      <Link href="/dashboard" className="text-sm text-[#e67e22] hover:underline">
         ← Dashboard
       </Link>
       <h1 className="mt-4 text-2xl font-bold text-slate-900">

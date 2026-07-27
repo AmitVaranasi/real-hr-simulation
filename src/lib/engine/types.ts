@@ -1,6 +1,6 @@
 export interface Profile {
   id: string;
-  role: "instructor" | "student";
+  role: "instructor" | "student" | "admin";
   display_name: string;
   created_at: string;
 }

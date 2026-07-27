@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { FormulaInspector } from "@/components/instructor/FormulaInspector";
+import {
+  FormulaInspector,
+  type CarryForwardInfo,
+} from "@/components/instructor/FormulaInspector";
 import { formSelectClassName } from "@/components/ui/form-controls";
 import type { Decision, SimulationTrace } from "@/lib/engine/types";
 
@@ -24,6 +27,7 @@ export default function InspectPage() {
     round: { round_number: number; round_type: string };
     decision: Decision | null;
     trace: SimulationTrace;
+    carryForward?: CarryForwardInfo | null;
   } | null>();
 
   useEffect(() => {
@@ -80,7 +84,7 @@ export default function InspectPage() {
     <div className="mx-auto w-full min-w-0 max-w-5xl px-4 py-10">
       <Link
         href={`/sessions/${sessionId}`}
-        className="text-sm text-indigo-600 hover:underline"
+        className="text-sm text-[#e67e22] hover:underline"
       >
         ← Back to session
       </Link>
@@ -131,6 +135,7 @@ export default function InspectPage() {
           roundLabel={`Round ${payload.round.round_number} (${payload.round.round_type})`}
           decision={payload.decision}
           trace={payload.trace}
+          carryForward={payload.carryForward}
         />
       )}
     </div>
