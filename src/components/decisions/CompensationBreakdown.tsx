@@ -39,7 +39,7 @@ export function CompensationBreakdown({
         <dt className="text-slate-600">Discretionary comp (budget)</dt>
         <dd className="font-medium">{formatCurrency(discretionaryComp)}</dd>
         <dt className="font-medium text-slate-800">Total compensation (est.)</dt>
-        <dd className="font-semibold text-indigo-700">
+        <dd className="font-semibold text-[#c45f12]">
           {formatCurrency(totalCompEstimate)}
         </dd>
         {compRatio != null && (

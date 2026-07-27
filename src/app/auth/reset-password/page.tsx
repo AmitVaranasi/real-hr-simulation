@@ -21,7 +21,7 @@ export default function ResetPasswordPage() {
       )}
       <p className="mt-6 text-sm text-slate-500">
         Link expired?{" "}
-        <Link href="/forgot-password" className="text-indigo-600 hover:underline">
+        <Link href="/forgot-password" className="text-[#e67e22] hover:underline">
           Request a new reset email
         </Link>
       </p>

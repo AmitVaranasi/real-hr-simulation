@@ -26,10 +26,10 @@ export function LeaderboardTable({
             <tr
               key={e.team_id}
               className={`border-t border-slate-100 ${
-                e.team_id === highlightTeamId ? "bg-indigo-50" : ""
+                e.team_id === highlightTeamId ? "bg-[#fff4e8]" : ""
               }`}
             >
-              <td className="px-4 py-3 font-bold text-indigo-600">#{e.rank}</td>
+              <td className="px-4 py-3 font-bold text-[#e67e22]">#{e.rank}</td>
               <td className="px-4 py-3 font-medium">{e.team_name}</td>
               <td className="px-4 py-3">{e.industry}</td>
               <td className="px-4 py-3">{e.strategy}</td>

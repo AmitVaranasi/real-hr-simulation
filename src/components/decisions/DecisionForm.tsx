@@ -256,7 +256,7 @@ function DecisionFormInner({
               onClick={() => selectTab(i)}
               className={`whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium ${
                 activeTab === i
-                  ? "bg-indigo-600 text-white"
+                  ? "bg-[#e67e22] text-white"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
@@ -267,7 +267,7 @@ function DecisionFormInner({
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
-        <p className="text-xs font-medium uppercase tracking-wide text-indigo-600">
+        <p className="text-xs font-medium uppercase tracking-wide text-[#e67e22]">
           SHRM BASK: {SHRM_BADGES[MODULES[activeTab]]}
         </p>
         <ScaffoldingText module={MODULES[activeTab]} />

@@ -34,30 +34,25 @@ export function ProfessorDashboard({
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
       <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 bg-slate-900 px-6 py-5 text-white">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--portal-sidebar-border)] bg-white px-6 py-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-brand)]">
               Professor portal
             </p>
-            <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Dashboard</h1>
-            <p className="mt-2 max-w-xl text-sm text-slate-300">
+            <h1 className="mt-1 text-2xl font-bold text-[var(--portal-ink)] sm:text-3xl">
+              Dashboard
+            </h1>
+            <p className="mt-2 max-w-xl text-sm text-[var(--portal-muted)]">
               Command center for rounds, teams, configuration, and testing —
               Capsim-style layout for Real HR Simulation.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Link href="/sessions/new">
-              <Button className="bg-white text-slate-900 hover:bg-slate-100">
-                New session
-              </Button>
+              <Button>New session</Button>
             </Link>
             <Link href="/sessions/manage">
-              <Button
-                variant="outline"
-                className="border-slate-500 bg-transparent text-white hover:bg-slate-800"
-              >
-                Manage Course
-              </Button>
+              <Button variant="outline">Manage Course</Button>
             </Link>
           </div>
         </div>
@@ -80,7 +75,7 @@ export function ProfessorDashboard({
               </div>
               <Link
                 href={`/sessions/${active.id}`}
-                className="text-sm font-medium text-indigo-700 hover:underline"
+                className="text-sm font-medium text-[var(--portal-brand)] hover:underline"
               >
                 Open course ops →
               </Link>
@@ -183,7 +178,7 @@ export function ProfessorDashboard({
           </h2>
           <Link
             href="/sessions/manage"
-            className="text-sm font-medium text-indigo-700 hover:underline"
+            className="text-sm font-medium text-[var(--portal-brand)] hover:underline"
           >
             View all →
           </Link>
@@ -234,11 +229,11 @@ export function ProfessorDashboard({
             <Link
               key={tile.title}
               href={tile.href}
-              className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-indigo-200 hover:shadow-md"
+              className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-[var(--portal-brand)] hover:shadow-md"
             >
               <p className="font-semibold text-slate-900">{tile.title}</p>
               <p className="mt-1 text-sm text-slate-500">{tile.desc}</p>
-              <p className="mt-3 text-xs font-medium text-indigo-700">
+              <p className="mt-3 text-xs font-medium text-[var(--portal-brand)]">
                 Continue →
               </p>
             </Link>
@@ -253,7 +248,7 @@ export function ProfessorDashboard({
             <Link
               key={s.id}
               href={`/sessions/${s.id}`}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm hover:border-indigo-200"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm hover:border-[var(--portal-brand)]"
             >
               <div>
                 <p className="font-semibold text-slate-900">{s.name}</p>

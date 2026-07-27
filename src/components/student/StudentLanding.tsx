@@ -282,7 +282,7 @@ export function StudentLanding({
             </div>
             <div>
               <dt className="text-slate-500">Last BSC</dt>
-              <dd className="mt-1 text-lg font-semibold text-indigo-700">
+              <dd className="mt-1 text-lg font-semibold text-[var(--portal-brand)]">
                 {lastScore != null ? lastScore.toFixed(1) : "—"}
               </dd>
             </div>
@@ -296,7 +296,7 @@ export function StudentLanding({
             </div>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
               <div
-                className="h-full rounded-full bg-indigo-600"
+                className="h-full rounded-full bg-[var(--portal-brand)]"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
@@ -314,9 +314,17 @@ export function StudentLanding({
             <li>
               <Link
                 href="/dashboard/getting-started"
-                className="font-medium text-indigo-700 hover:underline"
+                className="font-medium text-[#e67e22] hover:underline"
               >
                 Getting Started
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/join"
+                className="font-medium text-[#e67e22] hover:underline"
+              >
+                Join a new session
               </Link>
             </li>
             {openRound && (
@@ -324,7 +332,7 @@ export function StudentLanding({
                 <li>
                   <Link
                     href={`/round/${openRound.id}/decisions`}
-                    className="font-medium text-indigo-700 hover:underline"
+                    className="font-medium text-[#e67e22] hover:underline"
                   >
                     Decisions
                   </Link>
@@ -332,7 +340,7 @@ export function StudentLanding({
                 <li>
                   <Link
                     href={`/round/${openRound.id}/review`}
-                    className="font-medium text-indigo-700 hover:underline"
+                    className="font-medium text-[#e67e22] hover:underline"
                   >
                     Review &amp; Submit
                   </Link>
@@ -342,7 +350,7 @@ export function StudentLanding({
             <li>
               <Link
                 href="/history"
-                className="font-medium text-indigo-700 hover:underline"
+                className="font-medium text-[#e67e22] hover:underline"
               >
                 Reports
               </Link>
@@ -350,7 +358,7 @@ export function StudentLanding({
             <li>
               <Link
                 href="/leaderboard"
-                className="font-medium text-indigo-700 hover:underline"
+                className="font-medium text-[#e67e22] hover:underline"
               >
                 Leaderboard
               </Link>

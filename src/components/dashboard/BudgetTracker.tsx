@@ -24,7 +24,7 @@ export function BudgetTracker({ budget }: BudgetTrackerProps) {
       </div>
       <div className="h-3 overflow-hidden rounded-full bg-slate-100">
         <div
-          className={`h-full transition-all ${over ? "bg-red-500" : "bg-indigo-500"}`}
+          className={`h-full transition-all ${over ? "bg-red-500" : "bg-[#e67e22]"}`}
           style={{ width: `${Math.min(pct, 100)}%` }}
         />
       </div>

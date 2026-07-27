@@ -7,7 +7,7 @@ type NavItem = { href: string; label: string; match?: (path: string) => boolean 
 
 function linkClass(active: boolean) {
   return active
-    ? "border-b-2 border-indigo-600 pb-0.5 font-medium text-indigo-700"
+    ? "border-b-2 border-[#e67e22] pb-0.5 font-medium text-[#c45f12]"
     : "text-slate-600 hover:text-slate-900";
 }
 

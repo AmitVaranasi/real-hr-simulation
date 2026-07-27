@@ -21,21 +21,39 @@ export function SessionAnnouncementForm({
     e.preventDefault();
     setLoading(true);
     setMessage(null);
-    const res = await fetch(`/api/sessions/${sessionId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        announcement: text.trim() || null,
-      }),
-    });
-    setLoading(false);
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setMessage(data.error ?? "Failed to save");
-      return;
+    try {
+      const res = await fetch(`/api/sessions/${sessionId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          announcement: text.trim() || null,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const errText = data.error ?? "Failed to save";
+        // Common when migration-v4.sql has not been applied yet
+        if (
+          typeof errText === "string" &&
+          errText.toLowerCase().includes("announcement")
+        ) {
+          setMessage(
+            "Could not save announcement. Run supabase/migration-v4.sql in the Supabase SQL editor, then try again."
+          );
+        } else {
+          setMessage(errText);
+        }
+        return;
+      }
+      setMessage("Announcement saved — students see it on their dashboard.");
+      router.refresh();
+    } catch {
+      setMessage(
+        "Could not reach the server. Confirm the app is running at http://127.0.0.1:3000 and try again."
+      );
+    } finally {
+      setLoading(false);
     }
-    setMessage("Announcement saved — students see it on their dashboard.");
-    router.refresh();
   }
 
   return (

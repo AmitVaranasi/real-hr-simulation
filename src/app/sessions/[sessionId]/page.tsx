@@ -48,11 +48,11 @@ export default async function SessionDetailPage({
   return (
     <div className="mx-auto w-full min-w-0 max-w-4xl">
       <div className="mb-6 flex flex-wrap items-center gap-3 text-sm">
-        <Link href="/sessions" className="text-indigo-600 hover:underline">
+        <Link href="/sessions" className="text-[#e67e22] hover:underline">
           ← Dashboard
         </Link>
         <span className="text-slate-300">|</span>
-        <Link href="/sessions/manage" className="text-indigo-600 hover:underline">
+        <Link href="/sessions/manage" className="text-[#e67e22] hover:underline">
           Manage Course
         </Link>
       </div>
@@ -91,7 +91,7 @@ export default async function SessionDetailPage({
               <p className="text-sm text-slate-500">
                 {t.industry} · {t.strategy}
               </p>
-              <p className="mt-1 font-mono text-sm text-indigo-600">
+              <p className="mt-1 font-mono text-sm text-[#e67e22]">
                 Join code: {t.join_code}
               </p>
               <p className="mt-1 text-xs text-slate-500">
@@ -120,7 +120,7 @@ export default async function SessionDetailPage({
       <section className="mt-10 flex flex-wrap gap-3">
         <Link
           href={`/sessions/${sessionId}/reports`}
-          className="rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 hover:bg-indigo-100"
+          className="rounded-lg border border-[#f5d0a9] bg-[#fff4e8] px-4 py-3 text-sm font-medium text-[#c45f12] hover:bg-[#ffe8d1]"
         >
           Class reports & export →
         </Link>
@@ -144,7 +144,7 @@ export default async function SessionDetailPage({
         </Link>
         <Link
           href="/sessions/config"
-          className="rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 hover:bg-indigo-100"
+          className="rounded-lg border border-[#f5d0a9] bg-[#fff4e8] px-4 py-3 text-sm font-medium text-[#c45f12] hover:bg-[#ffe8d1]"
         >
           Simulation config center →
         </Link>

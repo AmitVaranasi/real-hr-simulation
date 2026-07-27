@@ -19,6 +19,7 @@ export default async function GettingStartedPage() {
     .eq("id", user.id)
     .single();
 
+  if (profile?.role === "admin") redirect("/admin");
   if (profile?.role === "instructor") redirect("/sessions");
 
   const { data: membership } = await supabase

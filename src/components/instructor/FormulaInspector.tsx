@@ -60,7 +60,7 @@ export function FormulaInspector({
       </div>
 
       {carryForward && (
-        <section className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
+        <section className="rounded-xl border border-[#f5d0a9] bg-[#fff4e8]/70 p-4">
           <h2 className="font-semibold text-slate-900">
             0. Carry-forward (prior → current)
           </h2>
@@ -248,7 +248,7 @@ export function FormulaInspector({
           <dt>Industry penalty</dt>
           <dd>-{trace.bsc_scores.industry_penalty}</dd>
           <dt className="font-medium">Total</dt>
-          <dd className="font-medium text-indigo-700">
+          <dd className="font-medium text-[#c45f12]">
             {trace.bsc_scores.total_score.toFixed(1)}
           </dd>
         </dl>

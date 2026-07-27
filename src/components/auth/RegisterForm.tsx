@@ -97,7 +97,11 @@ export function RegisterForm() {
           onChange={(e) => setPassword(e.target.value)}
         />
       </label>
-      <Button type="submit" disabled={loading} className="w-full">
+      <Button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-[#e67e22] text-white hover:bg-[#d35400]"
+      >
         {loading ? "Creating account…" : "Create account"}
       </Button>
     </form>

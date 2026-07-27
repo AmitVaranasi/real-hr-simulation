@@ -23,8 +23,8 @@ export function LearningInsightsPanel({
           ))}
         </ul>
       </section>
-      <section className="rounded-xl border border-indigo-200 bg-indigo-50/50 p-4">
-        <h3 className="font-semibold text-indigo-900">Next round</h3>
+      <section className="rounded-xl border border-[#f5d0a9] bg-[#fff4e8]/70 p-4">
+        <h3 className="font-semibold text-[#9a3412]">Next round</h3>
         <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-700">
           {insights.next_round.map((item) => (
             <li key={item}>{item}</li>

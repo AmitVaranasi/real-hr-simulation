@@ -50,8 +50,8 @@ export function GettingStarted({
         ? `You are on ${teamName}. Industry: ${industry}. Strategy: ${strategy}.`
         : "Enter the join code from your instructor to join a team.",
       status: hasTeam ? "complete" : "current",
-      actionHref: hasTeam ? undefined : "/join",
-      actionLabel: hasTeam ? undefined : "Join a team",
+      actionHref: hasTeam ? "/join" : "/join",
+      actionLabel: hasTeam ? "Join a new session" : "Join a team",
     },
     {
       id: 3,
@@ -110,13 +110,13 @@ export function GettingStarted({
   return (
     <div className="mx-auto w-full max-w-4xl">
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-brand)]">
           Getting Started · Recommended
         </p>
-        <h1 className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
+        <h1 className="mt-2 text-2xl font-bold text-[var(--portal-ink)] sm:text-3xl">
           Welcome, {displayName}
         </h1>
-        <p className="mt-3 max-w-2xl text-slate-600">
+        <p className="mt-3 max-w-2xl text-[var(--portal-muted)]">
           Here&apos;s how to get started. Complete the orientation steps below,
           then continue into decisions when your instructor opens a round.
         </p>
@@ -128,8 +128,8 @@ export function GettingStarted({
             key={step.id}
             className={`rounded-xl border bg-white p-5 shadow-sm ${
               step.status === "current"
-                ? "border-indigo-300 ring-1 ring-indigo-100"
-                : "border-slate-200"
+                ? "border-[var(--portal-brand)] ring-1 ring-[var(--portal-brand-soft)]"
+                : "border-[var(--portal-sidebar-border)]"
             }`}
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -140,15 +140,17 @@ export function GettingStarted({
                       step.status === "complete"
                         ? "bg-emerald-100 text-emerald-800"
                         : step.status === "current"
-                          ? "bg-indigo-600 text-white"
-                          : "bg-slate-100 text-slate-500"
+                          ? "bg-[var(--portal-brand)] text-white"
+                          : "bg-[var(--portal-sidebar)] text-[var(--portal-muted)]"
                     }`}
                   >
                     {step.status === "complete" ? "✓" : step.id}
                   </span>
                   <div>
-                    <h2 className="font-semibold text-slate-900">{step.title}</h2>
-                    <p className="mt-1 text-sm text-slate-600">
+                    <h2 className="font-semibold text-[var(--portal-ink)]">
+                      {step.title}
+                    </h2>
+                    <p className="mt-1 text-sm text-[var(--portal-muted)]">
                       {step.description}
                     </p>
                   </div>
@@ -160,8 +162,8 @@ export function GettingStarted({
                     step.status === "complete"
                       ? "bg-emerald-50 text-emerald-700"
                       : step.status === "current"
-                        ? "bg-indigo-50 text-indigo-700"
-                        : "bg-slate-50 text-slate-500"
+                        ? "bg-[var(--portal-brand-soft)] text-[var(--portal-brand-hover)]"
+                        : "bg-[var(--portal-sidebar)] text-[var(--portal-muted)]"
                   }`}
                 >
                   {step.status === "complete"
@@ -182,13 +184,13 @@ export function GettingStarted({
       </ol>
 
       {openRoundId && (
-        <div className="mt-6 rounded-xl border border-slate-800 bg-slate-900 px-5 py-4 text-white">
-          <p className="text-sm font-medium text-slate-200">Ready to play</p>
+        <div className="mt-6 rounded-xl border border-[var(--portal-brand)] bg-[var(--portal-brand)] px-5 py-4 text-white">
+          <p className="text-sm font-medium text-white/90">Ready to play</p>
           <p className="mt-1 text-lg font-semibold">
             Continue to your open round
           </p>
           <Link href={`/round/${openRoundId}/decisions`} className="mt-3 inline-block">
-            <Button className="bg-white text-slate-900 hover:bg-slate-100">
+            <Button className="bg-white text-[var(--portal-ink)] hover:bg-[var(--portal-brand-soft)]">
               Continue Simulation →
             </Button>
           </Link>

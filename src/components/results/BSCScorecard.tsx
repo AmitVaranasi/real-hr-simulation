@@ -31,7 +31,7 @@ export function BSCScorecard({ scores, bscWeights }: BSCScorecardProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between rounded-xl bg-indigo-600 px-6 py-4 text-white">
+      <div className="flex items-center justify-between rounded-xl bg-[#e67e22] px-6 py-4 text-white">
         <div>
           <p className="text-sm opacity-90">Total Round Score</p>
           <p className="text-4xl font-bold">{scores.total_score.toFixed(1)}</p>
@@ -63,7 +63,7 @@ export function BSCScorecard({ scores, bscWeights }: BSCScorecardProps) {
               </div>
               <div className="h-2 rounded-full bg-slate-100">
                 <div
-                  className="h-full rounded-full bg-indigo-500"
+                  className="h-full rounded-full bg-[#e67e22]"
                   style={{ width: `${Math.min(pct, 100)}%` }}
                 />
               </div>

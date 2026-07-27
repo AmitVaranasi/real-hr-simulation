@@ -13,13 +13,23 @@ const PUBLIC_PREFIXES = [
   "/api/auth",
 ];
 
-// /dashboard/getting-started and /sessions/manage are protected like other portal routes.
-
 function isPublic(path: string): boolean {
   if (path === "/") return true;
   return PUBLIC_PREFIXES.some(
     (p) => p !== "/" && (path === p || path.startsWith(`${p}/`))
   );
+}
+
+function isAdminSystemToolPath(path: string): boolean {
+  return (
+    path.startsWith("/sessions/config") || path.startsWith("/sessions/testing")
+  );
+}
+
+function homeForRole(role: string | undefined): string {
+  if (role === "admin") return "/admin";
+  if (role === "instructor") return "/sessions";
+  return "/dashboard";
 }
 
 export async function middleware(request: NextRequest) {
@@ -80,16 +90,56 @@ export async function middleware(request: NextRequest) {
     .eq("id", user.id)
     .single();
 
+  const role = profile?.role as string | undefined;
+  const allowlist = (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  const emailAllowlisted = !!(
+    user.email && allowlist.includes(user.email.toLowerCase())
+  );
+  // Treat allowlisted emails as admin for routing even before DB promote runs.
+  const effectiveRole =
+    role === "admin" || emailAllowlisted ? "admin" : role;
+
+  if (path.startsWith("/admin")) {
+    if (effectiveRole !== "admin") {
+      return NextResponse.redirect(
+        new URL(homeForRole(role), request.url)
+      );
+    }
+    return response;
+  }
+
+  if (path.startsWith("/sessions") || path.startsWith("/instructor")) {
+    if (effectiveRole === "instructor") {
+      return response;
+    }
+    if (effectiveRole === "admin" && isAdminSystemToolPath(path)) {
+      return response;
+    }
+    return NextResponse.redirect(
+      new URL(homeForRole(effectiveRole), request.url)
+    );
+  }
+
+  // Admins landing on student routes → admin home
   if (
-    (path.startsWith("/sessions") || path.startsWith("/instructor")) &&
-    profile?.role !== "instructor"
+    effectiveRole === "admin" &&
+    (path.startsWith("/dashboard") ||
+      path.startsWith("/round") ||
+      path.startsWith("/history") ||
+      path.startsWith("/leaderboard") ||
+      path.startsWith("/join"))
   ) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/admin", request.url));
   }
 
   return response;
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|ico)$).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|ico)$).*)",
+  ],
 };

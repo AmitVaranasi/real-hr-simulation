@@ -46,27 +46,31 @@ export function LoginForm() {
     setError(null);
     try {
       const supabase = createClient();
-      const { data, error: signInError } = await supabase.auth.signInWithPassword(
-        {
-          email: email.trim(),
-          password,
-        }
-      );
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
       if (signInError) {
         setError(friendlyAuthError(signInError.message));
         setLoading(false);
         return;
       }
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .single();
+      // Promote ADMIN_EMAILS allowlist and resolve effective role server-side.
+      const meRes = await fetch("/api/auth/me", { cache: "no-store" });
+      const me = meRes.ok ? await meRes.json() : null;
+      const role = me?.role as string | null | undefined;
       const defaultPath =
-        profile?.role === "instructor"
-          ? "/sessions"
-          : "/dashboard/getting-started";
-      router.push(nextPath ?? defaultPath);
+        role === "admin"
+          ? "/admin"
+          : role === "instructor"
+            ? "/sessions"
+            : "/dashboard/getting-started";
+      // Avoid sending admins to student/instructor deep-links after promote.
+      const dest =
+        role === "admin" && nextPath && !nextPath.startsWith("/admin")
+          ? "/admin"
+          : (nextPath ?? defaultPath);
+      router.push(dest);
       router.refresh();
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Sign-in failed";
@@ -107,12 +111,16 @@ export function LoginForm() {
       <div className="flex justify-end">
         <Link
           href="/forgot-password"
-          className="text-sm text-indigo-600 hover:underline"
+          className="text-sm font-medium text-[#e67e22] hover:underline"
         >
           Forgot password?
         </Link>
       </div>
-      <Button type="submit" disabled={loading} className="w-full">
+      <Button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-[#e67e22] text-white hover:bg-[#d35400]"
+      >
         {loading ? "Signing in…" : "Sign in"}
       </Button>
     </form>

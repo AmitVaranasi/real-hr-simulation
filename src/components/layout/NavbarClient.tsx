@@ -15,6 +15,7 @@ const PORTAL_PREFIXES = [
   "/leaderboard",
   "/join",
   "/sessions",
+  "/admin",
 ];
 
 function isPortalPath(path: string) {
@@ -24,9 +25,21 @@ function isPortalPath(path: string) {
 }
 
 type Profile = {
-  role: "instructor" | "student";
+  role: "instructor" | "student" | "admin";
   display_name: string;
 };
+
+function roleHome(role: Profile["role"] | undefined) {
+  if (role === "admin") return "/admin";
+  if (role === "instructor") return "/sessions";
+  return "/dashboard";
+}
+
+function roleLabel(role: Profile["role"] | undefined) {
+  if (role === "admin") return "Admin";
+  if (role === "instructor") return "Instructor";
+  return "Student";
+}
 
 export function NavbarClient() {
   const router = useRouter();
@@ -110,11 +123,35 @@ export function NavbarClient() {
         .toUpperCase()
     : "?";
 
-  const homeHref = profile?.role === "instructor" ? "/sessions" : "/dashboard";
+  const homeHref = roleHome(profile?.role);
 
   const navLinks = (
     <>
-      {user && profile?.role === "instructor" ? (
+      {user && profile?.role === "admin" ? (
+        <>
+          <Link
+            href="/admin"
+            className="text-slate-600 hover:text-slate-900"
+            onClick={() => setMobileOpen(false)}
+          >
+            Admin
+          </Link>
+          <Link
+            href="/admin/users"
+            className="text-slate-600 hover:text-slate-900"
+            onClick={() => setMobileOpen(false)}
+          >
+            Users
+          </Link>
+          <Link
+            href="/sessions/config"
+            className="text-slate-600 hover:text-slate-900"
+            onClick={() => setMobileOpen(false)}
+          >
+            Configuration
+          </Link>
+        </>
+      ) : user && profile?.role === "instructor" ? (
         <>
           <Link
             href="/sessions"
@@ -157,7 +194,7 @@ export function NavbarClient() {
           {!studentHasTeam && (
             <Link
               href="/join"
-              className="font-medium text-indigo-600 hover:text-indigo-800"
+              className="font-medium text-[#e67e22] hover:text-[#d35400]"
               onClick={() => setMobileOpen(false)}
             >
               Join team
@@ -186,7 +223,7 @@ export function NavbarClient() {
         className="flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-3 shadow-sm hover:bg-slate-50"
         aria-label="Account menu"
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--portal-brand)] text-xs font-semibold text-white">
           {initials}
         </span>
         <span className="hidden max-w-[120px] truncate text-sm font-medium text-slate-700 sm:inline">
@@ -203,14 +240,19 @@ export function NavbarClient() {
           />
           <div className="absolute right-0 z-50 mt-2 w-48 rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
             <p className="border-b border-slate-100 px-3 py-2 text-xs text-slate-500">
-              {profile?.role === "instructor" ? "Instructor" : "Student"}
+              {roleLabel(profile?.role)}
             </p>
             <Link
               href={homeHref}
               className="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
               onClick={() => setMenuOpen(false)}
             >
-              Go to {profile?.role === "instructor" ? "sessions" : "dashboard"}
+              Go to{" "}
+              {profile?.role === "admin"
+                ? "admin"
+                : profile?.role === "instructor"
+                  ? "sessions"
+                  : "dashboard"}
             </Link>
             <button
               type="button"
@@ -234,7 +276,7 @@ export function NavbarClient() {
       </Link>
       <Link
         href="/register"
-        className="inline-flex h-9 items-center rounded-lg bg-indigo-600 px-3 text-sm font-medium text-white hover:bg-indigo-700"
+        className="inline-flex h-9 items-center rounded-lg bg-[var(--portal-brand)] px-3 text-sm font-medium text-white hover:bg-[var(--portal-brand-hover)]"
         onClick={() => setMobileOpen(false)}
       >
         Register
@@ -247,7 +289,7 @@ export function NavbarClient() {
       <div className="mx-auto flex h-14 w-full min-w-0 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4">
         <Link
           href={user ? homeHref : "/"}
-          className="min-w-0 truncate text-sm font-semibold text-indigo-700 sm:text-base"
+          className="min-w-0 truncate text-sm font-semibold text-[var(--portal-brand)] sm:text-base"
           onClick={() => setMobileOpen(false)}
         >
           <span className="sm:hidden">HR Simulation</span>
@@ -286,14 +328,14 @@ export function NavbarClient() {
                 <>
                   <p className="mb-2 text-xs text-slate-500">
                     {profile?.display_name ?? "Account"} ·{" "}
-                    {profile?.role === "instructor" ? "Instructor" : "Student"}
+                    {roleLabel(profile?.role)}
                   </p>
                   <Link
                     href={homeHref}
                     className="mb-2 block text-slate-700"
                     onClick={() => setMobileOpen(false)}
                   >
-                    Go to dashboard
+                    Go to home
                   </Link>
                   <button
                     type="button"
@@ -314,7 +356,7 @@ export function NavbarClient() {
                   </Link>
                   <Link
                     href="/register"
-                    className="inline-flex h-10 items-center justify-center rounded-lg bg-indigo-600 font-medium text-white"
+                    className="inline-flex h-10 items-center justify-center rounded-lg bg-[var(--portal-brand)] font-medium text-white"
                     onClick={() => setMobileOpen(false)}
                   >
                     Register

@@ -1,4 +1,4 @@
-import { requireInstructor } from "@/lib/api/auth";
+import { requireInstructorOrAdmin } from "@/lib/api/auth";
 import {
   computeTeamOutcome,
   outcomeToDbRow,
@@ -12,7 +12,7 @@ import { NextResponse } from "next/server";
 
 /** Manual round processing from Simulation Configuration Center (V3). */
 export async function POST(request: Request) {
-  const { error } = await requireInstructor();
+  const { error } = await requireInstructorOrAdmin();
   if (error) return error;
 
   const { sessionId, roundId } = await request.json();

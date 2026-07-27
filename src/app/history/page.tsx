@@ -39,7 +39,7 @@ export default async function HistoryPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <Link href="/dashboard" className="text-sm text-indigo-600 hover:underline">
+      <Link href="/dashboard" className="text-sm text-[#e67e22] hover:underline">
         ← Dashboard
       </Link>
       <h1 className="mt-4 text-2xl font-bold text-slate-900">Round history</h1>
@@ -75,7 +75,7 @@ export default async function HistoryPage() {
                 <span className="font-medium">
                   Round {r.round_number} ({r.round_type})
                 </span>
-                <span className="text-indigo-600 font-semibold">
+                <span className="text-[#e67e22] font-semibold">
                   {Number(o.instructor_override ?? o.total_score).toFixed(1)} / 100
                 </span>
               </div>

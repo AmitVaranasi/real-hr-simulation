@@ -17,7 +17,9 @@ export default async function TestingCenterPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "instructor") redirect("/dashboard");
+  if (profile?.role !== "instructor" && profile?.role !== "admin") {
+    redirect("/dashboard");
+  }
 
   return <TestingLaboratory />;
 }

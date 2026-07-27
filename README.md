@@ -32,8 +32,13 @@ npm run dev
    - `supabase/migration-v2.sql`
    - `supabase/migration-v3.sql`
    - `supabase/migration-v4.sql`
+   - `supabase/migration-v5-admin.sql` (admin role + config/session read policies)
+   - `supabase/migration-v6-full-admin.sql` (audit log, config revisions, disable flags, formula notes)
+   - `supabase/migration-v7-student-leave-team.sql` (students can leave/switch teams)
 4. Enable **Email** auth in Supabase → Authentication
 5. Add `{APP_URL}/auth/callback` to Auth redirect URLs (password reset)
+6. Optional: set `ADMIN_EMAILS=you@school.edu` in `.env.local` to bootstrap admins
+   (or `UPDATE profiles SET role='admin' WHERE id='…'` in SQL)
 
 ## User flows
 
@@ -53,6 +58,14 @@ npm run dev
 5. **Leaderboard** → when instructor releases it
 6. **History** → trends across rounds
 
+### Admin
+1. Bootstrap via `ADMIN_EMAILS` or SQL `role='admin'` → `/admin`
+2. **User Management** → roles, disable/enable, password reset, impersonate
+3. **Formula Repository** → document engine formulas; tune params in Configuration
+4. **Version Management** → snapshot / restore global simulation config
+5. **Audit Log** → administrator activity trail
+6. **System** → Simulation Config + Testing Center
+
 ## Feature checklist
 
 | Feature | Status |
@@ -61,6 +74,7 @@ npm run dev
 | 7-module decision UI + budget tracker | ✅ |
 | Offline simulator (`/simulate`) | ✅ |
 | Auth (login, register, middleware) | ✅ |
+| Admin portal (users, formulas, versions, audit) | ✅ |
 | Sessions, teams, rounds | ✅ |
 | Auto-save & submit decisions | ✅ |
 | Round close → compute outcomes | ✅ |

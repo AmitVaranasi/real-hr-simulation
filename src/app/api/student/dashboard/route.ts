@@ -5,7 +5,7 @@ export async function GET() {
   const { error, supabase, user, profile } = await requireAuth();
   if (error) return error;
 
-  if (profile?.role === "instructor") {
+  if (profile?.role === "instructor" || profile?.role === "admin") {
     return NextResponse.json({ error: "Students only" }, { status: 403 });
   }
 

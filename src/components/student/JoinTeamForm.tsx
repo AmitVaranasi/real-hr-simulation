@@ -16,7 +16,13 @@ function normalizeCode(raw: string): string {
   return raw.trim().toLowerCase().replace(/\s+/g, "");
 }
 
-export function JoinTeamForm({ initialCode = "" }: { initialCode?: string }) {
+export function JoinTeamForm({
+  initialCode = "",
+  allowSwitch = false,
+}: {
+  initialCode?: string;
+  allowSwitch?: boolean;
+}) {
   const router = useRouter();
   const [code, setCode] = useState(initialCode);
   const [team, setTeam] = useState<TeamPreview | null>(null);
@@ -95,8 +101,14 @@ export function JoinTeamForm({ initialCode = "" }: { initialCode?: string }) {
 
   return (
     <form onSubmit={handleJoin} className="mt-6 space-y-4">
+      {allowSwitch && (
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+          Joining will leave your current team and switch you to the new
+          session.
+        </p>
+      )}
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Team join code</span>
+        <span className="font-medium text-[#1f2937]">Team join code</span>
         <input
           type="text"
           autoComplete="off"
@@ -106,14 +118,14 @@ export function JoinTeamForm({ initialCode = "" }: { initialCode?: string }) {
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
-        <span className="mt-1 block text-xs text-slate-500">
-          Your instructor shares this code for your team (letters and numbers, no
-          spaces).
+        <span className="mt-1 block text-xs text-[#6b7280]">
+          Your instructor shares this code for your team (letters and numbers,
+          no spaces).
         </span>
       </label>
 
       {previewLoading && (
-        <p className="text-sm text-slate-500">Looking up team…</p>
+        <p className="text-sm text-[#6b7280]">Looking up team…</p>
       )}
 
       {previewError && !previewLoading && (
@@ -133,11 +145,11 @@ export function JoinTeamForm({ initialCode = "" }: { initialCode?: string }) {
           <p className="text-xs font-medium uppercase tracking-wide text-emerald-800">
             Team found
           </p>
-          <p className="mt-1 font-medium text-slate-900">{team.name}</p>
-          <p className="text-sm text-slate-600">
+          <p className="mt-1 font-medium text-[#1f2937]">{team.name}</p>
+          <p className="text-sm text-[#6b7280]">
             {team.sessions?.name ?? "Class session"}
           </p>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-[#6b7280]">
             {team.industry} · {team.strategy}
           </p>
         </div>
@@ -145,10 +157,14 @@ export function JoinTeamForm({ initialCode = "" }: { initialCode?: string }) {
 
       <Button
         type="submit"
-        className="w-full"
+        className="w-full bg-[#e67e22] text-white hover:bg-[#d35400]"
         disabled={joinLoading || !normalized || previewLoading || !team}
       >
-        {joinLoading ? "Joining…" : "Join this team"}
+        {joinLoading
+          ? "Joining…"
+          : allowSwitch
+            ? "Switch to this team"
+            : "Join this team"}
       </Button>
     </form>
   );

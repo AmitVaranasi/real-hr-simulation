@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { Navbar } from "@/components/layout/Navbar";
+import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#4f46e5",
+  themeColor: "#e67e22",
   colorScheme: "light",
 };
 
@@ -55,6 +56,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-slate-50 text-slate-900 antialiased`}
       >
+        <ImpersonationBanner />
         <Navbar />
         <main className="min-h-screen w-full min-w-0 overflow-x-hidden">
           {children}

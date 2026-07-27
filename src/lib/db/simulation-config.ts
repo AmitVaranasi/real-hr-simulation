@@ -26,7 +26,8 @@ export async function loadSimulationConfigFromDb(): Promise<SimulationConfigDocu
 
 export async function saveSimulationConfigToDb(
   config: SimulationConfigDocument,
-  userId: string
+  userId: string,
+  opts?: { note?: string; source?: string; skipRevision?: boolean }
 ): Promise<void> {
   const admin = createAdminClient();
   await admin.from("simulation_config").upsert({
@@ -35,6 +36,19 @@ export async function saveSimulationConfigToDb(
     updated_at: new Date().toISOString(),
     updated_by: userId,
   });
+
+  if (!opts?.skipRevision) {
+    try {
+      await admin.from("simulation_config_revisions").insert({
+        config_json: config,
+        note: opts?.note ?? null,
+        created_by: userId,
+        source: opts?.source ?? "save",
+      });
+    } catch {
+      // Table may not exist until migration-v6 is applied
+    }
+  }
 }
 
 export async function withSimulationConfig<T>(

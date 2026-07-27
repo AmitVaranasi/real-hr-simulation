@@ -160,7 +160,7 @@ export function TestingLaboratory() {
               <Link
                 key={s.id}
                 href={`/sessions/${s.id}`}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-50"
+                className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-[#c45f12] hover:bg-[#fff4e8]"
               >
                 Open {s.name}
               </Link>
@@ -300,7 +300,7 @@ export function TestingLaboratory() {
             <li key={s.id}>
               <Link
                 href={`/sessions/${s.id}/inspect`}
-                className="text-sm font-medium text-indigo-700 hover:underline"
+                className="text-sm font-medium text-[#c45f12] hover:underline"
               >
                 Inspect {s.name} →
               </Link>

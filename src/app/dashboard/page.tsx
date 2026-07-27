@@ -22,6 +22,9 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single();
 
+  if (profile?.role === "admin") {
+    redirect("/admin");
+  }
   if (profile?.role === "instructor") {
     redirect("/sessions");
   }
@@ -60,7 +63,7 @@ export default async function DashboardPage() {
   if (!team) {
     return (
       <div className="mx-auto w-full max-w-lg rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#e67e22]">
           Getting started
         </p>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">
@@ -76,7 +79,7 @@ export default async function DashboardPage() {
         <p className="mt-4 text-sm">
           <Link
             href="/dashboard/getting-started"
-            className="text-indigo-600 hover:underline"
+            className="text-[#e67e22] hover:underline"
           >
             Or open Getting Started →
           </Link>

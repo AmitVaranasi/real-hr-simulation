@@ -121,7 +121,7 @@ export default function ReviewPage() {
     return (
       <p className="p-8">
         No decision found.{" "}
-        <Link href={`/round/${roundId}/decisions`} className="text-indigo-600">
+        <Link href={`/round/${roundId}/decisions`} className="text-[#e67e22]">
           Go to decisions
         </Link>
       </p>
@@ -145,7 +145,7 @@ export default function ReviewPage() {
     <div className="mx-auto max-w-3xl px-4 py-10">
       <Link
         href={`/round/${roundId}/decisions`}
-        className="text-sm text-indigo-600 hover:underline"
+        className="text-sm text-[#e67e22] hover:underline"
       >
         ← Back to edit
       </Link>
@@ -244,11 +244,11 @@ export default function ReviewPage() {
         </section>
       )}
 
-      <section className="mt-6 rounded-xl border border-indigo-100 bg-indigo-50/40 p-5">
-        <h2 className="font-semibold text-indigo-900">
+      <section className="mt-6 rounded-xl border border-[#f5d0a9] bg-[#fff4e8]/60 p-5">
+        <h2 className="font-semibold text-[#9a3412]">
           Expected consequences
         </h2>
-        <p className="mt-1 text-sm text-indigo-800/80">
+        <p className="mt-1 text-sm text-[#9a3412]/80">
           Preview using the same engine as round scoring. Actual results depend
           on economy, carry-forward state, and final compute.
         </p>
@@ -273,8 +273,8 @@ export default function ReviewPage() {
           <dd className="font-medium">{bsc.score_process.toFixed(1)}</dd>
           <dt>BSC Learning</dt>
           <dd className="font-medium">{bsc.score_learning.toFixed(1)}</dd>
-          <dt className="font-semibold text-indigo-900">BSC total (projected)</dt>
-          <dd className="font-semibold text-indigo-700">
+          <dt className="font-semibold text-[#9a3412]">BSC total (projected)</dt>
+          <dd className="font-semibold text-[#c45f12]">
             {bsc.total_score.toFixed(1)} / 100
           </dd>
         </dl>

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { PortalSidebar } from "./PortalSidebar";
 import { PortalTopBar } from "./PortalTopBar";
 import {
+  adminNavItems,
   professorNavItems,
   studentNavItems,
   type PortalNavItem,
@@ -12,21 +13,31 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
-type Role = "instructor" | "student";
+export type PortalRole = "instructor" | "student" | "admin";
+
+function roleHomeLabel(role: PortalRole) {
+  if (role === "admin") return "Administrator Portal";
+  if (role === "instructor") return "Professor Portal";
+  return "Student Portal";
+}
+
+function roleBadge(role: PortalRole) {
+  if (role === "admin") return "Admin";
+  if (role === "instructor") return "Instructor";
+  return "Student";
+}
 
 function PortalShellInner({
   role,
   children,
 }: {
-  role: Role;
+  role: PortalRole;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [displayName, setDisplayName] = useState("User");
-  const [contextTitle, setContextTitle] = useState(
-    role === "instructor" ? "Professor Portal" : "Student Portal"
-  );
+  const [contextTitle, setContextTitle] = useState(roleHomeLabel(role));
   const [contextMeta, setContextMeta] = useState<string | null>(null);
   const [openRoundId, setOpenRoundId] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -90,6 +101,9 @@ function PortalShellInner({
           setContextTitle("Student Portal");
           setContextMeta("Join a team to begin");
         }
+      } else if (role === "admin") {
+        setContextTitle("System administration");
+        setContextMeta("User management · configuration · diagnostics");
       } else {
         const sessionMatch = pathname.match(
           /^\/sessions\/([0-9a-f-]{36})(?:\/|$)/i
@@ -114,11 +128,7 @@ function PortalShellInner({
         if (active) {
           setContextTitle(active.name);
           setContextMeta(
-            [
-              active.course_code,
-              active.semester,
-              `Status: ${active.status}`,
-            ]
+            [active.course_code, active.semester, `Status: ${active.status}`]
               .filter(Boolean)
               .join(" · ")
           );
@@ -134,56 +144,45 @@ function PortalShellInner({
 
   const items: PortalNavItem[] = useMemo(() => {
     if (role === "student") return studentNavItems({ openRoundId });
+    if (role === "admin") return adminNavItems();
     return professorNavItems({ sessionId });
   }, [role, openRoundId, sessionId]);
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      {/* Desktop sidebar */}
-      <div className="hidden lg:block lg:shrink-0">
-        <div className="sticky top-0 h-screen">
-          <PortalSidebar
-            items={items}
-            brandSubtitle={
-              role === "instructor" ? "Professor Portal" : "Student Portal"
-            }
-          />
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#eef0f3]">
+      {/* Fixed desktop sidebar — stays visible while content scrolls */}
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[240px] lg:block">
+        <PortalSidebar items={items} brandSubtitle={roleHomeLabel(role)} />
+      </aside>
 
-      {/* Mobile drawer */}
       {mobileOpen && (
         <>
           <button
             type="button"
-            className="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"
+            className="fixed inset-0 z-40 bg-black/30 lg:hidden"
             aria-label="Close sidebar"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 z-50 lg:hidden">
+          <div className="fixed inset-y-0 left-0 z-50 w-[240px] lg:hidden">
             <PortalSidebar
               items={items}
-              brandSubtitle={
-                role === "instructor" ? "Professor Portal" : "Student Portal"
-              }
+              brandSubtitle={roleHomeLabel(role)}
               onNavigate={() => setMobileOpen(false)}
             />
           </div>
         </>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[240px]">
         <PortalTopBar
           displayName={displayName}
-          roleLabel={role === "instructor" ? "Instructor" : "Student"}
+          roleLabel={roleBadge(role)}
           contextTitle={contextTitle}
           contextMeta={contextMeta}
           mobileOpen={mobileOpen}
           onToggleMobile={() => setMobileOpen((o) => !o)}
         />
-        <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">
-          {children}
-        </main>
+        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );
@@ -193,13 +192,13 @@ export function PortalShell({
   role,
   children,
 }: {
-  role: Role;
+  role: PortalRole;
   children: React.ReactNode;
 }) {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-slate-100 text-sm text-slate-500">
+        <div className="flex min-h-screen items-center justify-center bg-[#eef0f3] text-sm text-[#6b7280]">
           Loading portal…
         </div>
       }

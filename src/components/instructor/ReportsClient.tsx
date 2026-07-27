@@ -147,7 +147,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
             onClick={() => setTab(t.id)}
             className={`rounded-lg px-3 py-2 text-sm font-medium ${
               tab === t.id
-                ? "bg-indigo-600 text-white"
+                ? "bg-[#e67e22] text-white"
                 : "text-slate-600 hover:bg-slate-100"
             }`}
           >
@@ -199,7 +199,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                   <YAxis domain={[0, 100]} />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="financial" stackId="a" fill="#4f46e5" name="Financial" />
+                  <Bar dataKey="financial" stackId="a" fill="#e67e22" name="Financial" />
                   <Bar dataKey="employee" stackId="a" fill="#0ea5e9" name="Employee" />
                   <Bar dataKey="process" stackId="a" fill="#10b981" name="Process" />
                   <Bar dataKey="learning" stackId="a" fill="#f59e0b" name="Learning" />
@@ -219,7 +219,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                   <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                   <YAxis domain={[0, 120]} unit="%" />
                   <Tooltip formatter={(v) => `${Number(v).toFixed(0)}%`} />
-                  <Bar dataKey="adherence" fill="#6366f1" name="Adherence %" />
+                  <Bar dataKey="adherence" fill="#e67e22" name="Adherence %" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -317,7 +317,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                       {teamOutcomes.length > 0 && (
                         <a
                           href={`/sessions/${sessionId}/inspect?team=${team.id}&round=${teamOutcomes[teamOutcomes.length - 1]!.round_id}`}
-                          className="text-xs text-indigo-600 hover:underline"
+                          className="text-xs text-[#e67e22] hover:underline"
                         >
                           Latest
                         </a>
@@ -432,7 +432,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                         {outcome && (
                           <>
                             <dt className="text-slate-500">BSC score</dt>
-                            <dd className="font-medium text-indigo-700">
+                            <dd className="font-medium text-[#c45f12]">
                               {Number(
                                 outcome.instructor_override ?? outcome.total_score
                               ).toFixed(1)}

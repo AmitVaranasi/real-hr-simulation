@@ -49,7 +49,11 @@ export function ResetPasswordForm() {
         .single();
 
       router.push(
-        profile?.role === "instructor" ? "/sessions" : "/dashboard"
+        profile?.role === "admin"
+          ? "/admin"
+          : profile?.role === "instructor"
+            ? "/sessions"
+            : "/dashboard"
       );
       router.refresh();
     } catch {

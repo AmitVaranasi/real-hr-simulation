@@ -12,7 +12,7 @@ export default async function SessionReportsPage({
     <div className="mx-auto max-w-6xl px-4 py-10">
       <Link
         href={`/sessions/${sessionId}`}
-        className="text-sm text-indigo-600 hover:underline"
+        className="text-sm text-[#e67e22] hover:underline"
       >
         ← Session
       </Link>

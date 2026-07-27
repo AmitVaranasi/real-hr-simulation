@@ -31,10 +31,18 @@ export async function GET(request: Request) {
         .eq("id", user?.id ?? "")
         .single();
 
-      const redirect =
-        profile?.role === "instructor" && next === "/dashboard"
-          ? "/sessions"
-          : next;
+      let redirect = next;
+      if (profile?.role === "admin") {
+        redirect =
+          next.startsWith("/admin") ||
+          next.startsWith("/sessions/config") ||
+          next.startsWith("/sessions/testing") ||
+          next.startsWith("/auth/reset-password")
+            ? next
+            : "/admin";
+      } else if (profile?.role === "instructor" && next === "/dashboard") {
+        redirect = "/sessions";
+      }
       return NextResponse.redirect(`${origin}${redirect}`);
     }
   }

@@ -1,4 +1,4 @@
-import { requireInstructor } from "@/lib/api/auth";
+import { requireInstructorOrAdmin } from "@/lib/api/auth";
 import { withSimulationConfig } from "@/lib/db/simulation-config";
 import {
   getIndustryConfig,
@@ -11,7 +11,7 @@ import type { EconomyCondition, Industry, Strategy } from "@/lib/engine/types";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const { error } = await requireInstructor();
+  const { error } = await requireInstructorOrAdmin();
   if (error) return error;
 
   const body = await request.json();

@@ -41,7 +41,7 @@ export default async function LeaderboardPage({
         <p className="mt-2 text-slate-600">
           Your instructor has not released a leaderboard yet.
         </p>
-        <Link href="/dashboard" className="mt-4 inline-block text-indigo-600">
+        <Link href="/dashboard" className="mt-4 inline-block text-[#e67e22]">
           Back to dashboard
         </Link>
       </div>
@@ -65,7 +65,7 @@ export default async function LeaderboardPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <Link href="/dashboard" className="text-sm text-indigo-600 hover:underline">
+      <Link href="/dashboard" className="text-sm text-[#e67e22] hover:underline">
         ← Dashboard
       </Link>
       <h1 className="mt-4 text-2xl font-bold text-slate-900">Leaderboard</h1>
@@ -79,7 +79,7 @@ export default async function LeaderboardPage({
               href={`/leaderboard?round=${r.id}`}
               className={`rounded-lg px-3 py-1 text-sm ${
                 r.id === round.id
-                  ? "bg-indigo-600 text-white"
+                  ? "bg-[#e67e22] text-white"
                   : "bg-slate-100 text-slate-700"
               }`}
             >

@@ -55,7 +55,7 @@ export function ForgotPasswordForm() {
         </p>
         <Link
           href="/login"
-          className="inline-block text-sm text-indigo-600 hover:underline"
+          className="inline-block text-sm text-[#e67e22] hover:underline"
         >
           Back to sign in
         </Link>
@@ -85,7 +85,7 @@ export function ForgotPasswordForm() {
         {loading ? "Sending…" : "Send reset link"}
       </Button>
       <p className="text-center text-sm text-slate-500">
-        <Link href="/login" className="text-indigo-600 hover:underline">
+        <Link href="/login" className="text-[#e67e22] hover:underline">
           Back to sign in
         </Link>
       </p>
