@@ -3,8 +3,14 @@ import { Button } from "@/components/ui/button";
 import {
   BarChart3,
   GraduationCap,
+  HeartHandshake,
+  Network,
+  Scale,
   Users,
+  UserPlus,
   Wallet,
+  Briefcase,
+  type LucideIcon,
 } from "lucide-react";
 
 const features = [
@@ -32,6 +38,20 @@ const features = [
     description:
       "Each module maps to SHRM BASK competency areas for accredited HR education.",
   },
+];
+
+const MODULES: Array<{
+  slug: string;
+  title: string;
+  icon: LucideIcon;
+}> = [
+  { slug: "recruitment", title: "Recruitment & Selection", icon: UserPlus },
+  { slug: "performance", title: "Performance Management", icon: Briefcase },
+  { slug: "training", title: "Training & Development", icon: GraduationCap },
+  { slug: "relations", title: "Employee Relations", icon: HeartHandshake },
+  { slug: "compensation", title: "Compensation & Benefits", icon: Wallet },
+  { slug: "org-design", title: "Org Design & Change", icon: Network },
+  { slug: "dei", title: "DEI Initiatives", icon: Scale },
 ];
 
 export default function Home() {
@@ -69,7 +89,7 @@ export default function Home() {
       <section className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="mb-8 text-center text-xl font-semibold text-slate-900 sm:text-2xl">
-            Seven HR decision modules
+            Why Real HR Simulation?
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {features.map((f) => (
@@ -85,24 +105,23 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <ul className="mt-8 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              "Recruitment & Selection",
-              "Performance Management",
-              "Training & Development",
-              "Employee Relations",
-              "Compensation & Benefits",
-              "Org Design & Change",
-              "DEI Initiatives",
-            ].map((m) => (
-              <li
-                key={m}
-                className="rounded-lg bg-slate-100 px-3 py-2 text-center text-sm text-slate-700"
+
+          <h2 className="mb-6 mt-14 text-center text-xl font-semibold text-slate-900 sm:text-2xl">
+            Seven HR Decision Modules
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {MODULES.map((m) => (
+              <Link
+                key={m.slug}
+                href={`/learn/${m.slug}`}
+                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-left shadow-sm transition hover:border-[#e67e22] hover:bg-[#fff4e8]"
               >
-                {m}
-              </li>
+                <m.icon className="mb-2 h-6 w-6 text-[#e67e22]" />
+                <p className="text-sm font-semibold text-slate-900">{m.title}</p>
+                <p className="mt-1 text-xs text-[#e67e22]">Learn more →</p>
+              </Link>
             ))}
-          </ul>
+          </div>
           <p className="mt-10 text-center text-sm text-slate-500">
             <Link href="/about" className="text-[#e67e22] hover:underline">
               About this application

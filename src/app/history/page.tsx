@@ -42,9 +42,16 @@ export default async function HistoryPage() {
       <Link href="/dashboard" className="text-sm text-[#e67e22] hover:underline">
         ← Dashboard
       </Link>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">Round history</h1>
+      <h1 className="mt-4 text-2xl font-bold text-slate-900">
+        Reports &amp; HR Analytics
+      </h1>
       <p className="text-slate-600">
-        {(membership.teams as unknown as { name: string }).name}
+        {(membership.teams as unknown as { name: string }).name} · classic history
+        view. Prefer{" "}
+        <Link href="/reports/workforce-brief" className="text-[#e67e22] hover:underline">
+          The Workforce Brief
+        </Link>
+        .
       </p>
 
       {trendData.length >= 2 && (

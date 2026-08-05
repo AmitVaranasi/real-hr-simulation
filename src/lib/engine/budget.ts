@@ -1,6 +1,9 @@
 import { getDiscretionaryBudget } from "./simulation-config";
 import {
+  CHANGE_MGMT_COST,
+  COLLABORATION_COST,
   CONFLICT_CONFIG,
+  DEI_LEVEL_COST,
   HR_TECH_ANNUAL_COST,
   PROGRAM_COSTS,
 } from "./programs";
@@ -111,8 +114,16 @@ export function computeBudgetBreakdown(
     headcount,
     marketSalary
   );
-  const org_design_spend = HR_TECH_ANNUAL_COST[d.hr_tech_level];
-  const dei_spend = 0;
+  const org_design_spend =
+    HR_TECH_ANNUAL_COST[d.hr_tech_level] +
+    CHANGE_MGMT_COST[d.change_management_capability] +
+    COLLABORATION_COST[d.collaboration_enablement];
+  const dei_spend =
+    DEI_LEVEL_COST[d.dei_diverse_recruitment] +
+    DEI_LEVEL_COST[d.dei_equity_practices] +
+    DEI_LEVEL_COST[d.dei_inclusion_initiatives] +
+    DEI_LEVEL_COST[d.dei_training_education] +
+    DEI_LEVEL_COST[d.dei_accessibility_support];
 
   const total_spend =
     recruitment_spend +

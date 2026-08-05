@@ -23,6 +23,14 @@ import {
   FunctionSquare,
   History,
   ScrollText,
+  Building2,
+  Library,
+  CircleHelp,
+  Network,
+  Scale,
+  MessageSquare,
+  FileText,
+  Landmark,
 } from "lucide-react";
 
 export type PortalNavItem = {
@@ -31,15 +39,63 @@ export type PortalNavItem = {
   icon?: LucideIcon;
   match?: (pathname: string, search: string) => boolean;
   children?: PortalNavItem[];
+  /** When true, children render expanded by default on related routes */
+  defaultExpanded?: boolean;
 };
 
 export const DECISION_TABS = [
-  { key: "recruitment", label: "Recruitment", index: 0, icon: UserPlus },
-  { key: "performance", label: "Performance", index: 1, icon: Briefcase },
-  { key: "training", label: "Training", index: 2, icon: GraduationCap },
-  { key: "relations", label: "Employee Relations", index: 3, icon: HeartHandshake },
-  { key: "compensation", label: "Compensation", index: 4, icon: Wallet },
+  {
+    key: "recruitment",
+    label: "Recruitment & Selection",
+    index: 0,
+    icon: UserPlus,
+    shrm: "Talent Acquisition",
+  },
+  {
+    key: "performance",
+    label: "Performance Management",
+    index: 1,
+    icon: Briefcase,
+    shrm: "Performance Management",
+  },
+  {
+    key: "training",
+    label: "Training & Development",
+    index: 2,
+    icon: GraduationCap,
+    shrm: "Learning & Development",
+  },
+  {
+    key: "relations",
+    label: "Employee Relations",
+    index: 3,
+    icon: HeartHandshake,
+    shrm: "Employee & Labor Relations",
+  },
+  {
+    key: "compensation",
+    label: "Compensation & Benefits",
+    index: 4,
+    icon: Wallet,
+    shrm: "Total Rewards",
+  },
+  {
+    key: "org-design",
+    label: "Org Design & Change",
+    index: 5,
+    icon: Network,
+    shrm: "Organization",
+  },
+  {
+    key: "dei",
+    label: "DEI Initiatives",
+    index: 6,
+    icon: Scale,
+    shrm: "Diversity, Equity & Inclusion",
+  },
 ] as const;
+
+export type DecisionTabKey = (typeof DECISION_TABS)[number]["key"];
 
 export function studentNavItems(opts: {
   openRoundId: string | null;
@@ -63,31 +119,26 @@ export function studentNavItems(opts: {
       match: (p) => p === "/dashboard",
     },
     {
-      href: "/join",
-      label: "Join Session",
-      icon: UserPlus,
-      match: (p) => p === "/join" || p.startsWith("/join/"),
-    },
-    {
       href: decisionBase,
-      label: "Decisions",
+      label: "HR Decisions",
       icon: ClipboardList,
       match: (p) => p.includes("/decisions"),
-      children: openRoundId
-        ? DECISION_TABS.map((t) => ({
-            href: `${decisionBase}?tab=${t.key}`,
-            label: t.label,
-            icon: t.icon,
-            match: (p: string, search: string) => {
-              if (!p.includes("/decisions")) return false;
-              const tab = new URLSearchParams(search).get("tab");
-              if (t.key === "recruitment") {
-                return !tab || tab === "recruitment";
-              }
-              return tab === t.key;
-            },
-          }))
-        : [],
+      defaultExpanded: true,
+      children: DECISION_TABS.map((t) => ({
+        href: openRoundId
+          ? `${decisionBase}?tab=${t.key}`
+          : "/dashboard/getting-started",
+        label: t.label,
+        icon: t.icon,
+        match: (p: string, search: string) => {
+          if (!p.includes("/decisions")) return false;
+          const tab = new URLSearchParams(search).get("tab");
+          if (t.key === "recruitment") {
+            return !tab || tab === "recruitment";
+          }
+          return tab === t.key;
+        },
+      })),
     },
     ...(openRoundId
       ? [
@@ -98,21 +149,139 @@ export function studentNavItems(opts: {
             match: (p: string) => p.includes("/review"),
           },
         ]
-      : []),
+      : [
+          {
+            href: "/dashboard",
+            label: "Review & Submit",
+            icon: FileCheck2,
+            match: () => false,
+          },
+        ]),
     {
-      href: "/history",
-      label: "Reports",
+      href: "/reports",
+      label: "Reports & HR Analytics",
       icon: BarChart3,
-      match: (p) => p.startsWith("/history") || p.includes("/results"),
+      match: (p) =>
+        p.startsWith("/reports") ||
+        p.startsWith("/history") ||
+        p.includes("/results"),
+      children: [
+        {
+          href: "/reports/workforce-brief",
+          label: "The Workforce Brief",
+          icon: FileText,
+          match: (p) =>
+            p.startsWith("/reports/workforce-brief") ||
+            p.includes("/results") ||
+            p === "/reports",
+        },
+        {
+          href: "/reports/balance-sheet",
+          label: "Balance Sheet",
+          icon: Landmark,
+          match: (p) => p.startsWith("/reports/balance-sheet"),
+        },
+        {
+          href: "/reports/profit-loss",
+          label: "Profit & Loss Statement",
+          icon: LineChart,
+          match: (p) => p.startsWith("/reports/profit-loss"),
+        },
+        {
+          href: "/reports/cash-flow",
+          label: "Cash Flow Statement",
+          icon: Wallet,
+          match: (p) => p.startsWith("/reports/cash-flow"),
+        },
+        {
+          href: "/reports/financial-ratios",
+          label: "Financial Ratios",
+          icon: BarChart3,
+          match: (p) => p.startsWith("/reports/financial-ratios"),
+        },
+        {
+          href: "/leaderboard",
+          label: "Leaderboard",
+          icon: Trophy,
+          match: (p) => p.startsWith("/leaderboard"),
+        },
+      ],
     },
     {
-      href: "/leaderboard",
-      label: "Leaderboard",
-      icon: Trophy,
-      match: (p) => p.startsWith("/leaderboard"),
+      href: "/team",
+      label: "Team & Company",
+      icon: Building2,
+      match: (p) => p.startsWith("/team"),
+      children: [
+        {
+          href: "/team",
+          label: "Company Profile",
+          icon: Building2,
+          match: (p) => p === "/team" || p === "/team/company",
+        },
+        {
+          href: "/team/members",
+          label: "My Team",
+          icon: Users,
+          match: (p) => p.startsWith("/team/members"),
+        },
+        {
+          href: "/team/industry-strategy",
+          label: "Industry & Strategy Brief",
+          icon: Briefcase,
+          match: (p) => p.startsWith("/team/industry-strategy"),
+        },
+        {
+          href: "/team/instructor",
+          label: "Instructor Information",
+          icon: GraduationCap,
+          match: (p) => p.startsWith("/team/instructor"),
+        },
+      ],
+    },
+    {
+      href: "/resources",
+      label: "Resources",
+      icon: Library,
+      match: (p) => p.startsWith("/resources"),
+      children: [
+        {
+          href: "/resources/reference",
+          label: "Simulation Reference Center",
+          icon: BookOpen,
+          match: (p) => p.startsWith("/resources/reference"),
+        },
+        {
+          href: "/resources/metrics",
+          label: "HR Metrics Reference",
+          icon: BarChart3,
+          match: (p) => p.startsWith("/resources/metrics"),
+        },
+      ],
+    },
+    {
+      href: "/help",
+      label: "Help Center",
+      icon: CircleHelp,
+      match: (p) => p.startsWith("/help"),
+    },
+    {
+      href: "/join",
+      label: "Join Session",
+      icon: UserPlus,
+      match: (p) => p === "/join" || p.startsWith("/join/"),
     },
   ];
 }
+
+export const STUDENT_QUICK_LINKS: PortalNavItem[] = [
+  {
+    href: "/help#messages",
+    label: "Messages",
+    icon: MessageSquare,
+    match: () => false,
+  },
+];
 
 export function professorNavItems(opts: {
   sessionId: string | null;

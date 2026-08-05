@@ -65,7 +65,10 @@ export const MODULE_TAB_GUIDANCE: Record<string, BudgetModuleKey[]> = {
   Performance: ["performance"],
   Training: ["training"],
   Relations: ["relations"],
-  Compensation: ["compensation", "org_design"],
+  Compensation: ["compensation"],
+  // Org Design / DEI ranges remain placeholders until engine validation
+  "Org Design": ["org_design"],
+  DEI: [],
 };
 
 export function formatNormRange(norm: ModuleNormRange): string {
