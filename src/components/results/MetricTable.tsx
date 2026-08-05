@@ -44,57 +44,119 @@ export function MetricTable({ metrics }: { metrics: MetricFeedback[] }) {
   );
 }
 
+type MetricRow = [string, unknown, string];
+
+/** Cooper V5 Workforce Performance Metrics — grouped by HR functional category */
+const METRIC_CATEGORIES: Array<{ title: string; rows: MetricRow[] }> = [
+  {
+    title: "Talent Acquisition",
+    rows: [
+      ["Cost per hire", "cost_per_hire", "$"],
+      ["Time to fill (days)", "time_to_fill", ""],
+      ["Hiring quality", "hiring_quality", "/100"],
+    ],
+  },
+  {
+    title: "Workforce & Employee Experience",
+    rows: [
+      ["Turnover rate (%)", "turnover_rate", ""],
+      ["Turnover cost", "turnover_cost", "$"],
+      ["Employee satisfaction", "employee_satisfaction", "/100"],
+      ["Engagement", "engagement_level", "/100"],
+      ["Absenteeism (days)", "absenteeism_rate", ""],
+    ],
+  },
+  {
+    title: "Learning & Talent Development",
+    rows: [
+      ["Training ROI (%)", "training_roi", ""],
+      ["Training effectiveness (%)", "training_effectiveness", ""],
+      ["Succession pipeline (%)", "succession_pipeline", ""],
+    ],
+  },
+  {
+    title: "Performance Management",
+    rows: [["Review coverage (%)", "review_coverage", ""]],
+  },
+  {
+    title: "Compensation & HR Financials",
+    rows: [
+      ["Compensation ratio (%)", "compensation_ratio", ""],
+      ["Budget adherence (%)", "budget_adherence", ""],
+      ["Productivity index (%)", "productivity", "pct100"],
+    ],
+  },
+  {
+    title: "Workforce Inclusion",
+    rows: [["DEI score", "dei_score", "/100"]],
+  },
+  {
+    title: "HR Technology & Capability",
+    rows: [["HR tech score", "hr_tech_score", "/100"]],
+  },
+];
+
+function formatMetricValue(
+  name: string,
+  val: unknown,
+  suffix: string
+): string {
+  if (val == null || Number.isNaN(Number(val))) return "—";
+  if (suffix === "$") return `$${Number(val).toLocaleString()}`;
+  if (suffix === "/100") return `${Number(val).toFixed(1)}/100`;
+  if (suffix === "pct100" || name === "Productivity index (%)") {
+    return `${(Number(val) * 100).toFixed(1)}%`;
+  }
+  return Number(val).toFixed(2);
+}
+
 export function OutcomeMetricTable({
   outcome,
 }: {
   outcome: Record<string, unknown>;
 }) {
-  const rows: Array<[string, unknown, string]> = [
-    ["Cost per hire", outcome.cost_per_hire, "$"],
-    ["Time to fill (days)", outcome.time_to_fill, ""],
-    ["Turnover rate (%)", outcome.turnover_rate, ""],
-    ["Employee satisfaction", outcome.employee_satisfaction, "/100"],
-    ["Engagement", outcome.engagement_level, "/100"],
-    ["Training ROI (%)", outcome.training_roi, ""],
-    ["DEI score", outcome.dei_score, "/100"],
-    ["Absenteeism (days)", outcome.absenteeism_rate, ""],
-    ["Review coverage (%)", outcome.review_coverage, ""],
-    ["Training effectiveness (%)", outcome.training_effectiveness, ""],
-    ["Succession pipeline (%)", outcome.succession_pipeline, ""],
-    ["HR tech score", outcome.hr_tech_score, "/100"],
-    ["Compensation ratio (%)", outcome.compensation_ratio, ""],
-    ["Budget adherence (%)", outcome.budget_adherence, ""],
-    ["Productivity index (%)", outcome.productivity, ""],
-    ["Hiring quality", outcome.hiring_quality, "/100"],
-    ["Turnover cost", outcome.turnover_cost, "$"],
-  ];
-
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200">
-      <table className="w-full text-sm">
-        <thead className="bg-slate-50 text-left">
-          <tr>
-            <th className="px-4 py-3">HR Metric</th>
-            <th className="px-4 py-3">Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(([name, val, suffix]) => (
-            <tr key={String(name)} className="border-t border-slate-100">
-              <td className="px-4 py-3 text-slate-700">{name}</td>
-              <td className="px-4 py-3 font-medium">
-                {suffix === "$"
-                  ? `$${Number(val).toLocaleString()}`
-                  : suffix === "/100"
-                    ? `${Number(val).toFixed(1)}/100`
-                    : name === "Productivity index (%)"
-                      ? `${(Number(val) * 100).toFixed(1)}%`
-                      : Number(val).toFixed(2)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="space-y-4">
+      {METRIC_CATEGORIES.map((category) => {
+        const present = category.rows.filter(
+          ([, key]) => outcome[key as string] != null
+        );
+        if (present.length === 0) return null;
+        return (
+          <div
+            key={category.title}
+            className="overflow-x-auto rounded-xl border border-slate-200"
+          >
+            <div className="border-b border-slate-200 bg-[#f8f9fb] px-4 py-2.5">
+              <h3 className="text-xs font-bold uppercase tracking-wide text-[#e67e22]">
+                {category.title}
+              </h3>
+            </div>
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 text-left text-slate-600">
+                <tr>
+                  <th className="px-4 py-2.5 font-medium">HR Metric</th>
+                  <th className="px-4 py-2.5 font-medium">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {present.map(([name, key, suffix]) => (
+                  <tr key={String(name)} className="border-t border-slate-100">
+                    <td className="px-4 py-3 text-slate-700">{name}</td>
+                    <td className="px-4 py-3 font-medium">
+                      {formatMetricValue(
+                        String(name),
+                        outcome[key as string],
+                        suffix
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      })}
     </div>
   );
 }

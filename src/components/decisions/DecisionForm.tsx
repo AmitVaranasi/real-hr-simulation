@@ -16,26 +16,37 @@ import { computeBudgetBreakdown, computeRecruitmentCost } from "@/lib/engine/bud
 import { computeCostPerHire, computeTimeToFill } from "@/lib/engine/metrics";
 import { generateWarnings } from "@/lib/engine/validation";
 import {
+  CHANGE_MGMT_COST,
+  COLLABORATION_COST,
   CONFLICT_CONFIG,
+  DEI_LEVEL_COST,
   DEVELOPMENTAL_PROGRAMS,
+  INVESTMENT_LEVELS,
   PROGRAM_COSTS,
 } from "@/lib/engine/programs";
 import { getRoleById, ROLE_GROUPS } from "@/lib/engine/roles";
 import type {
+  CollaborationEnablement,
   ConflictApproach,
   Decision,
   DevelopmentalProgram,
   EconomyCondition,
   Industry,
+  InvestmentLevel,
+  OrganizationalStructure,
   PositionToFill,
+  ProcessFocus,
   SalaryBand,
   Strategy,
 } from "@/lib/engine/types";
 import { CompensationBreakdown } from "@/components/decisions/CompensationBreakdown";
+import { DecisionGuidance } from "@/components/decisions/DecisionGuidance";
 import { IndustryGuidance } from "@/components/decisions/IndustryGuidance";
 import { MetricPreview } from "@/components/decisions/MetricPreview";
 import { ScaffoldingText } from "@/components/decisions/ScaffoldingText";
 import { BSCScorecard } from "@/components/results/BSCScorecard";
+import { budgetModuleShares } from "@/lib/engine/budget-shares";
+import { MODULE_TAB_GUIDANCE } from "@/lib/engine/industry-norms";
 import { deriveTrainingBudgetPerEe } from "@/lib/engine/training";
 import { useSimulationConfig } from "@/hooks/useSimulationConfig";
 import { formatCurrency } from "@/lib/utils";
@@ -46,7 +57,19 @@ const MODULES = [
   "Training",
   "Relations",
   "Compensation",
+  "Org Design",
+  "DEI",
 ] as const;
+
+const MODULE_LABELS: Record<(typeof MODULES)[number], string> = {
+  Recruitment: "Recruitment & Selection",
+  Performance: "Performance Management",
+  Training: "Training & Development",
+  Relations: "Employee Relations",
+  Compensation: "Compensation & Benefits",
+  "Org Design": "Org Design & Change",
+  DEI: "DEI Initiatives",
+};
 
 const SHRM_BADGES: Record<string, string> = {
   Recruitment: "Talent Acquisition",
@@ -54,6 +77,43 @@ const SHRM_BADGES: Record<string, string> = {
   Training: "Learning & Development",
   Relations: "Employee & Labor Relations",
   Compensation: "Total Rewards",
+  "Org Design": "Organization",
+  DEI: "Diversity, Equity & Inclusion",
+};
+
+const ORG_STRUCTURES: OrganizationalStructure[] = [
+  "Functional",
+  "Divisional",
+  "Matrix",
+  "Team-Based",
+  "Flat",
+];
+
+const PROCESS_FOCUS_OPTIONS: ProcessFocus[] = [
+  "Efficiency",
+  "Quality",
+  "Innovation",
+  "Customer Responsiveness",
+  "Agility",
+];
+
+const COLLABORATION_OPTIONS: CollaborationEnablement[] = [
+  "Limited",
+  "Standard",
+  "Enhanced",
+  "Highly Integrated",
+];
+
+const STRUCTURE_CUES: Record<OrganizationalStructure, string> = {
+  Functional:
+    "Functional structures can support efficiency and specialization but may reduce cross-functional coordination.",
+  Divisional:
+    "Divisional structures can improve market or product accountability but may duplicate functions.",
+  Matrix:
+    "Matrix structures can strengthen cross-functional integration but may introduce role ambiguity.",
+  "Team-Based":
+    "Team-based structures can increase collaboration and adaptability but may reduce clear hierarchical accountability.",
+  Flat: "Flat structures can speed decisions and empower employees but may stretch managerial capacity.",
 };
 
 const SALARY_BAND_OPTIONS: { value: SalaryBand; label: string }[] = [
@@ -120,6 +180,8 @@ function DecisionFormInner({
     "training",
     "relations",
     "compensation",
+    "org-design",
+    "dei",
   ] as const;
 
   // Deep-link from Capsim-style sidebar: ?tab=recruitment|performance|...
@@ -167,6 +229,16 @@ function DecisionFormInner({
       ),
     [decision, prior.headcount, industryConfig, industry, configReady]
   );
+
+  const moduleShares = useMemo(() => budgetModuleShares(budget), [budget]);
+
+  const activeModule = MODULES[activeTab];
+  const yourInvestmentPct = useMemo(() => {
+    const keys = MODULE_TAB_GUIDANCE[activeModule] ?? [];
+    const key = keys[0];
+    if (!key) return null;
+    return moduleShares[key] ?? null;
+  }, [activeModule, moduleShares]);
 
   const derivedTrainingPerEe = useMemo(
     () => deriveTrainingBudgetPerEe(decision),
@@ -222,30 +294,19 @@ function DecisionFormInner({
       {!configReady && (
         <p className="text-xs text-slate-500">Loading simulation parameters…</p>
       )}
-      <div className="flex flex-wrap gap-2 text-sm text-slate-600">
-        <span className="rounded-full bg-slate-100 px-3 py-1">Industry: {industry}</span>
-        <span className="rounded-full bg-slate-100 px-3 py-1">Strategy: {strategy}</span>
-        <span className="rounded-full bg-slate-100 px-3 py-1">Economy: {economy}</span>
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-[#dde1e6] bg-white px-3 py-2 text-xs font-medium text-[#1f2937]">
+        <span>Industry: {industry}</span>
+        <span className="text-[#dde1e6]">|</span>
+        <span>Strategy: {strategy}</span>
+        <span className="text-[#dde1e6]">|</span>
+        <span>Economy: {economy}</span>
+        <span className="text-[#dde1e6]">|</span>
+        <span>
+          HR Decisions {activeTab + 1} of {MODULES.length}
+        </span>
       </div>
 
       <BudgetTracker budget={budget} />
-
-      {warnings.length > 0 && (
-        <ul className="space-y-2">
-          {warnings.map((w, i) => (
-            <li
-              key={i}
-              className={`rounded-lg px-3 py-2 text-sm ${
-                w.severity === "critical"
-                  ? "bg-red-50 text-red-800"
-                  : "bg-amber-50 text-amber-900"
-              }`}
-            >
-              <strong>{w.module}:</strong> {w.message}
-            </li>
-          ))}
-        </ul>
-      )}
 
       <div className="overflow-x-auto border-b border-slate-200 pb-2">
         <div className="flex w-max min-w-full gap-1">
@@ -260,7 +321,7 @@ function DecisionFormInner({
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
-              {mod}
+              {MODULE_LABELS[mod]}
             </button>
           ))}
         </div>
@@ -268,10 +329,65 @@ function DecisionFormInner({
 
       <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
         <p className="text-xs font-medium uppercase tracking-wide text-[#e67e22]">
-          SHRM BASK: {SHRM_BADGES[MODULES[activeTab]]}
+          SHRM BASK · {SHRM_BADGES[MODULES[activeTab]]}
         </p>
+        <h2 className="mt-1 text-xl font-bold text-[#0f172a]">
+          {MODULE_LABELS[MODULES[activeTab]]}
+        </h2>
         <ScaffoldingText module={MODULES[activeTab]} />
-        <IndustryGuidance industry={industry} module={MODULES[activeTab]} />
+        <DecisionGuidance
+          industry={industry}
+          module={MODULES[activeTab]}
+          yourInvestmentPct={yourInvestmentPct}
+          warnings={warnings}
+        />
+        <IndustryGuidance
+          industry={industry}
+          module={MODULES[activeTab]}
+          yourInvestmentPct={yourInvestmentPct}
+        />
+        <div className="mt-3 rounded-lg border border-[#dde1e6] bg-[#f8f9fb] px-3 py-2 text-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-[#6b7280]">
+            Module Investment
+          </p>
+          <p className="mt-1 font-semibold text-[#0f172a]">
+            {formatCurrency(
+              activeTab === 0
+                ? budget.recruitment_spend
+                : activeTab === 1
+                  ? budget.performance_spend
+                  : activeTab === 2
+                    ? budget.training_spend
+                    : activeTab === 3
+                      ? budget.relations_spend
+                      : activeTab === 4
+                        ? budget.compensation_spend
+                        : activeTab === 5
+                          ? budget.org_design_spend
+                          : budget.dei_spend
+            )}{" "}
+            <span className="text-xs font-normal text-[#6b7280]">
+              ({(
+                ((activeTab === 0
+                  ? budget.recruitment_spend
+                  : activeTab === 1
+                    ? budget.performance_spend
+                    : activeTab === 2
+                      ? budget.training_spend
+                      : activeTab === 3
+                        ? budget.relations_spend
+                        : activeTab === 4
+                          ? budget.compensation_spend
+                          : activeTab === 5
+                            ? budget.org_design_spend
+                            : budget.dei_spend) /
+                  Math.max(1, budget.available_budget)) *
+                100
+              ).toFixed(1)}
+              % of HR Budget)
+            </span>
+          </p>
+        </div>
 
         {activeTab === 0 && (
           <div className="mt-4 space-y-4">
@@ -628,6 +744,198 @@ function DecisionFormInner({
               budget={budget}
               headcount={prior.headcount}
               marketSalary={industryConfig.base_market_salary}
+            />
+          </div>
+        )}
+
+        {activeTab === 5 && (
+          <div className="mt-4 space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Organizational Structure">
+                <select
+                  className={formSelectClassName}
+                  value={decision.organizational_structure}
+                  onChange={(e) =>
+                    update(
+                      "organizational_structure",
+                      e.target.value as OrganizationalStructure
+                    )
+                  }
+                >
+                  {ORG_STRUCTURES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Span of Control (avg direct reports)">
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      update(
+                        "span_of_control",
+                        Math.max(2, decision.span_of_control - 1)
+                      )
+                    }
+                  >
+                    −
+                  </Button>
+                  <span className="min-w-[2rem] text-center text-lg font-semibold">
+                    {decision.span_of_control}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      update(
+                        "span_of_control",
+                        Math.min(20, decision.span_of_control + 1)
+                      )
+                    }
+                  >
+                    +
+                  </Button>
+                </div>
+              </Field>
+              <Field label="Process Focus">
+                <select
+                  className={formSelectClassName}
+                  value={decision.process_focus}
+                  onChange={(e) =>
+                    update("process_focus", e.target.value as ProcessFocus)
+                  }
+                >
+                  {PROCESS_FOCUS_OPTIONS.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Change Management Capability">
+                <select
+                  className={formSelectClassName}
+                  value={decision.change_management_capability}
+                  onChange={(e) =>
+                    update(
+                      "change_management_capability",
+                      e.target.value as InvestmentLevel
+                    )
+                  }
+                >
+                  {INVESTMENT_LEVELS.map((level) => (
+                    <option key={level} value={level}>
+                      {level} ({formatCurrency(CHANGE_MGMT_COST[level])})
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Collaboration Enablement">
+                <select
+                  className={formSelectClassName}
+                  value={decision.collaboration_enablement}
+                  onChange={(e) =>
+                    update(
+                      "collaboration_enablement",
+                      e.target.value as CollaborationEnablement
+                    )
+                  }
+                >
+                  {COLLABORATION_OPTIONS.map((level) => (
+                    <option key={level} value={level}>
+                      {level} ({formatCurrency(COLLABORATION_COST[level])})
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+            <p className="rounded-lg bg-[#f8f9fb] px-3 py-2 text-sm text-[#1f2937]">
+              {STRUCTURE_CUES[decision.organizational_structure]}
+            </p>
+            <MetricPreview
+              items={[
+                {
+                  label: "Org Design investment",
+                  value: formatCurrency(budget.org_design_spend),
+                },
+                {
+                  label: "Decision Impact Preview",
+                  value: "— (pending engine validation)",
+                },
+              ]}
+            />
+          </div>
+        )}
+
+        {activeTab === 6 && (
+          <div className="mt-4 space-y-4">
+            {(
+              [
+                [
+                  "dei_diverse_recruitment",
+                  "Diverse Recruitment & Talent Pipelines",
+                  "Stronger pipelines help attract diverse talent and improve representation over time.",
+                ],
+                [
+                  "dei_equity_practices",
+                  "Equity Practices",
+                  "Equitable practices build trust, reduce bias, and support employee satisfaction.",
+                ],
+                [
+                  "dei_inclusion_initiatives",
+                  "Inclusion Initiatives",
+                  "Inclusive environments increase engagement, belonging, and retention.",
+                ],
+                [
+                  "dei_training_education",
+                  "Training & Education",
+                  "Education builds shared language and capability for inclusive leadership.",
+                ],
+                [
+                  "dei_accessibility_support",
+                  "Accessibility & Support",
+                  "Accessibility investments expand opportunity and strengthen belonging.",
+                ],
+              ] as const
+            ).map(([key, label, cue]) => (
+              <div
+                key={key}
+                className="rounded-lg border border-[#f0f1f3] bg-[#f8f9fb] p-3"
+              >
+                <Field label={label}>
+                  <select
+                    className={formSelectClassName}
+                    value={decision[key]}
+                    onChange={(e) =>
+                      update(key, e.target.value as InvestmentLevel)
+                    }
+                  >
+                    {INVESTMENT_LEVELS.map((level) => (
+                      <option key={level} value={level}>
+                        {level} ({formatCurrency(DEI_LEVEL_COST[level])})
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <p className="mt-2 text-xs text-[#6b7280]">{cue}</p>
+              </div>
+            ))}
+            <MetricPreview
+              items={[
+                {
+                  label: "DEI Module Investment",
+                  value: formatCurrency(budget.dei_spend),
+                },
+                {
+                  label: "Decision Impact Preview",
+                  value: "— (pending engine validation)",
+                },
+              ]}
             />
           </div>
         )}

@@ -49,6 +49,30 @@ export function decisionToRow(
     equity_level: d.equity_level ?? defaults.equity_level,
     hr_tech_level: d.hr_tech_level ?? defaults.hr_tech_level,
 
+    org_design_json: {
+      organizational_structure:
+        d.organizational_structure ?? defaults.organizational_structure,
+      span_of_control: d.span_of_control ?? defaults.span_of_control,
+      process_focus: d.process_focus ?? defaults.process_focus,
+      change_management_capability:
+        d.change_management_capability ??
+        defaults.change_management_capability,
+      collaboration_enablement:
+        d.collaboration_enablement ?? defaults.collaboration_enablement,
+    },
+    dei_initiatives_json: {
+      dei_diverse_recruitment:
+        d.dei_diverse_recruitment ?? defaults.dei_diverse_recruitment,
+      dei_equity_practices:
+        d.dei_equity_practices ?? defaults.dei_equity_practices,
+      dei_inclusion_initiatives:
+        d.dei_inclusion_initiatives ?? defaults.dei_inclusion_initiatives,
+      dei_training_education:
+        d.dei_training_education ?? defaults.dei_training_education,
+      dei_accessibility_support:
+        d.dei_accessibility_support ?? defaults.dei_accessibility_support,
+    },
+
     recruitment_budget_per_hire: 4500,
     positions_to_fill: totalPositions,
     performance_pay_pct: d.bonus_tier,
@@ -62,7 +86,7 @@ export function decisionToRow(
     salary_vs_market_pct: 100,
     benefits_per_ee: 3000,
     bonus_pool_pct: d.bonus_tier,
-    span_of_control: 8,
+    span_of_control: d.span_of_control ?? defaults.span_of_control,
     restructuring_investment: 0,
     change_comm_effort: 3,
     dei_training_per_ee: 100,

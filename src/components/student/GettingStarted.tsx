@@ -2,35 +2,60 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  YourSimulationPanel,
+  StudentPageHeader,
+} from "@/components/student/shell/StudentShell";
 
 export type GettingStartedProps = {
   displayName: string;
+  firstName: string;
   hasTeam: boolean;
   teamName: string | null;
+  courseLabel: string;
   industry: string | null;
   strategy: string | null;
   openRoundId: string | null;
+  openRoundLabel: string;
   decisionDraft: boolean;
   decisionSubmitted: boolean;
   roundsCompleted: number;
 };
 
+type StepStatus = "complete" | "current" | "upcoming" | "waiting";
+
 type Step = {
   id: number;
   title: string;
   description: string;
-  status: "complete" | "current" | "upcoming";
+  status: StepStatus;
   actionHref?: string;
   actionLabel?: string;
 };
 
+function statusLabel(status: StepStatus) {
+  if (status === "complete") return "Complete";
+  if (status === "current") return "In Progress";
+  if (status === "waiting") return "Waiting";
+  return "Not Started";
+}
+
+function statusClass(status: StepStatus) {
+  if (status === "complete") return "bg-emerald-100 text-emerald-800";
+  if (status === "waiting") return "bg-[#fff4e8] text-[#c45f12]";
+  if (status === "current") return "bg-sky-100 text-sky-800";
+  return "bg-slate-100 text-slate-600";
+}
+
 export function GettingStarted({
-  displayName,
+  firstName,
   hasTeam,
   teamName,
+  courseLabel,
   industry,
   strategy,
   openRoundId,
+  openRoundLabel,
   decisionDraft,
   decisionSubmitted,
   roundsCompleted,
@@ -38,164 +63,151 @@ export function GettingStarted({
   const steps: Step[] = [
     {
       id: 1,
-      title: "Welcome & orientation",
+      title: "Welcome & Orientation",
       description:
-        "You are entering an HR business simulation. Your team will allocate discretionary budget across recruitment, performance, training, relations, and compensation each round.",
+        "Learn how the Real HR Simulation works, including rounds, budgets, decisions, results, and the decision-learning cycle.",
       status: "complete",
+      actionHref: "/resources/reference",
+      actionLabel: "Review Again",
     },
     {
       id: 2,
-      title: "Join your company team",
+      title: "Join Your Company Team",
       description: hasTeam
-        ? `You are on ${teamName}. Industry: ${industry}. Strategy: ${strategy}.`
-        : "Enter the join code from your instructor to join a team.",
+        ? `Confirm your company (${teamName}), view teammates, and make sure you are ready to collaborate.`
+        : "Enter the join code from your instructor to join a company team.",
       status: hasTeam ? "complete" : "current",
-      actionHref: hasTeam ? "/join" : "/join",
-      actionLabel: hasTeam ? "Join a new session" : "Join a team",
+      actionHref: hasTeam ? "/team/members" : "/join",
+      actionLabel: hasTeam ? "Manage Team" : "Join Your Team",
     },
     {
       id: 3,
-      title: "Review industry & strategy brief",
+      title: "Review Industry & Strategy Brief",
       description:
-        "Understand how your industry norms and chosen strategy shape Balanced Scorecard weights before you decide.",
+        "Understand your industry environment, competitive landscape, and strategic priorities before making HR decisions.",
       status: !hasTeam
         ? "upcoming"
         : roundsCompleted > 0 || decisionDraft || decisionSubmitted
           ? "complete"
           : "current",
-      actionHref: hasTeam ? "/dashboard" : undefined,
-      actionLabel: hasTeam ? "Open dashboard" : undefined,
+      actionHref: hasTeam ? "/team/industry-strategy" : undefined,
+      actionLabel: hasTeam ? "Open Brief" : undefined,
     },
     {
       id: 4,
-      title: "Make HR decisions",
-      description: openRoundId
-        ? decisionSubmitted
-          ? "Your team has submitted this round. Review forecasts anytime, then wait for results."
-          : decisionDraft
-            ? "A draft is saved. Continue editing or go to Review & Submit."
-            : "A round is open. Enter decisions across the five HR modules."
-        : "Waiting for your instructor to open a round.",
+      title: "Explore Your HR Decision Environment",
+      description:
+        "Learn about the seven HR decision areas, how they are connected, and how your choices can impact results.",
       status: !hasTeam
         ? "upcoming"
-        : decisionSubmitted
+        : decisionDraft || decisionSubmitted || roundsCompleted > 0
           ? "complete"
-          : openRoundId
-            ? "current"
-            : "upcoming",
-      actionHref: openRoundId
-        ? decisionDraft && !decisionSubmitted
-          ? `/round/${openRoundId}/review`
-          : `/round/${openRoundId}/decisions`
-        : undefined,
-      actionLabel: openRoundId
-        ? decisionSubmitted
-          ? "View decisions"
-          : decisionDraft
-            ? "Continue to Review"
-            : "Continue Simulation"
-        : undefined,
+          : "current",
+      actionHref: "/learn/recruitment",
+      actionLabel: "Explore Modules",
     },
     {
       id: 5,
-      title: "Review results & learn",
-      description:
-        "After the round is closed and scored, study your BSC scorecard, feedback, and reports—then improve next round.",
-      status: roundsCompleted > 0 ? "complete" : "upcoming",
-      actionHref: roundsCompleted > 0 ? "/history" : undefined,
-      actionLabel: roundsCompleted > 0 ? "View reports" : undefined,
+      title: "Enter the Simulation",
+      description: openRoundId
+        ? decisionSubmitted
+          ? "Your team has submitted this round. Continue to the Dashboard while you wait for results."
+          : "A round is open. Continue to your Dashboard and HR Decisions."
+        : "Waiting for your instructor to open a round.",
+      status: !hasTeam
+        ? "upcoming"
+        : openRoundId
+          ? decisionSubmitted
+            ? "complete"
+            : "current"
+          : "waiting",
+      actionHref: hasTeam ? "/dashboard" : undefined,
+      actionLabel: hasTeam ? "Go to Dashboard" : undefined,
     },
   ];
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-brand)]">
-          Getting Started · Recommended
-        </p>
-        <h1 className="mt-2 text-2xl font-bold text-[var(--portal-ink)] sm:text-3xl">
-          Welcome, {displayName}
-        </h1>
-        <p className="mt-3 max-w-2xl text-[var(--portal-muted)]">
-          Here&apos;s how to get started. Complete the orientation steps below,
-          then continue into decisions when your instructor opens a round.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <StudentPageHeader
+        title={`Welcome, ${firstName}`}
+        subtitle="Let's get you ready to lead your organization. Follow the steps below to prepare for your first round."
+      />
 
-      <ol className="mt-6 space-y-3">
-        {steps.map((step) => (
-          <li
-            key={step.id}
-            className={`rounded-xl border bg-white p-5 shadow-sm ${
-              step.status === "current"
-                ? "border-[var(--portal-brand)] ring-1 ring-[var(--portal-brand-soft)]"
-                : "border-[var(--portal-sidebar-border)]"
-            }`}
-          >
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
-                      step.status === "complete"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : step.status === "current"
-                          ? "bg-[var(--portal-brand)] text-white"
-                          : "bg-[var(--portal-sidebar)] text-[var(--portal-muted)]"
-                    }`}
-                  >
-                    {step.status === "complete" ? "✓" : step.id}
-                  </span>
-                  <div>
-                    <h2 className="font-semibold text-[var(--portal-ink)]">
-                      {step.title}
-                    </h2>
-                    <p className="mt-1 text-sm text-[var(--portal-muted)]">
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide ${
-                    step.status === "complete"
-                      ? "bg-emerald-50 text-emerald-700"
-                      : step.status === "current"
-                        ? "bg-[var(--portal-brand-soft)] text-[var(--portal-brand-hover)]"
-                        : "bg-[var(--portal-sidebar)] text-[var(--portal-muted)]"
-                  }`}
-                >
-                  {step.status === "complete"
-                    ? "Complete"
-                    : step.status === "current"
-                      ? "Complete now"
-                      : "Upcoming"}
-                </span>
-                {step.actionHref && step.actionLabel && (
-                  <Link href={step.actionHref}>
-                    <Button size="sm">{step.actionLabel}</Button>
-                  </Link>
-                )}
-              </div>
-            </div>
-          </li>
-        ))}
-      </ol>
+      <YourSimulationPanel
+        company={teamName ?? "Not joined"}
+        course={courseLabel || "—"}
+        industry={industry ?? "—"}
+        strategy={strategy ?? "—"}
+        roundLabel={openRoundLabel}
+      />
 
-      {openRoundId && (
-        <div className="mt-6 rounded-xl border border-[var(--portal-brand)] bg-[var(--portal-brand)] px-5 py-4 text-white">
-          <p className="text-sm font-medium text-white/90">Ready to play</p>
-          <p className="mt-1 text-lg font-semibold">
-            Continue to your open round
+      <section className="rounded-xl border border-[#dde1e6] bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-[#e67e22]">
+              Getting Started
+            </h2>
+            <p className="mt-1 text-sm text-[#6b7280]">
+              Complete these steps to prepare for the simulation.
+            </p>
+          </div>
+          <p className="text-xs text-[#6b7280]">
+            ✓ Complete · ◉ In Progress · ○ Not Started · ◷ Waiting
           </p>
-          <Link href={`/round/${openRoundId}/decisions`} className="mt-3 inline-block">
-            <Button className="bg-white text-[var(--portal-ink)] hover:bg-[var(--portal-brand-soft)]">
-              Continue Simulation →
+        </div>
+
+        <ol className="mt-5 space-y-3">
+          {steps.map((step) => (
+            <li
+              key={step.id}
+              className="rounded-xl border border-[#f0f1f3] bg-[#f8f9fb] p-4"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-bold text-[#0f172a]">
+                      Step {step.id}. {step.title}
+                    </span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${statusClass(step.status)}`}
+                    >
+                      {statusLabel(step.status)}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm text-[#6b7280]">{step.description}</p>
+                </div>
+                {step.actionHref && step.actionLabel ? (
+                  <Link href={step.actionHref} className="shrink-0">
+                    <Button size="sm" variant={step.status === "complete" ? "outline" : "default"}>
+                      {step.actionLabel}
+                    </Button>
+                  </Link>
+                ) : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="rounded-xl border border-[#dde1e6] bg-white p-5 shadow-sm">
+        <h2 className="font-semibold text-[#0f172a]">Need help?</h2>
+        <p className="mt-2 text-sm text-[#6b7280]">
+          Visit the Help Center for guides and FAQs, or open Resources for reference
+          materials.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link href="/help">
+            <Button variant="outline" size="sm">
+              Go to Help Center
+            </Button>
+          </Link>
+          <Link href="/resources">
+            <Button variant="outline" size="sm">
+              Open Resources
             </Button>
           </Link>
         </div>
-      )}
+      </section>
     </div>
   );
 }

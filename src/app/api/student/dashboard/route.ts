@@ -11,13 +11,23 @@ export async function GET() {
 
   const { data: membership } = await supabase
     .from("team_members")
-    .select("team_id, teams(id, session_id)")
+    .select(
+      "team_id, teams(id, name, industry, strategy, session_id, sessions(name, course_code, semester))"
+    )
     .eq("user_id", user!.id)
     .maybeSingle();
 
   const team = membership?.teams as unknown as {
     id: string;
+    name: string;
+    industry: string | null;
+    strategy: string | null;
     session_id: string;
+    sessions: {
+      name: string;
+      course_code: string | null;
+      semester: string | null;
+    };
   } | null;
 
   if (!team) {
@@ -25,6 +35,7 @@ export async function GET() {
       hasTeam: false,
       openRound: null,
       decision: null,
+      simulation: null,
     });
   }
 
@@ -48,9 +59,29 @@ export async function GET() {
       : { exists: false, is_submitted: false };
   }
 
+  const course = [
+    team.sessions?.name,
+    team.sessions?.course_code,
+    team.sessions?.semester,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  const roundLabel = openRound
+    ? `Round ${openRound.round_number} — ${openRound.status.toUpperCase()}`
+    : "Not Open — Waiting for Instructor";
+
   return NextResponse.json({
     hasTeam: true,
     openRound: openRound ?? null,
     decision,
+    simulation: {
+      company: team.name,
+      course: course || team.sessions?.name || "—",
+      industry: team.industry ?? "—",
+      strategy: team.strategy ?? "—",
+      roundLabel,
+      economy: openRound?.economy_condition ?? null,
+    },
   });
 }

@@ -9,7 +9,7 @@ export function MetricPreview({ items }: MetricPreviewProps) {
   return (
     <div className="rounded-lg border border-[#f5d0a9] bg-[#fff4e8]/70 p-3">
       <p className="text-xs font-medium uppercase tracking-wide text-[#c45f12]">
-        Live preview
+        Decision Impact Preview
       </p>
       <dl className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
         {items.map((item) => (

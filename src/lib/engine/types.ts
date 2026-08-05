@@ -62,6 +62,33 @@ export type DevelopmentalProgram =
   | "Compliance"
   | "Project Management";
 
+export type OrganizationalStructure =
+  | "Functional"
+  | "Divisional"
+  | "Matrix"
+  | "Team-Based"
+  | "Flat";
+
+export type ProcessFocus =
+  | "Efficiency"
+  | "Quality"
+  | "Innovation"
+  | "Customer Responsiveness"
+  | "Agility";
+
+export type InvestmentLevel =
+  | "Minimal"
+  | "Basic"
+  | "Moderate"
+  | "Strong"
+  | "Advanced";
+
+export type CollaborationEnablement =
+  | "Limited"
+  | "Standard"
+  | "Enhanced"
+  | "Highly Integrated";
+
 export interface PositionToFill {
   role_id: string;
   count: number;
@@ -113,6 +140,20 @@ export interface Decision {
   equity_level: 0 | 1 | 2;
 
   hr_tech_level: 0 | 1 | 2;
+
+  /** Org Design & Change (Decision 6) — stored now; structural scoring later */
+  organizational_structure: OrganizationalStructure;
+  span_of_control: number;
+  process_focus: ProcessFocus;
+  change_management_capability: InvestmentLevel;
+  collaboration_enablement: CollaborationEnablement;
+
+  /** DEI Initiatives (Decision 7) — portfolio levels; scoring later */
+  dei_diverse_recruitment: InvestmentLevel;
+  dei_equity_practices: InvestmentLevel;
+  dei_inclusion_initiatives: InvestmentLevel;
+  dei_training_education: InvestmentLevel;
+  dei_accessibility_support: InvestmentLevel;
 }
 
 export interface PriorState {

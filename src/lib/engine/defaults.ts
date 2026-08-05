@@ -46,6 +46,18 @@ export function createDefaultDecision(
 
     hr_tech_level: 0,
 
+    organizational_structure: "Functional",
+    span_of_control: 6,
+    process_focus: "Efficiency",
+    change_management_capability: "Moderate",
+    collaboration_enablement: "Standard",
+
+    dei_diverse_recruitment: "Moderate",
+    dei_equity_practices: "Moderate",
+    dei_inclusion_initiatives: "Moderate",
+    dei_training_education: "Basic",
+    dei_accessibility_support: "Basic",
+
     ...overrides,
   };
 }

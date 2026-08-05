@@ -2,7 +2,10 @@
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
-import { PortalSidebar } from "./PortalSidebar";
+import {
+  PortalSidebar,
+  type StudentSimulationSummary,
+} from "./PortalSidebar";
 import { PortalTopBar } from "./PortalTopBar";
 import {
   adminNavItems,
@@ -36,15 +39,30 @@ function PortalShellInner({
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [displayName, setDisplayName] = useState("User");
   const [contextTitle, setContextTitle] = useState(roleHomeLabel(role));
   const [contextMeta, setContextMeta] = useState<string | null>(null);
   const [openRoundId, setOpenRoundId] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [hasTeam, setHasTeam] = useState(false);
+  const [simulation, setSimulation] =
+    useState<StudentSimulationSummary | null>(null);
 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const apply = () => {
+      if (mq.matches) setDesktopCollapsed(false);
+    };
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) return;
@@ -68,36 +86,26 @@ function PortalShellInner({
         if (res.ok) {
           const data = await res.json();
           setOpenRoundId(data.openRound?.id ?? null);
-        }
-
-        const { data: membership } = await supabase
-          .from("team_members")
-          .select(
-            "teams(name, industry, strategy, sessions(name, course_code))"
-          )
-          .eq("user_id", user.id)
-          .maybeSingle();
-
-        const team = membership?.teams as unknown as {
-          name: string;
-          industry: string;
-          strategy: string;
-          sessions: { name: string; course_code: string | null };
-        } | null;
-
-        if (team) {
-          setContextTitle(`${team.name} Dashboard`);
-          setContextMeta(
-            [
-              team.sessions?.name,
-              team.sessions?.course_code,
-              team.industry,
-              team.strategy,
-            ]
-              .filter(Boolean)
-              .join(" · ")
-          );
+          setHasTeam(Boolean(data.hasTeam));
+          setSimulation(data.simulation ?? null);
+          if (data.hasTeam && data.simulation) {
+            setContextTitle(`${data.simulation.company} Dashboard`);
+            setContextMeta(
+              [
+                data.simulation.course,
+                data.simulation.industry,
+                data.simulation.strategy,
+              ]
+                .filter(Boolean)
+                .join(" · ")
+            );
+          } else {
+            setContextTitle("Student Portal");
+            setContextMeta("Join a team to begin");
+          }
         } else {
+          setHasTeam(false);
+          setSimulation(null);
           setContextTitle("Student Portal");
           setContextMeta("Join a team to begin");
         }
@@ -148,11 +156,41 @@ function PortalShellInner({
     return professorNavItems({ sessionId });
   }, [role, openRoundId, sessionId]);
 
+  const homeHref =
+    role === "student"
+      ? hasTeam
+        ? "/dashboard"
+        : "/dashboard/getting-started"
+      : role === "admin"
+        ? "/admin"
+        : "/sessions";
+
+  function toggleNav() {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setMobileOpen((o) => !o);
+    } else {
+      setDesktopCollapsed((c) => !c);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#eef0f3]">
-      {/* Fixed desktop sidebar — stays visible while content scrolls */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[240px] lg:block">
-        <PortalSidebar items={items} brandSubtitle={roleHomeLabel(role)} />
+      <aside
+        className={`fixed inset-y-0 left-0 z-30 hidden overflow-hidden transition-[width] duration-200 lg:block ${
+          desktopCollapsed ? "w-0" : "w-[240px]"
+        }`}
+      >
+        {!desktopCollapsed && (
+          <PortalSidebar
+            items={items}
+            brandSubtitle={roleHomeLabel(role)}
+            displayName={displayName}
+            roleLabel={roleBadge(role)}
+            homeHref={homeHref}
+            showStudentChrome={role === "student"}
+            simulation={role === "student" ? simulation : null}
+          />
+        )}
       </aside>
 
       {mobileOpen && (
@@ -167,20 +205,30 @@ function PortalShellInner({
             <PortalSidebar
               items={items}
               brandSubtitle={roleHomeLabel(role)}
+              displayName={displayName}
+              roleLabel={roleBadge(role)}
+              homeHref={homeHref}
+              showStudentChrome={role === "student"}
+              simulation={role === "student" ? simulation : null}
               onNavigate={() => setMobileOpen(false)}
             />
           </div>
         </>
       )}
 
-      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[240px]">
+      <div
+        className={`flex min-h-screen min-w-0 flex-col ${desktopCollapsed ? "" : "lg:pl-[240px]"}`}
+      >
         <PortalTopBar
           displayName={displayName}
           roleLabel={roleBadge(role)}
           contextTitle={contextTitle}
           contextMeta={contextMeta}
-          mobileOpen={mobileOpen}
-          onToggleMobile={() => setMobileOpen((o) => !o)}
+          mobileOpen={mobileOpen || !desktopCollapsed}
+          onToggleMobile={toggleNav}
+          homeHref={homeHref}
+          helpHref={role === "student" ? "/help" : "/about"}
+          showBrandInBar={role === "student"}
         />
         <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>

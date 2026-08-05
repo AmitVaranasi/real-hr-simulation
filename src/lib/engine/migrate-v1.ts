@@ -1,9 +1,13 @@
 import { createDefaultDecision } from "./defaults";
 import { ROLE_GROUPS } from "./roles";
 import type {
+  CollaborationEnablement,
   ConflictApproach,
   Decision,
   DevelopmentalProgram,
+  InvestmentLevel,
+  OrganizationalStructure,
+  ProcessFocus,
   SalaryBand,
 } from "./types";
 
@@ -84,6 +88,8 @@ export function migrateV1RowToDecision(row: Record<string, unknown>): Decision {
     bonus_tier,
     equity_level: Number(row.equity_level ?? 0) as 0 | 1 | 2,
     hr_tech_level: Number(row.hr_tech_level ?? 0) as 0 | 1 | 2,
+
+    span_of_control: Number(row.span_of_control ?? base.span_of_control),
   };
 }
 
@@ -132,5 +138,36 @@ export function rowToDecision(row: Record<string, unknown>): Decision {
       (row.conflict_approach as ConflictApproach) ?? base.conflict_approach,
     benefits_pct: Number(row.benefits_pct ?? base.benefits_pct),
     bonus_tier: Number(row.bonus_tier ?? base.bonus_tier) as Decision["bonus_tier"],
+
+    ...(() => {
+      const org = parseJsonColumn<Partial<Decision>>(row.org_design_json, {});
+      const dei = parseJsonColumn<Partial<Decision>>(
+        row.dei_initiatives_json,
+        {}
+      );
+      return {
+        organizational_structure: (org.organizational_structure ??
+          base.organizational_structure) as OrganizationalStructure,
+        span_of_control: Number(
+          org.span_of_control ?? row.span_of_control ?? base.span_of_control
+        ),
+        process_focus: (org.process_focus ??
+          base.process_focus) as ProcessFocus,
+        change_management_capability: (org.change_management_capability ??
+          base.change_management_capability) as InvestmentLevel,
+        collaboration_enablement: (org.collaboration_enablement ??
+          base.collaboration_enablement) as CollaborationEnablement,
+        dei_diverse_recruitment: (dei.dei_diverse_recruitment ??
+          base.dei_diverse_recruitment) as InvestmentLevel,
+        dei_equity_practices: (dei.dei_equity_practices ??
+          base.dei_equity_practices) as InvestmentLevel,
+        dei_inclusion_initiatives: (dei.dei_inclusion_initiatives ??
+          base.dei_inclusion_initiatives) as InvestmentLevel,
+        dei_training_education: (dei.dei_training_education ??
+          base.dei_training_education) as InvestmentLevel,
+        dei_accessibility_support: (dei.dei_accessibility_support ??
+          base.dei_accessibility_support) as InvestmentLevel,
+      };
+    })(),
   };
 }

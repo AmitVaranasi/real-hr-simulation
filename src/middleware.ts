@@ -10,6 +10,7 @@ const PUBLIC_PREFIXES = [
   "/auth",
   "/simulate",
   "/about",
+  "/learn",
   "/api/auth",
 ];
 
@@ -129,6 +130,10 @@ export async function middleware(request: NextRequest) {
     (path.startsWith("/dashboard") ||
       path.startsWith("/round") ||
       path.startsWith("/history") ||
+      path.startsWith("/reports") ||
+      path.startsWith("/team") ||
+      path.startsWith("/resources") ||
+      path.startsWith("/help") ||
       path.startsWith("/leaderboard") ||
       path.startsWith("/join"))
   ) {

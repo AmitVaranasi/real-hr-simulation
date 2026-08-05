@@ -118,11 +118,10 @@ export function StudentLanding({
             {sessionName}
           </p>
           <h1 className="mt-1 text-2xl font-bold sm:text-3xl">
-            Welcome to {team.name} Dashboard
+            {team.name} Dashboard
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-300">
-            Hello {displayName}. From Getting Started, review your team brief,
-            then enter Decisions when a round is open.
+            Hello {displayName}. Where are we now, and what needs to happen next?
           </p>
         </div>
         <div className="grid gap-0 sm:grid-cols-3">
@@ -309,58 +308,42 @@ export function StudentLanding({
         </section>
 
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">Quick links</h2>
+          <h2 className="font-semibold text-slate-900">Next actions</h2>
           <ul className="mt-3 space-y-2 text-sm">
+            {openRound && !decision?.is_submitted ? (
+              <li>
+                <Link
+                  href={`/round/${openRound.id}/decisions`}
+                  className="font-medium text-[#e67e22] hover:underline"
+                >
+                  Continue HR Decisions →
+                </Link>
+              </li>
+            ) : null}
+            {openRound && decision?.exists && !decision.is_submitted ? (
+              <li>
+                <Link
+                  href={`/round/${openRound.id}/review`}
+                  className="font-medium text-[#e67e22] hover:underline"
+                >
+                  Review &amp; Submit →
+                </Link>
+              </li>
+            ) : null}
             <li>
               <Link
-                href="/dashboard/getting-started"
+                href="/reports/workforce-brief"
                 className="font-medium text-[#e67e22] hover:underline"
               >
-                Getting Started
+                Open The Workforce Brief →
               </Link>
             </li>
             <li>
               <Link
-                href="/join"
+                href="/team"
                 className="font-medium text-[#e67e22] hover:underline"
               >
-                Join a new session
-              </Link>
-            </li>
-            {openRound && (
-              <>
-                <li>
-                  <Link
-                    href={`/round/${openRound.id}/decisions`}
-                    className="font-medium text-[#e67e22] hover:underline"
-                  >
-                    Decisions
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={`/round/${openRound.id}/review`}
-                    className="font-medium text-[#e67e22] hover:underline"
-                  >
-                    Review &amp; Submit
-                  </Link>
-                </li>
-              </>
-            )}
-            <li>
-              <Link
-                href="/history"
-                className="font-medium text-[#e67e22] hover:underline"
-              >
-                Reports
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/leaderboard"
-                className="font-medium text-[#e67e22] hover:underline"
-              >
-                Leaderboard
+                Team &amp; Company context →
               </Link>
             </li>
           </ul>

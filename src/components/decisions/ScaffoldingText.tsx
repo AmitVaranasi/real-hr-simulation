@@ -9,6 +9,9 @@ const MODULE_SCAFFOLDING: Record<string, string> = {
     "Choose conflict approach, voice mechanisms, engagement spend, and flexibility. These levers shape satisfaction, engagement, absenteeism, and DEI outcomes.",
   Compensation:
     "Set salary bands by role, bonus tier, benefits, equity, and HR technology level. Compensation and tech investments affect turnover, retention, and financial results.",
+  "Org Design":
+    "Design structure, span of control, process focus, change capability, and collaboration enablement. Fit matters more than selecting the most sophisticated option.",
+  DEI: "Build a coherent DEI portfolio across talent pipelines, equity, inclusion, education, and accessibility — not simply spend more for a higher score.",
 };
 
 export function ScaffoldingText({ module }: { module: string }) {
