@@ -42,10 +42,10 @@ export default async function RoundResultsPage({
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
         <h1 className="text-xl font-bold">Results not yet available</h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-[var(--portal-muted)]">
           Results appear after your instructor closes this round.
         </p>
-        <Link href="/dashboard" className="mt-4 inline-block text-[#e67e22]">
+        <Link href="/dashboard" className="mt-4 inline-block text-[var(--portal-primary)]">
           Back to dashboard
         </Link>
       </div>
@@ -63,7 +63,7 @@ export default async function RoundResultsPage({
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
         <h1 className="text-xl font-bold">Computing results</h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-[var(--portal-muted)]">
           Outcomes are being processed. Check back shortly.
         </p>
       </div>
@@ -105,10 +105,10 @@ export default async function RoundResultsPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <Link href="/dashboard" className="text-sm text-[#e67e22] hover:underline">
+      <Link href="/dashboard" className="text-sm text-[var(--portal-primary)] hover:underline">
         ← Dashboard
       </Link>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">
+      <h1 className="mt-4 text-2xl font-bold text-[var(--portal-title)]">
         Round {round?.round_number} results
       </h1>
       <div className="mt-8">

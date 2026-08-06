@@ -37,7 +37,7 @@ export function LeaderboardRelease({
 
   if (closed.length === 0) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-[var(--portal-muted)]">
         Close a round to release its leaderboard.
       </p>
     );

@@ -8,9 +8,9 @@ export function LeaderboardTable({
   highlightTeamId?: string;
 }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200">
+    <div className="overflow-x-auto rounded-xl border border-[var(--portal-sidebar-border)]">
       <table className="w-full text-sm">
-        <thead className="bg-slate-50 text-left text-slate-600">
+        <thead className="bg-[var(--portal-page)] text-left text-[var(--portal-muted)]">
           <tr>
             <th className="px-4 py-3">Rank</th>
             <th className="px-4 py-3">Team</th>
@@ -26,10 +26,10 @@ export function LeaderboardTable({
             <tr
               key={e.team_id}
               className={`border-t border-slate-100 ${
-                e.team_id === highlightTeamId ? "bg-[#fff4e8]" : ""
+                e.team_id === highlightTeamId ? "bg-[var(--portal-primary-soft)]" : ""
               }`}
             >
-              <td className="px-4 py-3 font-bold text-[#e67e22]">#{e.rank}</td>
+              <td className="px-4 py-3 font-bold text-[var(--portal-primary)]">#{e.rank}</td>
               <td className="px-4 py-3 font-medium">{e.team_name}</td>
               <td className="px-4 py-3">{e.industry}</td>
               <td className="px-4 py-3">{e.strategy}</td>

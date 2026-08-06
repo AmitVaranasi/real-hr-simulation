@@ -41,25 +41,25 @@ export default async function JoinPage() {
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-md px-4 py-12 sm:py-16">
-      <p className="text-xs font-semibold uppercase tracking-wider text-[#e67e22]">
+      <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-primary)]">
         Student portal
       </p>
-      <h1 className="mt-1 text-2xl font-bold text-[#1f2937]">
+      <h1 className="mt-1 text-2xl font-bold text-[var(--portal-ink)]">
         {currentTeam ? "Join a new session" : "Join your team"}
       </h1>
-      <p className="mt-2 text-sm text-[#6b7280]">
+      <p className="mt-2 text-sm text-[var(--portal-muted)]">
         {currentTeam
           ? "Enter a join code from another class session. This will switch you to that team (one active team at a time)."
           : "Enter the join code your instructor gave you to join your company team."}
       </p>
 
       {currentTeam && (
-        <div className="mt-4 rounded-lg border border-[#dde1e6] bg-white p-4 text-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]">
+        <div className="mt-4 rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-4 text-sm">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
             Current team
           </p>
-          <p className="mt-1 font-semibold text-[#1f2937]">{currentTeam.name}</p>
-          <p className="text-[#6b7280]">
+          <p className="mt-1 font-semibold text-[var(--portal-ink)]">{currentTeam.name}</p>
+          <p className="text-[var(--portal-muted)]">
             {[currentTeam.sessions?.name, currentTeam.sessions?.course_code]
               .filter(Boolean)
               .join(" · ") || "Active session"}
@@ -69,8 +69,8 @@ export default async function JoinPage() {
 
       <JoinTeamForm allowSwitch={!!currentTeam} />
 
-      <p className="mt-8 text-center text-sm text-[#6b7280]">
-        <Link href="/dashboard" className="font-medium text-[#e67e22] hover:underline">
+      <p className="mt-8 text-center text-sm text-[var(--portal-muted)]">
+        <Link href="/dashboard" className="font-medium text-[var(--portal-primary)] hover:underline">
           Back to dashboard
         </Link>
       </p>

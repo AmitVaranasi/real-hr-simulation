@@ -59,7 +59,7 @@ export function SessionAnnouncementForm({
   return (
     <form onSubmit={handleSubmit} className="mt-3 space-y-3">
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">
+        <span className="font-medium text-[var(--portal-ink)]">
           Announcement (shown on student dashboard)
         </span>
         <textarea
@@ -74,7 +74,7 @@ export function SessionAnnouncementForm({
         <Button type="submit" size="sm" disabled={loading}>
           {loading ? "Saving…" : "Save announcement"}
         </Button>
-        {message && <p className="text-sm text-slate-600">{message}</p>}
+        {message && <p className="text-sm text-[var(--portal-muted)]">{message}</p>}
       </div>
     </form>
   );

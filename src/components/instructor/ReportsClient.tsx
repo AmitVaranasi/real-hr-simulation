@@ -112,7 +112,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
   }, [data]);
 
   if (!data) {
-    return <p className="text-slate-500">Loading reports…</p>;
+    return <p className="text-[var(--portal-muted)]">Loading reports…</p>;
   }
 
   const exportData: ClassExportData = {
@@ -139,7 +139,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-2">
+      <div className="flex flex-wrap gap-2 border-b border-[var(--portal-sidebar-border)] pb-2">
         {tabs.map((t) => (
           <button
             key={t.id}
@@ -147,8 +147,8 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
             onClick={() => setTab(t.id)}
             className={`rounded-lg px-3 py-2 text-sm font-medium ${
               tab === t.id
-                ? "bg-[#e67e22] text-white"
-                : "text-slate-600 hover:bg-slate-100"
+                ? "bg-[var(--portal-primary)] text-white"
+                : "text-[var(--portal-muted)] hover:bg-[#f1f3f5]"
             }`}
           >
             {t.label}
@@ -159,36 +159,36 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
       {tab === "analytics" && analytics && (
         <div className="mt-6 space-y-6">
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <p className="text-xs uppercase text-slate-500">Class avg BSC</p>
-              <p className="mt-1 text-2xl font-bold text-slate-900">
+            <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+              <p className="text-xs uppercase text-[var(--portal-muted)]">Class avg BSC</p>
+              <p className="mt-1 text-2xl font-bold text-[var(--portal-title)]">
                 {analytics.avgScore != null
                   ? analytics.avgScore.toFixed(1)
                   : "—"}
               </p>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <p className="text-xs uppercase text-slate-500">
+            <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+              <p className="text-xs uppercase text-[var(--portal-muted)]">
                 Decisions submitted
               </p>
-              <p className="mt-1 text-2xl font-bold text-slate-900">
+              <p className="mt-1 text-2xl font-bold text-[var(--portal-title)]">
                 {analytics.submitted}
-                <span className="text-base font-normal text-slate-500">
+                <span className="text-base font-normal text-[var(--portal-muted)]">
                   {" "}
                   / {analytics.expected || "—"}
                 </span>
               </p>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <p className="text-xs uppercase text-slate-500">Outcomes scored</p>
-              <p className="mt-1 text-2xl font-bold text-slate-900">
+            <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+              <p className="text-xs uppercase text-[var(--portal-muted)]">Outcomes scored</p>
+              <p className="mt-1 text-2xl font-bold text-[var(--portal-title)]">
                 {analytics.outcomeCount}
               </p>
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="font-semibold text-slate-900">
+          <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+            <h3 className="font-semibold text-[var(--portal-title)]">
               Latest team BSC scores
             </h3>
             <div className="mt-4 h-72 w-full">
@@ -199,7 +199,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                   <YAxis domain={[0, 100]} />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="financial" stackId="a" fill="#e67e22" name="Financial" />
+                  <Bar dataKey="financial" stackId="a" fill="var(--portal-primary)" name="Financial" />
                   <Bar dataKey="employee" stackId="a" fill="#0ea5e9" name="Employee" />
                   <Bar dataKey="process" stackId="a" fill="#10b981" name="Process" />
                   <Bar dataKey="learning" stackId="a" fill="#f59e0b" name="Learning" />
@@ -208,8 +208,8 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="font-semibold text-slate-900">
+          <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+            <h3 className="font-semibold text-[var(--portal-title)]">
               Budget adherence (latest round)
             </h3>
             <div className="mt-4 h-64 w-full">
@@ -219,7 +219,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                   <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                   <YAxis domain={[0, 120]} unit="%" />
                   <Tooltip formatter={(v) => `${Number(v).toFixed(0)}%`} />
-                  <Bar dataKey="adherence" fill="#e67e22" name="Adherence %" />
+                  <Bar dataKey="adherence" fill="var(--portal-primary)" name="Adherence %" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -230,7 +230,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
       {tab === "comparison" && (
         <div className="mt-6 overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50">
+            <thead className="bg-[var(--portal-page)]">
               <tr>
                 <th className="px-3 py-2 text-left">Team</th>
                 {data.rounds.map((r) => (
@@ -317,7 +317,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                       {teamOutcomes.length > 0 && (
                         <a
                           href={`/sessions/${sessionId}/inspect?team=${team.id}&round=${teamOutcomes[teamOutcomes.length - 1]!.round_id}`}
-                          className="text-xs text-[#e67e22] hover:underline"
+                          className="text-xs text-[var(--portal-primary)] hover:underline"
                         >
                           Latest
                         </a>
@@ -333,7 +333,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
 
       {tab === "participation" && (
         <table className="mt-6 w-full text-sm">
-          <thead className="bg-slate-50">
+          <thead className="bg-[var(--portal-page)]">
             <tr>
               <th className="px-3 py-2 text-left">Team</th>
               <th className="px-3 py-2">Round</th>
@@ -397,10 +397,10 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                   return (
                     <div
                       key={String(d.id)}
-                      className="rounded-xl border border-slate-200 bg-white p-4 text-sm"
+                      className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 text-sm"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <p className="font-semibold text-slate-900">
+                        <p className="font-semibold text-[var(--portal-title)]">
                           Round {round?.round_number ?? "?"} (
                           {round?.round_type})
                         </p>
@@ -415,29 +415,29 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                         </span>
                       </div>
                       <dl className="mt-3 grid gap-1 sm:grid-cols-2">
-                        <dt className="text-slate-500">Hires planned</dt>
+                        <dt className="text-[var(--portal-muted)]">Hires planned</dt>
                         <dd>{summary.hireCount}</dd>
-                        <dt className="text-slate-500">Screening rigor</dt>
+                        <dt className="text-[var(--portal-muted)]">Screening rigor</dt>
                         <dd>{String(summary.screening)}</dd>
-                        <dt className="text-slate-500">Diversity goal</dt>
+                        <dt className="text-[var(--portal-muted)]">Diversity goal</dt>
                         <dd>{formatPercent(Number(summary.diversityGoal))}</dd>
-                        <dt className="text-slate-500">% trained</dt>
+                        <dt className="text-[var(--portal-muted)]">% trained</dt>
                         <dd>{formatPercent(Number(summary.trainingPct))}</dd>
-                        <dt className="text-slate-500">Benefits / bonus</dt>
+                        <dt className="text-[var(--portal-muted)]">Benefits / bonus</dt>
                         <dd>
                           {String(summary.benefits)}% / {String(summary.bonus)}%
                         </dd>
-                        <dt className="text-slate-500">Conflict approach</dt>
+                        <dt className="text-[var(--portal-muted)]">Conflict approach</dt>
                         <dd className="capitalize">{String(summary.conflict)}</dd>
                         {outcome && (
                           <>
-                            <dt className="text-slate-500">BSC score</dt>
-                            <dd className="font-medium text-[#c45f12]">
+                            <dt className="text-[var(--portal-muted)]">BSC score</dt>
+                            <dd className="font-medium text-[var(--portal-primary)]">
                               {Number(
                                 outcome.instructor_override ?? outcome.total_score
                               ).toFixed(1)}
                             </dd>
-                            <dt className="text-slate-500">Profit</dt>
+                            <dt className="text-[var(--portal-muted)]">Profit</dt>
                             <dd>
                               {formatCurrency(Number(outcome.profit ?? 0))}
                             </dd>
@@ -449,7 +449,7 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
                 })}
               {data.decisions.filter((d) => d.team_id === selectedTeam)
                 .length === 0 && (
-                <p className="text-sm text-slate-500">No decisions yet.</p>
+                <p className="text-sm text-[var(--portal-muted)]">No decisions yet.</p>
               )}
             </div>
           )}

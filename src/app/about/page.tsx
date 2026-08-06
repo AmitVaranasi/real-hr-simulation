@@ -7,22 +7,22 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="text-2xl font-bold text-slate-900">About Real HR Simulation</h1>
-      <p className="mt-4 text-slate-600 leading-relaxed">
+      <h1 className="text-2xl font-bold text-[var(--portal-title)]">About Real HR Simulation</h1>
+      <p className="mt-4 text-[var(--portal-muted)] leading-relaxed">
         Real HR Simulation is an educational web application for university HR
         and management courses. Student teams make collective human resources
         decisions each round; the simulation engine calculates HR metrics,
         financial outcomes, and Balanced Scorecard scores.
       </p>
-      <p className="mt-4 text-slate-600 leading-relaxed">
+      <p className="mt-4 text-[var(--portal-muted)] leading-relaxed">
         This site is operated for academic use. It uses Supabase for secure
         authentication and data storage. No malware, phishing, or unauthorized
         data collection is performed.
       </p>
-      <p className="mt-4 text-slate-600 leading-relaxed">
+      <p className="mt-4 text-[var(--portal-muted)] leading-relaxed">
         <strong>Contact:</strong> Course instructor or project administrator.
       </p>
-      <Link href="/" className="mt-8 inline-block text-[#e67e22] hover:underline">
+      <Link href="/" className="mt-8 inline-block text-[var(--portal-primary)] hover:underline">
         ← Back to home
       </Link>
     </div>

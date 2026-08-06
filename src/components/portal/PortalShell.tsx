@@ -48,6 +48,11 @@ function PortalShellInner({
   const [hasTeam, setHasTeam] = useState(false);
   const [simulation, setSimulation] =
     useState<StudentSimulationSummary | null>(null);
+  const [courseSummary, setCourseSummary] = useState<{
+    courseName: string;
+    term: string;
+    roundsSummary: string;
+  } | null>(null);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -140,14 +145,32 @@ function PortalShellInner({
               .filter(Boolean)
               .join(" · ")
           );
+          setCourseSummary({
+            courseName: active.name,
+            term: [active.course_code, active.semester]
+              .filter(Boolean)
+              .join(" · ") || "Active course",
+            roundsSummary: "Course operations · Simulation Lab",
+          });
         } else {
           setContextTitle("Professor Portal");
           setContextMeta("Create a session to begin");
+          setCourseSummary(null);
         }
       }
     }
 
     void load();
+
+    // Keep open-round nav fresh when instructor opens/closes rounds
+    if (role !== "student") return;
+    const interval = window.setInterval(() => void load(), 15000);
+    const onFocus = () => void load();
+    window.addEventListener("focus", onFocus);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+    };
   }, [role, pathname]);
 
   const items: PortalNavItem[] = useMemo(() => {
@@ -174,10 +197,10 @@ function PortalShellInner({
   }
 
   return (
-    <div className="min-h-screen bg-[#eef0f3]">
+    <div className="min-h-screen bg-[var(--portal-page)]">
       <aside
         className={`fixed inset-y-0 left-0 z-30 hidden overflow-hidden transition-[width] duration-200 lg:block ${
-          desktopCollapsed ? "w-0" : "w-[240px]"
+          desktopCollapsed ? "w-0" : "w-[260px]"
         }`}
       >
         {!desktopCollapsed && (
@@ -188,7 +211,9 @@ function PortalShellInner({
             roleLabel={roleBadge(role)}
             homeHref={homeHref}
             showStudentChrome={role === "student"}
+            darkNav={role === "instructor" || role === "admin"}
             simulation={role === "student" ? simulation : null}
+            courseSummary={role === "instructor" ? courseSummary : null}
           />
         )}
       </aside>
@@ -201,7 +226,7 @@ function PortalShellInner({
             aria-label="Close sidebar"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 z-50 w-[240px] lg:hidden">
+          <div className="fixed inset-y-0 left-0 z-50 w-[260px] lg:hidden">
             <PortalSidebar
               items={items}
               brandSubtitle={roleHomeLabel(role)}
@@ -209,7 +234,9 @@ function PortalShellInner({
               roleLabel={roleBadge(role)}
               homeHref={homeHref}
               showStudentChrome={role === "student"}
+              darkNav={role === "instructor" || role === "admin"}
               simulation={role === "student" ? simulation : null}
+              courseSummary={role === "instructor" ? courseSummary : null}
               onNavigate={() => setMobileOpen(false)}
             />
           </div>
@@ -217,7 +244,7 @@ function PortalShellInner({
       )}
 
       <div
-        className={`flex min-h-screen min-w-0 flex-col ${desktopCollapsed ? "" : "lg:pl-[240px]"}`}
+        className={`flex min-h-screen min-w-0 flex-col ${desktopCollapsed ? "" : "lg:pl-[260px]"}`}
       >
         <PortalTopBar
           displayName={displayName}
@@ -227,8 +254,14 @@ function PortalShellInner({
           mobileOpen={mobileOpen || !desktopCollapsed}
           onToggleMobile={toggleNav}
           homeHref={homeHref}
-          helpHref={role === "student" ? "/help" : "/about"}
-          showBrandInBar={role === "student"}
+          helpHref={
+            role === "student"
+              ? "/help"
+              : role === "instructor"
+                ? "/sessions/help"
+                : "/about"
+          }
+          showBrandInBar={role === "student" || role === "instructor"}
         />
         <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
@@ -246,7 +279,7 @@ export function PortalShell({
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#eef0f3] text-sm text-[#6b7280]">
+        <div className="flex min-h-screen items-center justify-center bg-[var(--portal-page)] text-sm text-[var(--portal-muted)]">
           Loading portal…
         </div>
       }

@@ -74,12 +74,12 @@ export default async function FinancialRatiosPage() {
             ].map((r) => (
               <div
                 key={r.label}
-                className="rounded-xl border border-[#dde1e6] bg-white p-4 shadow-sm"
+                className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm"
               >
-                <p className="text-xs uppercase tracking-wide text-[#6b7280]">
+                <p className="text-xs uppercase tracking-wide text-[var(--portal-muted)]">
                   {r.label}
                 </p>
-                <p className="mt-2 text-2xl font-bold text-[#0f172a]">{r.value}</p>
+                <p className="mt-2 text-2xl font-bold text-[var(--portal-title)]">{r.value}</p>
               </div>
             ))}
           </div>

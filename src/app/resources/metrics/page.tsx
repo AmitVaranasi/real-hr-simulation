@@ -1,46 +1,70 @@
-import {
-  PlaceholderPanel,
-  StudentPageHeader,
-} from "@/components/student/shell/StudentShell";
+import { ResourcesSectionPage } from "@/components/student/ResourcesOverview";
 
-const METRICS = [
-  "Cost per Hire",
-  "Time to Fill",
-  "Hiring Quality",
-  "Turnover Rate",
-  "Employee Satisfaction",
-  "Engagement",
-  "Training ROI",
-  "Productivity Index",
-  "Compensation Ratio",
-  "Budget Adherence",
-  "DEI Score",
-  "HR Tech Score",
+const GROUPS = [
+  {
+    title: "Talent Acquisition",
+    metrics: ["Cost per Hire", "Time to Fill", "Hiring Quality"],
+  },
+  {
+    title: "Workforce & Employee Experience",
+    metrics: [
+      "Turnover Rate",
+      "Turnover Cost",
+      "Employee Satisfaction",
+      "Engagement",
+      "Absenteeism",
+    ],
+  },
+  {
+    title: "Learning & Talent Development",
+    metrics: [
+      "Training ROI",
+      "Training Effectiveness",
+      "Succession Pipeline",
+    ],
+  },
+  {
+    title: "Performance Management",
+    metrics: ["Review Coverage"],
+  },
+  {
+    title: "Compensation & HR Financials",
+    metrics: ["Compensation Ratio", "Budget Adherence", "Productivity Index"],
+  },
+  {
+    title: "Workforce Inclusion",
+    metrics: ["DEI Score"],
+  },
+  {
+    title: "HR Technology & Capability",
+    metrics: ["HR Tech Score"],
+  },
 ];
 
 export default function MetricsReferencePage() {
   return (
-    <div>
-      <StudentPageHeader
-        title="HR Metrics Reference"
-        subtitle="Definitions for metrics used across The Workforce Brief and Decision Impact Preview."
-      />
-      <PlaceholderPanel title="Metric catalog">
-        <p className="mb-3">
-          Detailed metric pages will expand as instructional content is finalized.
-          Current validated metric names used in the simulation include:
-        </p>
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {METRICS.map((m) => (
-            <li
-              key={m}
-              className="rounded-lg border border-[#f0f1f3] bg-[#f8f9fb] px-3 py-2 text-sm text-[#1f2937]"
-            >
-              {m}
-            </li>
-          ))}
-        </ul>
-      </PlaceholderPanel>
-    </div>
+    <ResourcesSectionPage
+      title="HR Metrics Reference"
+      subtitle="Metric groups used in The Workforce Brief and related analytics views."
+    >
+      <div className="grid gap-4 md:grid-cols-2">
+        {GROUPS.map((g) => (
+          <section
+            key={g.title}
+            className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm"
+          >
+            <h2 className="font-semibold text-[var(--portal-title)]">{g.title}</h2>
+            <ul className="mt-3 space-y-1.5 text-sm text-[var(--portal-ink)]">
+              {g.metrics.map((m) => (
+                <li key={m} className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-500" />
+                  {m}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </ResourcesSectionPage>
   );
 }

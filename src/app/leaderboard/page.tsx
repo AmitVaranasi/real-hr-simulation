@@ -38,10 +38,10 @@ export default async function LeaderboardPage({
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
         <h1 className="text-xl font-bold">Leaderboard</h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-[var(--portal-muted)]">
           Your instructor has not released a leaderboard yet.
         </p>
-        <Link href="/dashboard" className="mt-4 inline-block text-[#e67e22]">
+        <Link href="/dashboard" className="mt-4 inline-block text-[var(--portal-primary)]">
           Back to dashboard
         </Link>
       </div>
@@ -65,11 +65,11 @@ export default async function LeaderboardPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <Link href="/dashboard" className="text-sm text-[#e67e22] hover:underline">
+      <Link href="/dashboard" className="text-sm text-[var(--portal-primary)] hover:underline">
         ← Dashboard
       </Link>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">Leaderboard</h1>
-      <p className="text-slate-600">Round {round.round_number}</p>
+      <h1 className="mt-4 text-2xl font-bold text-[var(--portal-title)]">Leaderboard</h1>
+      <p className="text-[var(--portal-muted)]">Round {round.round_number}</p>
 
       {releasedRounds.length > 1 && (
         <div className="mt-4 flex flex-wrap gap-2">
@@ -79,8 +79,8 @@ export default async function LeaderboardPage({
               href={`/leaderboard?round=${r.id}`}
               className={`rounded-lg px-3 py-1 text-sm ${
                 r.id === round.id
-                  ? "bg-[#e67e22] text-white"
-                  : "bg-slate-100 text-slate-700"
+                  ? "bg-[var(--portal-primary)] text-white"
+                  : "bg-[#f1f3f5] text-[var(--portal-ink)]"
               }`}
             >
               Round {r.round_number}

@@ -81,6 +81,8 @@ export async function GET() {
       industry: team.industry ?? "—",
       strategy: team.strategy ?? "—",
       roundLabel,
+      roundNumber: openRound?.round_number ?? null,
+      roundStatus: openRound ? "Open" : "Waiting",
       economy: openRound?.economy_condition ?? null,
     },
   });

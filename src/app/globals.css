@@ -2,36 +2,60 @@
 
 /* Force light theme — avoids dark system preference hiding slate-900 text */
 :root {
-  --background: #f3f4f6;
+  --background: #f5f6f8;
   --foreground: #1f2937;
   color-scheme: light;
 
-  /* Capsim-inspired portal tokens (Real HR brand) */
-  --portal-brand: #e67e22;
-  --portal-brand-hover: #d35400;
-  --portal-brand-soft: #fff4e8;
-  --portal-sidebar: #f4f5f7;
-  --portal-sidebar-border: #dde1e6;
+  /* Cooper blue-only palette */
+  --portal-primary: #1d6ef5;
+  --portal-primary-hover: #1558d6;
+  --portal-primary-soft: #eaf2ff;
+  --portal-accent-blue: #1d6ef5;
+  --portal-accent-blue-soft: #eaf2ff;
+  /* brand aliases → blue (no orange) */
+  --portal-brand: #1d6ef5;
+  --portal-brand-hover: #1558d6;
+  --portal-brand-soft: #eaf2ff;
+  --portal-navy: #0a1f3d;
+  --portal-navy-soft: #132a4a;
+  --portal-title: #0b1f3a;
+  --portal-sidebar: #ffffff;
+  --portal-sidebar-border: #e2e6ec;
   --portal-ink: #1f2937;
   --portal-muted: #6b7280;
-  --portal-accent-blue: #2563eb;
   --portal-card: #ffffff;
-  --portal-page: #eef0f3;
+  --portal-page: #f5f6f8;
+  --portal-success: #16a34a;
+  --portal-warning: #f59e0b;
+  --portal-purple: #7c3aed;
+  --portal-icon-green: #16a34a;
+  --portal-icon-orange: #1d6ef5;
+  --portal-icon-blue: #1d6ef5;
+  --portal-icon-purple: #7c3aed;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-portal-primary: var(--portal-primary);
+  --color-portal-primary-hover: var(--portal-primary-hover);
+  --color-portal-primary-soft: var(--portal-primary-soft);
   --color-portal-brand: var(--portal-brand);
   --color-portal-brand-hover: var(--portal-brand-hover);
   --color-portal-brand-soft: var(--portal-brand-soft);
+  --color-portal-navy: var(--portal-navy);
+  --color-portal-navy-soft: var(--portal-navy-soft);
+  --color-portal-title: var(--portal-title);
   --color-portal-sidebar: var(--portal-sidebar);
   --color-portal-sidebar-border: var(--portal-sidebar-border);
   --color-portal-ink: var(--portal-ink);
   --color-portal-muted: var(--portal-muted);
   --color-portal-accent-blue: var(--portal-accent-blue);
+  --color-portal-accent-blue-soft: var(--portal-accent-blue-soft);
   --color-portal-card: var(--portal-card);
   --color-portal-page: var(--portal-page);
+  --color-portal-success: var(--portal-success);
+  --color-portal-warning: var(--portal-warning);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -49,7 +73,6 @@ body {
   max-width: 100%;
 }
 
-/* Keep native controls on light theme (macOS dark mode otherwise styles selects dark) */
 select,
 textarea,
 input:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
@@ -64,4 +87,29 @@ select {
 select option {
   background-color: #ffffff;
   color: #1f2937;
+}
+
+.portal-card {
+  border: 1px solid var(--portal-sidebar-border);
+  background: var(--portal-card);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+}
+
+.portal-link {
+  color: var(--portal-primary);
+  font-weight: 600;
+}
+
+.portal-link:hover {
+  text-decoration: underline;
+}
+
+.portal-brand-text {
+  color: var(--portal-primary);
+}
+
+.portal-section-title {
+  color: var(--portal-title);
+  font-weight: 700;
 }

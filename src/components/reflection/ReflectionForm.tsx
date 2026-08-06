@@ -40,19 +40,19 @@ export function ReflectionForm({ teamId, roundId }: ReflectionFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-slate-200 bg-white p-6">
-      <h3 className="font-semibold text-slate-900">Team reflection</h3>
-      <p className="mt-1 text-sm text-slate-500">
+    <form onSubmit={handleSubmit} className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-6">
+      <h3 className="font-semibold text-[var(--portal-title)]">Team reflection</h3>
+      <p className="mt-1 text-sm text-[var(--portal-muted)]">
         100–2000 characters. Explain your HR decisions and what you learned.
       </p>
       <textarea
-        className="mt-4 w-full min-w-0 rounded-lg border border-slate-300 bg-white p-3 text-sm text-slate-900 [color-scheme:light]"
+        className="mt-4 w-full min-w-0 rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-3 text-sm text-[var(--portal-title)] [color-scheme:light]"
         rows={6}
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Our team focused on..."
       />
-      <p className="mt-1 text-xs text-slate-400">{content.length} / 2000</p>
+      <p className="mt-1 text-xs text-[var(--portal-muted)]">{content.length} / 2000</p>
       <Button type="submit" className="mt-4" disabled={loading}>
         {loading ? "Submitting…" : "Submit reflection"}
       </Button>

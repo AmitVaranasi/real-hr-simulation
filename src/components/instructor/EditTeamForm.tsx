@@ -84,7 +84,7 @@ export function EditTeamForm({
         </p>
       )}
       <label className="flex min-w-0 flex-col text-sm sm:col-span-2 lg:col-span-1">
-        <span className="font-medium text-slate-700">Team name</span>
+        <span className="font-medium text-[var(--portal-ink)]">Team name</span>
         <input
           required
           className={`mt-1 ${formInputClassName}`}
@@ -93,7 +93,7 @@ export function EditTeamForm({
         />
       </label>
       <label className="flex min-w-0 flex-col text-sm">
-        <span className="font-medium text-slate-700">Industry</span>
+        <span className="font-medium text-[var(--portal-ink)]">Industry</span>
         <select
           className={`mt-1 ${formSelectClassName}`}
           value={industry}
@@ -105,7 +105,7 @@ export function EditTeamForm({
         </select>
       </label>
       <label className="flex min-w-0 flex-col text-sm">
-        <span className="font-medium text-slate-700">Strategy</span>
+        <span className="font-medium text-[var(--portal-ink)]">Strategy</span>
         <select
           className={`mt-1 ${formSelectClassName}`}
           value={strategy}

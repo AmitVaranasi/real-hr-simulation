@@ -57,11 +57,11 @@ export function CurrentRoundCard({ initialOpenRound }: CurrentRoundCardProps) {
   }, [fetchStatus]);
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5">
+    <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5">
       <div className="flex items-start justify-between gap-2">
-        <h2 className="font-semibold text-slate-900">Current round</h2>
+        <h2 className="font-semibold text-[var(--portal-title)]">Current round</h2>
         {checking && !openRound && (
-          <span className="text-xs text-slate-400">Checking…</span>
+          <span className="text-xs text-[var(--portal-muted)]">Checking…</span>
         )}
       </div>
       {openRound ? (
@@ -79,7 +79,7 @@ export function CurrentRoundCard({ initialOpenRound }: CurrentRoundCardProps) {
         </>
       ) : (
         <>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-[var(--portal-muted)]">
             No round open yet. This page updates automatically when your
             instructor opens a round.
           </p>

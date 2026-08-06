@@ -1,45 +1,57 @@
-import Link from "next/link";
-import {
-  PlaceholderPanel,
-  StudentPageHeader,
-} from "@/components/student/shell/StudentShell";
+import { ResourcesOverview } from "@/components/student/ResourcesOverview";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function ResourcesHomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function ResourcesHomePage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login?next=/resources");
+
+  const { data: membership } = await supabase
+    .from("team_members")
+    .select("teams(name, industry, strategy, session_id)")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const team = membership?.teams as unknown as {
+    name: string;
+    industry: string;
+    strategy: string;
+    session_id: string;
+  } | null;
+
+  let openRound: {
+    round_number: number;
+    economy_condition: string;
+  } | null = null;
+  if (team) {
+    const { data } = await supabase
+      .from("rounds")
+      .select("round_number, economy_condition")
+      .eq("session_id", team.session_id)
+      .eq("status", "open")
+      .maybeSingle();
+    openRound = data;
+  }
+
   return (
-    <div>
-      <StudentPageHeader
-        title="Resources"
-        subtitle="Reference materials that support learning before, during, and after HR decisions."
-      />
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Link
-          href="/resources/reference"
-          className="rounded-xl border border-[#dde1e6] bg-white p-5 shadow-sm transition hover:border-[#e67e22]"
-        >
-          <h2 className="font-semibold text-[#0f172a]">
-            Simulation Reference Center
-          </h2>
-          <p className="mt-2 text-sm text-[#6b7280]">
-            How the simulation works, rounds, budgets, and report navigation.
-          </p>
-        </Link>
-        <Link
-          href="/resources/metrics"
-          className="rounded-xl border border-[#dde1e6] bg-white p-5 shadow-sm transition hover:border-[#e67e22]"
-        >
-          <h2 className="font-semibold text-[#0f172a]">HR Metrics Reference</h2>
-          <p className="mt-2 text-sm text-[#6b7280]">
-            Definitions for workforce and organizational metrics used in The
-            Workforce Brief.
-          </p>
-        </Link>
-      </div>
-      <div className="mt-6">
-        <PlaceholderPanel title="Content in progress">
-          Deeper Learning Guide and reference articles will be added as Dr. Cooper
-          finalizes instructional content. Architecture and navigation are active now.
-        </PlaceholderPanel>
-      </div>
-    </div>
+    <ResourcesOverview
+      context={{
+        roundLabel: openRound
+          ? `Round ${openRound.round_number}`
+          : "No open round",
+        roundOpen: Boolean(openRound),
+        industry: team?.industry ?? "—",
+        strategy: team?.strategy ?? "—",
+        economy: openRound
+          ? openRound.economy_condition.charAt(0).toUpperCase() +
+            openRound.economy_condition.slice(1)
+          : "—",
+      }}
+    />
   );
 }

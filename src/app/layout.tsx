@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#e67e22",
+  themeColor: "#1d6ef5",
   colorScheme: "light",
 };
 
@@ -54,7 +54,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="light" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-slate-50 text-slate-900 antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-[var(--portal-page)] text-[var(--portal-ink)] antialiased`}
       >
         <ImpersonationBanner />
         <Navbar />

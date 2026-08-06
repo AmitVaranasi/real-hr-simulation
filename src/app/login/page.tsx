@@ -8,8 +8,8 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-md px-4 py-16">
-      <h1 className="text-2xl font-bold text-slate-900">Login</h1>
-      <p className="mt-2 text-slate-600">
+      <h1 className="text-2xl font-bold text-[var(--portal-title)]">Login</h1>
+      <p className="mt-2 text-[var(--portal-muted)]">
         Sign in as an instructor or student.
       </p>
       {!configured ? (
@@ -26,13 +26,13 @@ export default function LoginPage() {
           </p>
         </div>
       ) : (
-        <Suspense fallback={<p className="mt-6 text-sm text-slate-500">Loading…</p>}>
+        <Suspense fallback={<p className="mt-6 text-sm text-[var(--portal-muted)]">Loading…</p>}>
           <LoginForm />
         </Suspense>
       )}
-      <p className="mt-6 text-sm text-slate-500">
+      <p className="mt-6 text-sm text-[var(--portal-muted)]">
         No account?{" "}
-        <Link href="/register" className="font-medium text-[#e67e22] hover:underline">
+        <Link href="/register" className="font-medium text-[var(--portal-primary)] hover:underline">
           Register
         </Link>
       </p>

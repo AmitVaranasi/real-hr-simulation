@@ -43,14 +43,14 @@ export function RoundControls({ sessionId, rounds }: RoundControlsProps) {
         .map((round) => (
           <div
             key={round.id}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-4"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-4"
           >
             <div>
-              <p className="font-medium text-slate-900">
+              <p className="font-medium text-[var(--portal-title)]">
                 Round {round.round_number}{" "}
-                <span className="text-slate-500">({round.round_type})</span>
+                <span className="text-[var(--portal-muted)]">({round.round_type})</span>
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-[var(--portal-muted)]">
                 Status: <span className="capitalize">{round.status}</span>
                 {" · "}
                 Economy: {round.economy_condition}

@@ -62,14 +62,14 @@ export default async function DashboardPage() {
 
   if (!team) {
     return (
-      <div className="mx-auto w-full max-w-lg rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wider text-[#e67e22]">
+      <div className="mx-auto w-full max-w-lg rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-6 py-12 text-center shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-primary)]">
           Getting started
         </p>
-        <h1 className="mt-2 text-2xl font-bold text-slate-900">
+        <h1 className="mt-2 text-2xl font-bold text-[var(--portal-title)]">
           Join your company
         </h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-[var(--portal-muted)]">
           Enter the join code from your instructor to unlock your team
           dashboard.
         </p>
@@ -79,7 +79,7 @@ export default async function DashboardPage() {
         <p className="mt-4 text-sm">
           <Link
             href="/dashboard/getting-started"
-            className="text-[#e67e22] hover:underline"
+            className="text-[var(--portal-primary)] hover:underline"
           >
             Or open Getting Started →
           </Link>
@@ -101,7 +101,7 @@ export default async function DashboardPage() {
 
   const { data: lastOutcome } = await supabase
     .from("outcomes")
-    .select("total_score, feedback_json, computed_at")
+    .select("total_score, profit, feedback_json, computed_at")
     .eq("team_id", team.id)
     .order("computed_at", { ascending: false })
     .limit(1)
@@ -111,6 +111,11 @@ export default async function DashboardPage() {
     .from("outcomes")
     .select("id", { count: "exact", head: true })
     .eq("team_id", team.id);
+
+  const { count: teamsInClass } = await supabase
+    .from("teams")
+    .select("id", { count: "exact", head: true })
+    .eq("session_id", team.session_id);
 
   let decisionStatus: { exists: boolean; is_submitted: boolean } | null = null;
   if (openRound) {
@@ -157,6 +162,10 @@ export default async function DashboardPage() {
           : null
       }
       lastSummary={lastSummary}
+      lastProfit={
+        lastOutcome?.profit != null ? Number(lastOutcome.profit) : null
+      }
+      teamsInClass={teamsInClass ?? null}
       initialOpenRound={
         openRound
           ? {

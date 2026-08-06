@@ -113,8 +113,8 @@ export function TestingLaboratory() {
     <div className="mx-auto w-full min-w-0 max-w-5xl px-4 py-10">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Testing Center</h1>
-          <p className="mt-2 max-w-2xl text-slate-600">
+          <h1 className="text-2xl font-bold text-[var(--portal-title)]">Testing Center</h1>
+          <p className="mt-2 max-w-2xl text-[var(--portal-muted)]">
             Dedicated laboratory for formula validation, scenario runs, workflow
             checks, and engine diagnostics before expert evaluation.
           </p>
@@ -122,7 +122,7 @@ export function TestingLaboratory() {
         <div className="flex flex-wrap gap-2">
           <Link
             href="/sessions/config"
-            className="inline-flex h-10 items-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            className="inline-flex h-10 items-center rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-4 text-sm font-medium text-[var(--portal-ink)] hover:bg-[var(--portal-page)]"
           >
             Configuration
           </Link>
@@ -132,9 +132,9 @@ export function TestingLaboratory() {
         </div>
       </div>
 
-      <section className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
-        <h2 className="font-semibold text-slate-900">Workflow checklist</h2>
-        <p className="mt-1 text-sm text-slate-500">
+      <section className="mt-8 rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5">
+        <h2 className="font-semibold text-[var(--portal-title)]">Workflow checklist</h2>
+        <p className="mt-1 text-sm text-[var(--portal-muted)]">
           Use this when validating a full classroom path.
         </p>
         <ul className="mt-4 space-y-2">
@@ -148,7 +148,7 @@ export function TestingLaboratory() {
                   setChecked((prev) => ({ ...prev, [i]: e.target.checked }))
                 }
               />
-              <span className={checked[i] ? "text-slate-400 line-through" : ""}>
+              <span className={checked[i] ? "text-[var(--portal-muted)] line-through" : ""}>
                 {step}
               </span>
             </li>
@@ -160,7 +160,7 @@ export function TestingLaboratory() {
               <Link
                 key={s.id}
                 href={`/sessions/${s.id}`}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-[#c45f12] hover:bg-[#fff4e8]"
+                className="rounded-lg border border-[var(--portal-sidebar-border)] px-3 py-1.5 text-xs font-medium text-[var(--portal-primary)] hover:bg-[var(--portal-primary-soft)]"
               >
                 Open {s.name}
               </Link>
@@ -169,15 +169,15 @@ export function TestingLaboratory() {
         )}
       </section>
 
-      <section className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
-        <h2 className="font-semibold text-slate-900">Scenario runner</h2>
-        <p className="mt-1 text-sm text-slate-500">
+      <section className="mt-8 rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5">
+        <h2 className="font-semibold text-[var(--portal-title)]">Scenario runner</h2>
+        <p className="mt-1 text-sm text-[var(--portal-muted)]">
           Run the default decision pack across industry × strategy × economy.
           Discretionary budget: {formatCurrency(effectiveBudget)}.
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           <label className="text-sm">
-            <span className="font-medium text-slate-700">Industry</span>
+            <span className="font-medium text-[var(--portal-ink)]">Industry</span>
             <select
               className={`mt-1 w-full ${formSelectClassName}`}
               value={industry}
@@ -189,7 +189,7 @@ export function TestingLaboratory() {
             </select>
           </label>
           <label className="text-sm">
-            <span className="font-medium text-slate-700">Strategy</span>
+            <span className="font-medium text-[var(--portal-ink)]">Strategy</span>
             <select
               className={`mt-1 w-full ${formSelectClassName}`}
               value={strategy}
@@ -201,7 +201,7 @@ export function TestingLaboratory() {
             </select>
           </label>
           <label className="text-sm">
-            <span className="font-medium text-slate-700">Economy</span>
+            <span className="font-medium text-[var(--portal-ink)]">Economy</span>
             <select
               className={`mt-1 w-full ${formSelectClassName}`}
               value={economy}
@@ -256,7 +256,7 @@ export function TestingLaboratory() {
       </section>
 
       <section className="mt-8">
-        <h2 className="mb-3 font-semibold text-slate-900">
+        <h2 className="mb-3 font-semibold text-[var(--portal-title)]">
           Engine diagnostic panel
         </h2>
         <EngineDiagnosticPanel />
@@ -287,20 +287,20 @@ export function TestingLaboratory() {
         </section>
       )}
 
-      <section className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
-        <h2 className="font-semibold text-slate-900">Live session inspect</h2>
-        <p className="mt-1 text-sm text-slate-500">
+      <section className="mt-8 rounded-xl border border-[var(--portal-sidebar-border)] bg-[var(--portal-page)] p-5">
+        <h2 className="font-semibold text-[var(--portal-title)]">Live session inspect</h2>
+        <p className="mt-1 text-sm text-[var(--portal-muted)]">
           Jump into a real team/round formula trace (includes carry-forward).
         </p>
         <ul className="mt-3 space-y-2">
           {sessions.length === 0 && (
-            <li className="text-sm text-slate-500">No sessions yet.</li>
+            <li className="text-sm text-[var(--portal-muted)]">No sessions yet.</li>
           )}
           {sessions.map((s) => (
             <li key={s.id}>
               <Link
                 href={`/sessions/${s.id}/inspect`}
-                className="text-sm font-medium text-[#c45f12] hover:underline"
+                className="text-sm font-medium text-[var(--portal-primary)] hover:underline"
               >
                 Inspect {s.name} →
               </Link>

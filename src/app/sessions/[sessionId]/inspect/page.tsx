@@ -84,14 +84,14 @@ export default function InspectPage() {
     <div className="mx-auto w-full min-w-0 max-w-5xl px-4 py-10">
       <Link
         href={`/sessions/${sessionId}`}
-        className="text-sm text-[#e67e22] hover:underline"
+        className="text-sm text-[var(--portal-primary)] hover:underline"
       >
         ← Back to session
       </Link>
 
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end">
         <label className="flex-1 text-sm">
-          <span className="font-medium text-slate-700">Team</span>
+          <span className="font-medium text-[var(--portal-ink)]">Team</span>
           <select
             className={`mt-1 w-full ${formSelectClassName}`}
             value={teamId}
@@ -106,7 +106,7 @@ export default function InspectPage() {
           </select>
         </label>
         <label className="flex-1 text-sm">
-          <span className="font-medium text-slate-700">Round</span>
+          <span className="font-medium text-[var(--portal-ink)]">Round</span>
           <select
             className={`mt-1 w-full ${formSelectClassName}`}
             value={roundId}
@@ -122,7 +122,7 @@ export default function InspectPage() {
         </label>
       </div>
 
-      {loading && <p className="text-sm text-slate-500">Loading trace…</p>}
+      {loading && <p className="text-sm text-[var(--portal-muted)]">Loading trace…</p>}
       {error && (
         <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
           {error}

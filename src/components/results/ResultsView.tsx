@@ -72,13 +72,13 @@ export function ResultsView({
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-xs font-bold uppercase tracking-wider text-[#e67e22]">
+        <p className="text-xs font-bold uppercase tracking-wider text-[var(--portal-primary)]">
           Reports & HR Analytics
         </p>
-        <h1 className="mt-1 text-2xl font-bold text-[#0f172a] sm:text-3xl">
+        <h1 className="mt-1 text-2xl font-bold text-[var(--portal-title)] sm:text-3xl">
           The Workforce Brief — Round {roundNumber}
         </h1>
-        <p className="mt-2 text-sm text-[#6b7280]">
+        <p className="mt-2 text-sm text-[var(--portal-muted)]">
           {sessionName} · {team.name} · {team.industry} · {team.strategy}
         </p>
       </div>
@@ -97,7 +97,7 @@ export function ResultsView({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/reports/workforce-brief"
-          className="text-sm font-medium text-[#e67e22] hover:underline"
+          className="text-sm font-medium text-[var(--portal-primary)] hover:underline"
         >
           ← All Workforce Briefs
         </Link>
@@ -107,7 +107,7 @@ export function ResultsView({
       </div>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[#0f172a]">
+        <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[var(--portal-title)]">
           HR Balance Scorecard
         </h2>
         <BSCScorecard scores={bsc} bscWeights={strategyConfig.bsc_weights} />
@@ -116,7 +116,7 @@ export function ResultsView({
       {trendData && trendData.length >= 2 && <TrendChart data={trendData} />}
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[#0f172a]">
+        <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[var(--portal-title)]">
           Strategic Performance Metrics KPIs
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -160,7 +160,7 @@ export function ResultsView({
 
       {feedback && (
         <section>
-          <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[#0f172a]">
+          <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[var(--portal-title)]">
             Feedback: Perspective Summaries
           </h2>
           <FeedbackPanel feedback={feedback} />
@@ -168,7 +168,7 @@ export function ResultsView({
       )}
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[#0f172a]">
+        <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[var(--portal-title)]">
           Workforce Performance Metrics
         </h2>
         <OutcomeMetricTable outcome={outcome} />
@@ -176,7 +176,7 @@ export function ResultsView({
 
       {feedback?.learning_insights && (
         <section>
-          <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[#0f172a]">
+          <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[var(--portal-title)]">
             Feedback: Workforce Performance Metrics
           </h2>
           <LearningInsightsPanel insights={feedback.learning_insights} />

@@ -44,7 +44,7 @@ export function AdminAuditClient() {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
       <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-6 py-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-brand)]">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-primary)]">
           Audit log
         </p>
         <h1 className="mt-1 text-2xl font-bold text-[var(--portal-ink)]">

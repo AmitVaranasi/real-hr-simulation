@@ -42,9 +42,9 @@ function statusLabel(status: StepStatus) {
 
 function statusClass(status: StepStatus) {
   if (status === "complete") return "bg-emerald-100 text-emerald-800";
-  if (status === "waiting") return "bg-[#fff4e8] text-[#c45f12]";
+  if (status === "waiting") return "bg-[var(--portal-primary-soft)] text-[var(--portal-primary)]";
   if (status === "current") return "bg-sky-100 text-sky-800";
-  return "bg-slate-100 text-slate-600";
+  return "bg-[#f1f3f5] text-[var(--portal-muted)]";
 }
 
 export function GettingStarted({
@@ -141,17 +141,17 @@ export function GettingStarted({
         roundLabel={openRoundLabel}
       />
 
-      <section className="rounded-xl border border-[#dde1e6] bg-white p-5 shadow-sm">
+      <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[#e67e22]">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--portal-primary)]">
               Getting Started
             </h2>
-            <p className="mt-1 text-sm text-[#6b7280]">
+            <p className="mt-1 text-sm text-[var(--portal-muted)]">
               Complete these steps to prepare for the simulation.
             </p>
           </div>
-          <p className="text-xs text-[#6b7280]">
+          <p className="text-xs text-[var(--portal-muted)]">
             ✓ Complete · ◉ In Progress · ○ Not Started · ◷ Waiting
           </p>
         </div>
@@ -160,12 +160,12 @@ export function GettingStarted({
           {steps.map((step) => (
             <li
               key={step.id}
-              className="rounded-xl border border-[#f0f1f3] bg-[#f8f9fb] p-4"
+              className="rounded-xl border border-[#f0f1f3] bg-[#f8fafc] p-4"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-bold text-[#0f172a]">
+                    <span className="text-sm font-bold text-[var(--portal-title)]">
                       Step {step.id}. {step.title}
                     </span>
                     <span
@@ -174,7 +174,7 @@ export function GettingStarted({
                       {statusLabel(step.status)}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm text-[#6b7280]">{step.description}</p>
+                  <p className="mt-2 text-sm text-[var(--portal-muted)]">{step.description}</p>
                 </div>
                 {step.actionHref && step.actionLabel ? (
                   <Link href={step.actionHref} className="shrink-0">
@@ -189,9 +189,9 @@ export function GettingStarted({
         </ol>
       </section>
 
-      <section className="rounded-xl border border-[#dde1e6] bg-white p-5 shadow-sm">
-        <h2 className="font-semibold text-[#0f172a]">Need help?</h2>
-        <p className="mt-2 text-sm text-[#6b7280]">
+      <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
+        <h2 className="font-semibold text-[var(--portal-title)]">Need help?</h2>
+        <p className="mt-2 text-sm text-[var(--portal-muted)]">
           Visit the Help Center for guides and FAQs, or open Resources for reference
           materials.
         </p>

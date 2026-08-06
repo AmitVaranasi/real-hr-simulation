@@ -24,8 +24,8 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
   if (data.length < 2) return null;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4">
-      <h3 className="mb-4 font-semibold text-slate-900">Score trends</h3>
+    <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+      <h3 className="mb-4 font-semibold text-[var(--portal-title)]">Score trends</h3>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
@@ -34,7 +34,7 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
             <YAxis domain={[0, 100]} />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="total" stroke="#e67e22" strokeWidth={2} />
+            <Line type="monotone" dataKey="total" stroke="var(--portal-primary)" strokeWidth={2} />
             <Line type="monotone" dataKey="financial" stroke="#10b981" />
             <Line type="monotone" dataKey="employee" stroke="#f59e0b" />
             <Line type="monotone" dataKey="process" stroke="#6366f1" />

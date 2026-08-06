@@ -7,8 +7,8 @@ type NavItem = { href: string; label: string; match?: (path: string) => boolean 
 
 function linkClass(active: boolean) {
   return active
-    ? "border-b-2 border-[#e67e22] pb-0.5 font-medium text-[#c45f12]"
-    : "text-slate-600 hover:text-slate-900";
+    ? "border-b-2 border-[var(--portal-primary)] pb-0.5 font-medium text-[var(--portal-primary)]"
+    : "text-[var(--portal-muted)] hover:text-[var(--portal-title)]";
 }
 
 export function StudentRoleNav({

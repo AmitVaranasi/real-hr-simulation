@@ -2,9 +2,9 @@ import { cn } from "@/lib/utils";
 
 /** Shared text/number input styling — always light theme */
 export const formInputClassName = cn(
-  "w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm",
-  "placeholder:text-slate-400",
-  "focus:border-[#e67e22] focus:outline-none focus:ring-1 focus:ring-[#e67e22]",
+  "w-full min-w-0 rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-3 py-2 text-sm text-[var(--portal-ink)] shadow-sm",
+  "placeholder:text-[var(--portal-muted)]",
+  "focus:border-[var(--portal-accent-blue)] focus:outline-none focus:ring-1 focus:ring-[var(--portal-accent-blue)]",
   "[color-scheme:light]"
 );
 

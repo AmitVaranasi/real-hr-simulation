@@ -17,7 +17,7 @@ export function SignOutButton() {
     <button
       type="button"
       onClick={signOut}
-      className="text-sm text-slate-600 hover:text-slate-900"
+      className="text-sm text-[var(--portal-muted)] hover:text-[var(--portal-title)]"
     >
       Sign out
     </button>
