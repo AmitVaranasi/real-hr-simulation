@@ -196,7 +196,7 @@ export default function ReviewPage() {
     return (
       <p className="p-8">
         No decision found.{" "}
-        <Link href={`/round/${roundId}/decisions`} className="text-[#e67e22]">
+        <Link href={`/round/${roundId}/decisions`} className="text-[var(--portal-primary)]">
           Go to decisions
         </Link>
       </p>
@@ -208,61 +208,67 @@ export default function ReviewPage() {
   const bsc = forecast.bsc_scores;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="mx-auto max-w-5xl space-y-6 pb-8">
       <StudentPageHeader
         title="Review & Submit"
         subtitle="This is your final quality-control checkpoint. Review all decisions, budget impact, and projected outcomes before your team submits for this round."
+        badge="Final Checkpoint"
       />
 
-      <div className="rounded-lg border border-[#f5d0a9] bg-[#fff4e8] px-4 py-3 text-sm text-[#9a3412]">
+      <div className="rounded-lg border border-[var(--portal-primary)]/30 bg-[var(--portal-primary-soft)] px-4 py-3 text-sm text-[var(--portal-title)]">
         You can go back to any HR Decision area to make changes. Only Submit
-        Decisions locks the round.
+        Decisions locks the round. Org Design &amp; DEI modules remain part of
+        the full decision set.
       </div>
 
       <section>
-        <h2 className="text-lg font-semibold text-[#0f172a]">Your HR Decisions</h2>
+        <h2 className="text-lg font-semibold text-[var(--portal-title)]">
+          Your HR Decisions
+        </h2>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           {DECISION_TABS.map((tab) => (
             <article
               key={tab.key}
-              className="rounded-xl border border-[#dde1e6] bg-white p-4 shadow-sm"
+              className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm"
             >
               <div className="flex items-start justify-between gap-2">
-                <h3 className="font-semibold text-[#0f172a]">{tab.label}</h3>
+                <h3 className="font-semibold text-[var(--portal-title)]">
+                  {tab.label}
+                </h3>
                 <Link
                   href={`/round/${roundId}/decisions?tab=${tab.key}`}
-                  className="text-xs font-semibold text-[#e67e22] hover:underline"
+                  className="text-xs font-semibold text-[var(--portal-primary)] hover:underline"
                 >
                   Edit
                 </Link>
               </div>
-              <ul className="mt-2 space-y-1 text-xs text-[#6b7280]">
+              <ul className="mt-2 space-y-1 text-xs text-[var(--portal-muted)]">
                 {moduleSummary(decision, tab.key).map((line) => (
                   <li key={line}>{line}</li>
                 ))}
               </ul>
-              <p className="mt-3 text-sm font-medium text-[#1f2937]">
-                Investment: {formatCurrency(moduleSpend(budget, tab.key))}
+              <p className="mt-3 text-sm font-medium text-[var(--portal-ink)]">
+                Module Investment: {formatCurrency(moduleSpend(budget, tab.key))}
               </p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="rounded-xl border border-[#dde1e6] bg-white p-5 shadow-sm">
-        <h2 className="font-semibold text-[#0f172a]">Budget summary</h2>
+      <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
+        <h2 className="font-semibold text-[var(--portal-title)]">Budget summary</h2>
         <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
-          <dt className="text-[#6b7280]">Total HR budget</dt>
+          <dt className="text-[var(--portal-muted)]">Total HR budget</dt>
           <dd className="font-medium">{formatCurrency(budget.available_budget)}</dd>
-          <dt className="text-[#6b7280]">Planned spend</dt>
+          <dt className="text-[var(--portal-muted)]">Planned spend</dt>
           <dd className="font-medium">{formatCurrency(budget.total_spend)}</dd>
-          <dt className="text-[#6b7280]">Remaining</dt>
+          <dt className="text-[var(--portal-muted)]">Remaining</dt>
           <dd
             className={`font-medium ${budget.remaining < 0 ? "text-red-600" : "text-emerald-700"}`}
           >
             {formatCurrency(budget.remaining)}
           </dd>
-          <dt className="text-[#6b7280]">Utilization</dt>
+          <dt className="text-[var(--portal-muted)]">Utilization</dt>
           <dd className="font-medium">
             {formatPercent(budgetUtilizationPct(budget))}
           </dd>
@@ -282,8 +288,10 @@ export default function ReviewPage() {
       </section>
 
       {warnings.length > 0 && (
-        <section className="rounded-xl border border-[#dde1e6] bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-[#0f172a]">Warnings & coaching notes</h2>
+        <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
+          <h2 className="font-semibold text-[var(--portal-title)]">
+            Warnings & coaching notes
+          </h2>
           <ul className="mt-3 space-y-2">
             {warnings.map((w, i) => (
               <li
@@ -303,9 +311,9 @@ export default function ReviewPage() {
         </section>
       )}
 
-      <section className="rounded-xl border border-[#f5d0a9] bg-[#fff4e8]/60 p-5">
-        <h2 className="font-semibold text-[#9a3412]">Projected outcomes</h2>
-        <p className="mt-1 text-sm text-[#9a3412]/80">
+      <section className="rounded-xl border border-[var(--portal-primary)]/30 bg-[var(--portal-primary-soft)]/60 p-5">
+        <h2 className="font-semibold text-[var(--portal-title)]">Projected outcomes</h2>
+        <p className="mt-1 text-sm text-[var(--portal-title)]/80">
           Preview using the existing simulation engine. Actual results depend on
           economy, carry-forward state, and final compute.
         </p>
@@ -322,17 +330,22 @@ export default function ReviewPage() {
           <dd className="font-medium">{formatCurrency(f.profit)}</dd>
           <dt>Stock price (projected)</dt>
           <dd className="font-medium">${f.stock_price.toFixed(2)}</dd>
-          <dt className="font-semibold text-[#9a3412]">HR Balance Scorecard (projected)</dt>
-          <dd className="font-semibold text-[#c45f12]">
+          <dt className="font-semibold text-[var(--portal-title)]">
+            HR Balance Scorecard (projected)
+          </dt>
+          <dd className="font-semibold text-[var(--portal-primary)]">
             {bsc.total_score.toFixed(1)} / 100
           </dd>
         </dl>
       </section>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap gap-3 border-t border-[var(--portal-sidebar-border)] bg-white/95 px-4 py-3 backdrop-blur sm:-mx-0 sm:rounded-xl sm:border sm:px-5">
         <Button onClick={submitFinal}>Submit Decisions</Button>
         <Link href={`/round/${roundId}/decisions`}>
           <Button variant="outline">Back to HR Decisions</Button>
+        </Link>
+        <Link href="/dashboard">
+          <Button variant="outline">Dashboard</Button>
         </Link>
       </div>
     </div>

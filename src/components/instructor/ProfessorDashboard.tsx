@@ -33,10 +33,10 @@ export function ProfessorDashboard({
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
-      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <section className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--portal-sidebar-border)] bg-white px-6 py-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-brand)]">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-primary)]">
               Professor portal
             </p>
             <h1 className="mt-1 text-2xl font-bold text-[var(--portal-ink)] sm:text-3xl">
@@ -61,13 +61,13 @@ export function ProfessorDashboard({
           <div className="px-6 py-5">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-500">
+                <p className="text-xs uppercase tracking-wide text-[var(--portal-muted)]">
                   Active course
                 </p>
-                <h2 className="text-xl font-semibold text-slate-900">
+                <h2 className="text-xl font-semibold text-[var(--portal-title)]">
                   {active.name}
                 </h2>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-[var(--portal-muted)]">
                   {[active.course_code, active.semester, active.status]
                     .filter(Boolean)
                     .join(" · ")}
@@ -75,38 +75,38 @@ export function ProfessorDashboard({
               </div>
               <Link
                 href={`/sessions/${active.id}`}
-                className="text-sm font-medium text-[var(--portal-brand)] hover:underline"
+                className="text-sm font-medium text-[var(--portal-primary)] hover:underline"
               >
                 Open course ops →
               </Link>
             </div>
 
             <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="rounded-lg bg-slate-50 px-4 py-3">
-                <dt className="text-xs text-slate-500">Teams</dt>
-                <dd className="text-xl font-semibold text-slate-900">
+              <div className="rounded-lg bg-[var(--portal-page)] px-4 py-3">
+                <dt className="text-xs text-[var(--portal-muted)]">Teams</dt>
+                <dd className="text-xl font-semibold text-[var(--portal-title)]">
                   {active.teamCount}
                 </dd>
               </div>
-              <div className="rounded-lg bg-slate-50 px-4 py-3">
-                <dt className="text-xs text-slate-500">Current round</dt>
-                <dd className="text-xl font-semibold text-slate-900">
+              <div className="rounded-lg bg-[var(--portal-page)] px-4 py-3">
+                <dt className="text-xs text-[var(--portal-muted)]">Current round</dt>
+                <dd className="text-xl font-semibold text-[var(--portal-title)]">
                   {active.openRound
                     ? `R${active.openRound.round_number}`
                     : "—"}
                 </dd>
               </div>
-              <div className="rounded-lg bg-slate-50 px-4 py-3">
-                <dt className="text-xs text-slate-500">Submissions</dt>
-                <dd className="text-xl font-semibold text-slate-900">
+              <div className="rounded-lg bg-[var(--portal-page)] px-4 py-3">
+                <dt className="text-xs text-[var(--portal-muted)]">Submissions</dt>
+                <dd className="text-xl font-semibold text-[var(--portal-title)]">
                   {active.decisionsExpected > 0
                     ? `${active.submittedCount}/${active.decisionsExpected}`
                     : "—"}
                 </dd>
               </div>
-              <div className="rounded-lg bg-slate-50 px-4 py-3">
-                <dt className="text-xs text-slate-500">Structure</dt>
-                <dd className="text-xl font-semibold text-slate-900">
+              <div className="rounded-lg bg-[var(--portal-page)] px-4 py-3">
+                <dt className="text-xs text-[var(--portal-muted)]">Structure</dt>
+                <dd className="text-xl font-semibold text-[var(--portal-title)]">
                   {active.practice_rounds}p + {active.rounds_total}c
                 </dd>
               </div>
@@ -114,7 +114,7 @@ export function ProfessorDashboard({
 
             {/* Round timeline */}
             <div className="mt-6">
-              <h3 className="text-sm font-semibold text-slate-900">
+              <h3 className="text-sm font-semibold text-[var(--portal-title)]">
                 Round timeline
               </h3>
               <ol className="mt-3 flex gap-2 overflow-x-auto pb-1">
@@ -131,14 +131,14 @@ export function ProfessorDashboard({
                           isOpen
                             ? "border-emerald-300 bg-emerald-50"
                             : isClosed
-                              ? "border-slate-200 bg-slate-50"
-                              : "border-dashed border-slate-200 bg-white"
+                              ? "border-[var(--portal-sidebar-border)] bg-[var(--portal-page)]"
+                              : "border-dashed border-[var(--portal-sidebar-border)] bg-white"
                         }`}
                       >
-                        <p className="text-xs font-semibold uppercase text-slate-500">
+                        <p className="text-xs font-semibold uppercase text-[var(--portal-muted)]">
                           R{r.round_number}
                         </p>
-                        <p className="mt-0.5 font-medium capitalize text-slate-900">
+                        <p className="mt-0.5 font-medium capitalize text-[var(--portal-title)]">
                           {r.round_type}
                         </p>
                         <p
@@ -146,8 +146,8 @@ export function ProfessorDashboard({
                             isOpen
                               ? "text-emerald-700"
                               : isClosed
-                                ? "text-slate-600"
-                                : "text-slate-400"
+                                ? "text-[var(--portal-muted)]"
+                                : "text-[var(--portal-muted)]"
                           }`}
                         >
                           {r.status}
@@ -160,7 +160,7 @@ export function ProfessorDashboard({
           </div>
         ) : (
           <div className="px-6 py-10 text-center">
-            <p className="text-slate-600">
+            <p className="text-[var(--portal-muted)]">
               No sessions yet. Create one to add teams and open rounds.
             </p>
             <Link href="/sessions/new" className="mt-4 inline-block">
@@ -173,12 +173,12 @@ export function ProfessorDashboard({
       {/* Manage Course tile preview */}
       <section>
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-semibold text-[var(--portal-title)]">
             Manage Course
           </h2>
           <Link
             href="/sessions/manage"
-            className="text-sm font-medium text-[var(--portal-brand)] hover:underline"
+            className="text-sm font-medium text-[var(--portal-primary)] hover:underline"
           >
             View all →
           </Link>
@@ -229,11 +229,11 @@ export function ProfessorDashboard({
             <Link
               key={tile.title}
               href={tile.href}
-              className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-[var(--portal-brand)] hover:shadow-md"
+              className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm transition hover:border-[var(--portal-primary)] hover:shadow-md"
             >
-              <p className="font-semibold text-slate-900">{tile.title}</p>
-              <p className="mt-1 text-sm text-slate-500">{tile.desc}</p>
-              <p className="mt-3 text-xs font-medium text-[var(--portal-brand)]">
+              <p className="font-semibold text-[var(--portal-title)]">{tile.title}</p>
+              <p className="mt-1 text-sm text-[var(--portal-muted)]">{tile.desc}</p>
+              <p className="mt-3 text-xs font-medium text-[var(--portal-primary)]">
                 Continue →
               </p>
             </Link>
@@ -242,17 +242,17 @@ export function ProfessorDashboard({
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-slate-900">Your sessions</h2>
+        <h2 className="text-lg font-semibold text-[var(--portal-title)]">Your sessions</h2>
         <div className="mt-3 space-y-2">
           {sessions.map((s) => (
             <Link
               key={s.id}
               href={`/sessions/${s.id}`}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm hover:border-[var(--portal-brand)]"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-5 py-4 shadow-sm hover:border-[var(--portal-primary)]"
             >
               <div>
-                <p className="font-semibold text-slate-900">{s.name}</p>
-                <p className="text-sm text-slate-500">
+                <p className="font-semibold text-[var(--portal-title)]">{s.name}</p>
+                <p className="text-sm text-[var(--portal-muted)]">
                   {s.teamCount} teams · {s.currentRoundLabel}
                 </p>
               </div>
@@ -260,7 +260,7 @@ export function ProfessorDashboard({
                 className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                   s.openRound
                     ? "bg-emerald-100 text-emerald-800"
-                    : "bg-slate-100 text-slate-600"
+                    : "bg-[#f1f3f5] text-[var(--portal-muted)]"
                 }`}
               >
                 {s.status}

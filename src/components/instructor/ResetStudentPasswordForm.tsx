@@ -36,7 +36,7 @@ export function ResetStudentPasswordForm({
 
   return (
     <form onSubmit={handleSubmit} className="mt-3 space-y-3">
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-[var(--portal-muted)]">
         Send a password reset email to a student enrolled in this session.
       </p>
       {error && (
@@ -51,7 +51,7 @@ export function ResetStudentPasswordForm({
       )}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
         <label className="block min-w-0 flex-1 text-sm">
-          <span className="font-medium text-slate-700">Student email</span>
+          <span className="font-medium text-[var(--portal-ink)]">Student email</span>
           <input
             type="email"
             required

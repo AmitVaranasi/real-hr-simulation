@@ -24,31 +24,31 @@ export default async function InstructorInfoPage() {
       />
       <TeamSubnav activeHref="/team/instructor" />
       {!ctx.team ? (
-        <p className="text-sm text-[#6b7280]">
-          <Link href="/join" className="text-[#e67e22] hover:underline">
+        <p className="text-sm text-[var(--portal-muted)]">
+          <Link href="/join" className="text-[var(--portal-primary)] hover:underline">
             Join a team
           </Link>{" "}
           to view instructor information.
         </p>
       ) : (
-        <section className="rounded-xl border border-[#dde1e6] bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-[#0f172a]">Instructor Information</h2>
-          <p className="mt-3 text-sm text-[#1f2937]">
-            <span className="text-[#6b7280]">Instructor: </span>
+        <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
+          <h2 className="font-semibold text-[var(--portal-title)]">Instructor Information</h2>
+          <p className="mt-3 text-sm text-[var(--portal-ink)]">
+            <span className="text-[var(--portal-muted)]">Instructor: </span>
             <span className="font-semibold">
               {ctx.instructor?.display_name ?? "—"}
             </span>
           </p>
-          <p className="mt-2 text-sm text-[#1f2937]">
-            <span className="text-[#6b7280]">Course: </span>
+          <p className="mt-2 text-sm text-[var(--portal-ink)]">
+            <span className="text-[var(--portal-muted)]">Course: </span>
             <span className="font-semibold">{ctx.team.sessions.name}</span>
             {ctx.team.sessions.course_code
               ? ` (${ctx.team.sessions.course_code})`
               : ""}
           </p>
           {ctx.team.sessions.announcement ? (
-            <div className="mt-4 rounded-lg bg-[#fff4e8] px-3 py-2 text-sm text-[#1f2937]">
-              <p className="text-xs font-bold uppercase tracking-wide text-[#e67e22]">
+            <div className="mt-4 rounded-lg bg-[var(--portal-primary-soft)] px-3 py-2 text-sm text-[var(--portal-ink)]">
+              <p className="text-xs font-bold uppercase tracking-wide text-[var(--portal-primary)]">
                 Announcement
               </p>
               <p className="mt-1 whitespace-pre-wrap">

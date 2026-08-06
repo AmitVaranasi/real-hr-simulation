@@ -95,7 +95,7 @@ export function AdminOverview() {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-8">
       <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-6 py-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-brand)]">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-primary)]">
           Administrator
         </p>
         <h1 className="mt-1 text-2xl font-bold text-[var(--portal-ink)]">
@@ -122,7 +122,7 @@ export function AdminOverview() {
               className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm"
             >
               <div className="flex items-center gap-2 text-[var(--portal-muted)]">
-                <Icon className="h-4 w-4 text-[var(--portal-brand)]" />
+                <Icon className="h-4 w-4 text-[var(--portal-primary)]" />
                 <span className="text-xs font-semibold uppercase tracking-wide">
                   {t.label}
                 </span>
@@ -146,10 +146,10 @@ export function AdminOverview() {
               <Link
                 key={a.href}
                 href={a.href}
-                className="flex items-start gap-3 rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm transition hover:border-[var(--portal-brand)]"
+                className="flex items-start gap-3 rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm transition hover:border-[var(--portal-primary)]"
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--portal-brand-soft)]">
-                  <Icon className="h-5 w-5 text-[var(--portal-brand)]" />
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--portal-primary-soft)]">
+                  <Icon className="h-5 w-5 text-[var(--portal-primary)]" />
                 </span>
                 <div>
                   <p className="font-semibold text-[var(--portal-ink)]">

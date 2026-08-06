@@ -76,7 +76,7 @@ export function ConfigParametersPanel({
   return (
     <div className="space-y-6">
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Discretionary HR budget</span>
+        <span className="font-medium text-[var(--portal-ink)]">Discretionary HR budget</span>
         <input
           type="number"
           step={10000}
@@ -90,7 +90,7 @@ export function ConfigParametersPanel({
         <h3 className="font-medium text-slate-800">Economy multipliers</h3>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
           {ECONOMIES.map((econ) => (
-            <div key={econ} className="rounded-lg border border-slate-200 p-3 text-sm">
+            <div key={econ} className="rounded-lg border border-[var(--portal-sidebar-border)] p-3 text-sm">
               <p className="font-medium capitalize">{econ}</p>
               <label className="mt-2 block">
                 Revenue mult.
@@ -202,7 +202,7 @@ export function ConfigIndustryPanel({
       </div>
 
       <div>
-        <h4 className="text-sm font-medium text-slate-700">Module multipliers</h4>
+        <h4 className="text-sm font-medium text-[var(--portal-ink)]">Module multipliers</h4>
         <div className="mt-2 grid gap-2 sm:grid-cols-2">
           {MODULE_KEYS.map((mod) => (
             <label key={mod} className="text-sm capitalize">
@@ -319,7 +319,7 @@ export function ConfigBenchmarkPanel({
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[640px] text-sm">
-        <thead className="bg-slate-50 text-left text-slate-600">
+        <thead className="bg-[var(--portal-page)] text-left text-[var(--portal-muted)]">
           <tr>
             <th className="px-2 py-2">Metric</th>
             <th className="px-2 py-2">Perspective</th>
@@ -456,7 +456,7 @@ export function ConfigIndustryNormsPanel({
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-[var(--portal-muted)]">
         Suggested HR budget allocation ranges shown to students as industry guidance
         and validation warnings.
       </p>
@@ -474,7 +474,7 @@ export function ConfigIndustryNormsPanel({
 
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-sm">
-          <thead className="bg-slate-50 text-left text-slate-600">
+          <thead className="bg-[var(--portal-page)] text-left text-[var(--portal-muted)]">
             <tr>
               <th className="px-2 py-2">Module</th>
               <th className="px-2 py-2">Min %</th>

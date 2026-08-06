@@ -12,12 +12,12 @@ export default async function SessionReportsPage({
     <div className="mx-auto max-w-6xl px-4 py-10">
       <Link
         href={`/sessions/${sessionId}`}
-        className="text-sm text-[#e67e22] hover:underline"
+        className="text-sm text-[var(--portal-primary)] hover:underline"
       >
         ← Session
       </Link>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">Class reports</h1>
-      <p className="text-slate-600">
+      <h1 className="mt-4 text-2xl font-bold text-[var(--portal-title)]">Class reports</h1>
+      <p className="text-[var(--portal-muted)]">
         Compare teams, track participation, and export data.
       </p>
       <div className="mt-8">

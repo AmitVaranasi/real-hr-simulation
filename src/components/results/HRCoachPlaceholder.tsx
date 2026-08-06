@@ -6,9 +6,9 @@ export function HRCoachPlaceholder() {
   ];
 
   return (
-    <section className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5">
+    <section className="rounded-xl border border-dashed border-[var(--portal-sidebar-border)] bg-[var(--portal-page)] p-5">
       <h3 className="font-semibold text-slate-800">HR Coach (coming soon)</h3>
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="mt-1 text-sm text-[var(--portal-muted)]">
         Future versions will connect to an AI coach for personalized guidance.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -17,7 +17,7 @@ export function HRCoachPlaceholder() {
             key={label}
             type="button"
             disabled
-            className="cursor-not-allowed rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-400"
+            className="cursor-not-allowed rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-3 py-2 text-sm text-[var(--portal-muted)]"
             title="Available in a future release"
           >
             {label}

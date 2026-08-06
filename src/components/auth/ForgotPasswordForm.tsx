@@ -55,7 +55,7 @@ export function ForgotPasswordForm() {
         </p>
         <Link
           href="/login"
-          className="inline-block text-sm text-[#e67e22] hover:underline"
+          className="inline-block text-sm text-[var(--portal-primary)] hover:underline"
         >
           Back to sign in
         </Link>
@@ -71,7 +71,7 @@ export function ForgotPasswordForm() {
         </p>
       )}
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Email</span>
+        <span className="font-medium text-[var(--portal-ink)]">Email</span>
         <input
           type="email"
           required
@@ -84,8 +84,8 @@ export function ForgotPasswordForm() {
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? "Sending…" : "Send reset link"}
       </Button>
-      <p className="text-center text-sm text-slate-500">
-        <Link href="/login" className="text-[#e67e22] hover:underline">
+      <p className="text-center text-sm text-[var(--portal-muted)]">
+        <Link href="/login" className="text-[var(--portal-primary)] hover:underline">
           Back to sign in
         </Link>
       </p>

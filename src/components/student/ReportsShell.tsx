@@ -26,9 +26,9 @@ export async function ReportsRoundList() {
 
   if (!team) {
     return (
-      <p className="text-sm text-[#6b7280]">
+      <p className="text-sm text-[var(--portal-muted)]">
         Join a team to view reports.{" "}
-        <Link href="/join" className="text-[#e67e22] hover:underline">
+        <Link href="/join" className="text-[var(--portal-primary)] hover:underline">
           Join Session →
         </Link>
       </p>
@@ -44,16 +44,16 @@ export async function ReportsRoundList() {
     .order("computed_at", { ascending: false });
 
   return (
-    <aside className="rounded-xl border border-[#dde1e6] bg-white p-4 shadow-sm">
-      <p className="text-xs font-bold uppercase tracking-wide text-[#e67e22]">
+    <aside className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
+      <p className="text-xs font-bold uppercase tracking-wide text-[var(--portal-primary)]">
         The Workforce Brief
       </p>
-      <p className="mt-1 text-xs text-[#6b7280]">
+      <p className="mt-1 text-xs text-[var(--portal-muted)]">
         Select a round to review results
       </p>
       <ul className="mt-3 space-y-2">
         {(outcomes ?? []).length === 0 ? (
-          <li className="text-sm text-[#6b7280]">
+          <li className="text-sm text-[var(--portal-muted)]">
             No finalized rounds yet. Results appear after the instructor closes a
             round.
           </li>
@@ -67,12 +67,12 @@ export async function ReportsRoundList() {
               <li key={o.id}>
                 <Link
                   href={`/round/${o.round_id}/results`}
-                  className="block rounded-lg border border-[#f0f1f3] bg-[#f8f9fb] px-3 py-2 text-sm hover:border-[#e67e22]"
+                  className="block rounded-lg border border-[#f0f1f3] bg-[#f8fafc] px-3 py-2 text-sm hover:border-[var(--portal-primary)]"
                 >
-                  <span className="font-semibold text-[#0f172a]">
+                  <span className="font-semibold text-[var(--portal-title)]">
                     Round {round?.round_number ?? "—"} Results
                   </span>
-                  <span className="mt-1 block text-xs text-[#6b7280]">
+                  <span className="mt-1 block text-xs text-[var(--portal-muted)]">
                     BSC {Number(o.total_score).toFixed(1)} · Rev{" "}
                     {formatCurrency(Number(o.revenue))} · Stock $
                     {Number(o.stock_price).toFixed(2)}

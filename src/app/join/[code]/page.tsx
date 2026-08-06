@@ -45,10 +45,10 @@ export default async function JoinTeamByCodePage({
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-md px-4 py-12 sm:py-16">
-      <h1 className="text-2xl font-bold text-[#1f2937]">
+      <h1 className="text-2xl font-bold text-[var(--portal-ink)]">
         {currentName ? "Switch to this team" : "Join your team"}
       </h1>
-      <p className="mt-2 text-sm text-[#6b7280]">
+      <p className="mt-2 text-sm text-[var(--portal-muted)]">
         Confirm the team below, or edit the code if needed.
         {currentName
           ? ` You are currently on ${currentName}; joining will switch sessions.`
@@ -56,7 +56,7 @@ export default async function JoinTeamByCodePage({
       </p>
       <JoinTeamForm initialCode={code} allowSwitch={!!membership} />
       <p className="mt-8 text-center text-sm">
-        <Link href="/dashboard" className="font-medium text-[#e67e22] hover:underline">
+        <Link href="/dashboard" className="font-medium text-[var(--portal-primary)] hover:underline">
           Back to dashboard
         </Link>
       </p>

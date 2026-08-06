@@ -39,14 +39,14 @@ export function IndustryGuidance({
   const rangeWidth = ((max - min) / Math.max(max * 1.4, 1)) * 100;
 
   return (
-    <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600">
-      <p className="text-xs font-bold uppercase tracking-wide text-[#2563eb]">
+    <div className="mt-3 rounded-lg border border-[var(--portal-sidebar-border)] bg-[var(--portal-page)] px-3 py-3 text-sm text-[var(--portal-muted)]">
+      <p className="text-xs font-bold uppercase tracking-wide text-[var(--portal-accent-blue)]">
         Industry Guidance
       </p>
       <p className="mt-1 font-medium text-slate-800">
         {industry} · {primaryNorm.label ?? module} Investment (% of HR Budget)
       </p>
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-1 text-xs text-[var(--portal-muted)]">
         Suggested Range: {formatNormRange(primaryNorm)}
       </p>
 
@@ -57,7 +57,7 @@ export function IndustryGuidance({
         />
         {markerPct != null && (
           <div
-            className="absolute -top-1 h-4 w-1 rounded-full bg-[#e67e22]"
+            className="absolute -top-1 h-4 w-1 rounded-full bg-[var(--portal-primary)]"
             style={{ left: `calc(${markerPct}% - 2px)` }}
             title={`Your investment ${your?.toFixed(1)}%`}
           />
@@ -65,13 +65,13 @@ export function IndustryGuidance({
       </div>
       <div className="mt-2 flex justify-between text-xs">
         <span>Suggested Range</span>
-        <span className="font-semibold text-[#c45f12]">
+        <span className="font-semibold text-[var(--portal-primary)]">
           {your != null ? `▲ Your Investment ${your.toFixed(1)}%` : "Your Investment —"}
         </span>
       </div>
 
       {norms.benefits_pct_of_comp && module === "Compensation" && (
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-[var(--portal-muted)]">
           Benefits: {norms.benefits_pct_of_comp.min}%–
           {norms.benefits_pct_of_comp.max}% of salary
         </p>

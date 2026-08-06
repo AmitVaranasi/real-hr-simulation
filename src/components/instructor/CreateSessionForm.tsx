@@ -99,7 +99,7 @@ export function CreateSessionForm() {
           />
         </label>
       </div>
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-[var(--portal-muted)]">
         Creates {practiceRounds} practice + {roundsTotal} competitive rounds (
         {practiceRounds + roundsTotal} total).
       </p>

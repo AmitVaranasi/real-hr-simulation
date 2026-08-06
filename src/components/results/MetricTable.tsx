@@ -3,15 +3,15 @@ import type { MetricFeedback } from "@/lib/engine/types";
 const STATUS_STYLES = {
   excellent: "bg-emerald-100 text-emerald-800",
   moderate: "bg-amber-100 text-amber-800",
-  poor: "bg-orange-100 text-orange-800",
+  poor: "bg-sky-100 text-sky-800",
   critical: "bg-red-100 text-red-800",
 };
 
 export function MetricTable({ metrics }: { metrics: MetricFeedback[] }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200">
+    <div className="overflow-x-auto rounded-xl border border-[var(--portal-sidebar-border)]">
       <table className="w-full text-sm">
-        <thead className="bg-slate-50 text-left text-slate-600">
+        <thead className="bg-[var(--portal-page)] text-left text-[var(--portal-muted)]">
           <tr>
             <th className="px-4 py-3">Metric</th>
             <th className="px-4 py-3">Value</th>
@@ -26,7 +26,7 @@ export function MetricTable({ metrics }: { metrics: MetricFeedback[] }) {
                 {m.display_name}
               </td>
               <td className="px-4 py-3">{m.formatted_value}</td>
-              <td className="px-4 py-3 text-slate-500">
+              <td className="px-4 py-3 text-[var(--portal-muted)]">
                 Excellent: {m.benchmark_excellent} · Poor: {m.benchmark_poor}
               </td>
               <td className="px-4 py-3">
@@ -125,15 +125,15 @@ export function OutcomeMetricTable({
         return (
           <div
             key={category.title}
-            className="overflow-x-auto rounded-xl border border-slate-200"
+            className="overflow-x-auto rounded-xl border border-[var(--portal-sidebar-border)]"
           >
-            <div className="border-b border-slate-200 bg-[#f8f9fb] px-4 py-2.5">
-              <h3 className="text-xs font-bold uppercase tracking-wide text-[#e67e22]">
+            <div className="border-b border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-4 py-2.5">
+              <h3 className="text-xs font-bold uppercase tracking-wide text-[var(--portal-primary)]">
                 {category.title}
               </h3>
             </div>
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-slate-600">
+              <thead className="bg-[var(--portal-page)] text-left text-[var(--portal-muted)]">
                 <tr>
                   <th className="px-4 py-2.5 font-medium">HR Metric</th>
                   <th className="px-4 py-2.5 font-medium">Value</th>
@@ -142,7 +142,7 @@ export function OutcomeMetricTable({
               <tbody>
                 {present.map(([name, key, suffix]) => (
                   <tr key={String(name)} className="border-t border-slate-100">
-                    <td className="px-4 py-3 text-slate-700">{name}</td>
+                    <td className="px-4 py-3 text-[var(--portal-ink)]">{name}</td>
                     <td className="px-4 py-3 font-medium">
                       {formatMetricValue(
                         String(name),

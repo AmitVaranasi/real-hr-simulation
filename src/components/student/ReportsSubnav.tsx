@@ -10,7 +10,7 @@ const TABS = [
 
 export function ReportsSubnav({ activeHref }: { activeHref: string }) {
   return (
-    <div className="mb-6 flex flex-wrap gap-2 border-b border-[#dde1e6] pb-3">
+    <div className="mb-6 flex flex-wrap gap-2 border-b border-[var(--portal-sidebar-border)] pb-3">
       {TABS.map((t) => {
         const active = activeHref.startsWith(t.href);
         return (
@@ -19,8 +19,8 @@ export function ReportsSubnav({ activeHref }: { activeHref: string }) {
             href={t.href}
             className={`rounded-md px-3 py-1.5 text-sm font-medium ${
               active
-                ? "bg-[#fff4e8] text-[#c45f12]"
-                : "text-[#6b7280] hover:bg-white hover:text-[#1f2937]"
+                ? "bg-[var(--portal-primary-soft)] text-[var(--portal-primary)]"
+                : "text-[var(--portal-muted)] hover:bg-white hover:text-[var(--portal-ink)]"
             }`}
           >
             {t.label}

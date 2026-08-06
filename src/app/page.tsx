@@ -56,16 +56,16 @@ const MODULES: Array<{
 
 export default function Home() {
   return (
-    <div className="w-full min-w-0 overflow-x-hidden bg-slate-50">
-      <section className="border-b border-slate-200 bg-gradient-to-br from-[#fff4e8] via-white to-slate-50">
+    <div className="w-full min-w-0 overflow-x-hidden bg-[var(--portal-page)]">
+      <section className="border-b border-[var(--portal-sidebar-border)] bg-gradient-to-br from-[var(--portal-primary-soft)] via-white to-[var(--portal-page)]">
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:py-20">
-          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[#e67e22] sm:text-sm">
+          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--portal-primary)] sm:text-sm">
             Higher Education Business Simulation
           </p>
-          <h1 className="mx-auto max-w-3xl text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+          <h1 className="mx-auto max-w-3xl text-3xl font-bold tracking-tight text-[var(--portal-primary)] sm:text-5xl">
             Real HR Simulation
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
+          <p className="mx-auto mt-4 max-w-2xl text-base text-[var(--portal-muted)] sm:text-lg">
             An HR business simulation where student teams make recruitment,
             compensation, training, and engagement decisions — then see how
             those choices affect workforce metrics, financial outcomes, and the
@@ -88,25 +88,25 @@ export default function Home() {
 
       <section className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-6xl px-4">
-          <h2 className="mb-8 text-center text-xl font-semibold text-slate-900 sm:text-2xl">
+          <h2 className="mb-8 text-center text-xl font-semibold text-[var(--portal-title)] sm:text-2xl">
             Why Real HR Simulation?
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {features.map((f) => (
               <div
                 key={f.title}
-                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
+                className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm sm:p-6"
               >
-                <f.icon className="mb-3 h-8 w-8 text-[#e67e22]" />
-                <h3 className="font-semibold text-slate-900">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                <f.icon className="mb-3 h-8 w-8 text-[var(--portal-primary)]" />
+                <h3 className="font-semibold text-[var(--portal-title)]">{f.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--portal-muted)]">
                   {f.description}
                 </p>
               </div>
             ))}
           </div>
 
-          <h2 className="mb-6 mt-14 text-center text-xl font-semibold text-slate-900 sm:text-2xl">
+          <h2 className="mb-6 mt-14 text-center text-xl font-semibold text-[var(--portal-title)] sm:text-2xl">
             Seven HR Decision Modules
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -114,16 +114,16 @@ export default function Home() {
               <Link
                 key={m.slug}
                 href={`/learn/${m.slug}`}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-left shadow-sm transition hover:border-[#e67e22] hover:bg-[#fff4e8]"
+                className="rounded-xl border border-[var(--portal-sidebar-border)] bg-[var(--portal-page)] px-4 py-4 text-left shadow-sm transition hover:border-[var(--portal-primary)] hover:bg-[var(--portal-primary-soft)]"
               >
-                <m.icon className="mb-2 h-6 w-6 text-[#e67e22]" />
-                <p className="text-sm font-semibold text-slate-900">{m.title}</p>
-                <p className="mt-1 text-xs text-[#e67e22]">Learn more →</p>
+                <m.icon className="mb-2 h-6 w-6 text-[var(--portal-primary)]" />
+                <p className="text-sm font-semibold text-[var(--portal-title)]">{m.title}</p>
+                <p className="mt-1 text-xs text-[var(--portal-primary)]">Learn more →</p>
               </Link>
             ))}
           </div>
-          <p className="mt-10 text-center text-sm text-slate-500">
-            <Link href="/about" className="text-[#e67e22] hover:underline">
+          <p className="mt-10 text-center text-sm text-[var(--portal-muted)]">
+            <Link href="/about" className="text-[var(--portal-primary)] hover:underline">
               About this application
             </Link>
           </p>

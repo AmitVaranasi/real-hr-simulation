@@ -15,20 +15,20 @@ export function BudgetTracker({ budget }: BudgetTrackerProps) {
   const over = budget.remaining < 0;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
       <div className="mb-2 flex items-center justify-between text-sm">
-        <span className="font-medium text-slate-700">Discretionary HR Budget</span>
-        <span className={over ? "font-semibold text-red-600" : "text-slate-600"}>
+        <span className="font-medium text-[var(--portal-ink)]">Discretionary HR Budget</span>
+        <span className={over ? "font-semibold text-red-600" : "text-[var(--portal-muted)]"}>
           {formatCurrency(budget.total_spend)} / {formatCurrency(budget.available_budget)}
         </span>
       </div>
-      <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+      <div className="h-3 overflow-hidden rounded-full bg-[#f1f3f5]">
         <div
-          className={`h-full transition-all ${over ? "bg-red-500" : "bg-[#e67e22]"}`}
+          className={`h-full transition-all ${over ? "bg-red-500" : "bg-[var(--portal-primary)]"}`}
           style={{ width: `${Math.min(pct, 100)}%` }}
         />
       </div>
-      <p className="mt-2 text-xs text-slate-500">
+      <p className="mt-2 text-xs text-[var(--portal-muted)]">
         Remaining:{" "}
         <span className={over ? "text-red-600" : "text-emerald-600"}>
           {formatCurrency(budget.remaining)}

@@ -14,7 +14,7 @@ export function DeltaArrow({
   format = "percent",
 }: DeltaArrowProps) {
   if (prior === undefined || prior === 0) {
-    return <span className="text-xs text-slate-400">—</span>;
+    return <span className="text-xs text-[var(--portal-muted)]">—</span>;
   }
   const delta = ((current - prior) / Math.abs(prior)) * 100;
   const improved = invertColor ? delta < 0 : delta > 0;
@@ -23,7 +23,7 @@ export function DeltaArrow({
     ? "text-emerald-600"
     : worsened
       ? "text-red-600"
-      : "text-slate-400";
+      : "text-[var(--portal-muted)]";
   const Icon = delta > 0 ? ArrowUp : delta < 0 ? ArrowDown : Minus;
   const label =
     format === "percent"

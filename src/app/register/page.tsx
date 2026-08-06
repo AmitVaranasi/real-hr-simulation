@@ -7,8 +7,8 @@ export default function RegisterPage() {
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-md px-4 py-16">
-      <h1 className="text-2xl font-bold text-slate-900">Register</h1>
-      <p className="mt-2 text-slate-600">
+      <h1 className="text-2xl font-bold text-[var(--portal-title)]">Register</h1>
+      <p className="mt-2 text-[var(--portal-muted)]">
         Create a student or instructor account.
       </p>
       {!configured ? (
@@ -20,7 +20,7 @@ export default function RegisterPage() {
         <RegisterForm />
       )}
       <p className="mt-6 text-sm">
-        <Link href="/login" className="text-[#e67e22] hover:underline">
+        <Link href="/login" className="text-[var(--portal-primary)] hover:underline">
           Already have an account? Login
         </Link>
       </p>

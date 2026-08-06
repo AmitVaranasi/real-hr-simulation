@@ -7,11 +7,13 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  default: "bg-[#e67e22] text-white hover:bg-[#d35400]",
+  default:
+    "bg-[var(--portal-primary)] text-white hover:bg-[var(--portal-primary-hover)]",
   outline:
-    "border border-[#dde1e6] bg-white text-[#1f2937] hover:bg-[#f4f5f7]",
-  ghost: "text-[#1f2937] hover:bg-[#f4f5f7]",
-  secondary: "bg-[#f4f5f7] text-[#1f2937] hover:bg-[#dde1e6]",
+    "border border-[var(--portal-sidebar-border)] bg-white text-[var(--portal-ink)] hover:bg-[#f4f5f7]",
+  ghost: "text-[var(--portal-ink)] hover:bg-[#f4f5f7]",
+  secondary:
+    "bg-[#f4f5f7] text-[var(--portal-ink)] hover:bg-[var(--portal-sidebar-border)]",
 };
 
 const sizes = {

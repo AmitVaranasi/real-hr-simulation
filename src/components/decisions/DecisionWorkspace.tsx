@@ -119,7 +119,7 @@ export function DecisionWorkspace({
 
   return (
     <div>
-      <p className="mb-4 text-sm text-slate-500">
+      <p className="mb-4 text-sm text-[var(--portal-muted)]">
         {saving ? "Saving…" : "Changes auto-save"}
       </p>
       <DecisionForm

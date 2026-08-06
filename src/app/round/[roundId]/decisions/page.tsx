@@ -49,13 +49,13 @@ export default async function RoundDecisionsPage({
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-10">
-      <Link href="/dashboard" className="text-sm text-[#e67e22] hover:underline">
+      <Link href="/dashboard" className="text-sm text-[var(--portal-primary)] hover:underline">
         ← Dashboard
       </Link>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">
+      <h1 className="mt-4 text-2xl font-bold text-[var(--portal-title)]">
         Round {round.round_number} decisions
       </h1>
-      <p className="text-slate-600 capitalize">
+      <p className="text-[var(--portal-muted)] capitalize">
         {round.round_type} · {round.status} · Economy: {round.economy_condition}
       </p>
       <div className="mt-8">

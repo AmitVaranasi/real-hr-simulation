@@ -29,13 +29,13 @@ function FinancialShell({
               (label) => (
                 <div
                   key={label}
-                  className="rounded-xl border border-[#dde1e6] bg-white p-4 shadow-sm"
+                  className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm"
                 >
-                  <p className="text-xs uppercase tracking-wide text-[#6b7280]">
+                  <p className="text-xs uppercase tracking-wide text-[var(--portal-muted)]">
                     {label}
                   </p>
-                  <p className="mt-2 text-xl font-bold text-[#0f172a]">—</p>
-                  <p className="mt-1 text-xs text-[#6b7280]">
+                  <p className="mt-2 text-xl font-bold text-[var(--portal-title)]">—</p>
+                  <p className="mt-1 text-xs text-[var(--portal-muted)]">
                     Pending validated financial statement mapping
                   </p>
                 </div>

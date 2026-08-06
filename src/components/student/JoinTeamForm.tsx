@@ -108,7 +108,7 @@ export function JoinTeamForm({
         </p>
       )}
       <label className="block text-sm">
-        <span className="font-medium text-[#1f2937]">Team join code</span>
+        <span className="font-medium text-[var(--portal-ink)]">Team join code</span>
         <input
           type="text"
           autoComplete="off"
@@ -118,14 +118,14 @@ export function JoinTeamForm({
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
-        <span className="mt-1 block text-xs text-[#6b7280]">
+        <span className="mt-1 block text-xs text-[var(--portal-muted)]">
           Your instructor shares this code for your team (letters and numbers,
           no spaces).
         </span>
       </label>
 
       {previewLoading && (
-        <p className="text-sm text-[#6b7280]">Looking up team…</p>
+        <p className="text-sm text-[var(--portal-muted)]">Looking up team…</p>
       )}
 
       {previewError && !previewLoading && (
@@ -145,11 +145,11 @@ export function JoinTeamForm({
           <p className="text-xs font-medium uppercase tracking-wide text-emerald-800">
             Team found
           </p>
-          <p className="mt-1 font-medium text-[#1f2937]">{team.name}</p>
-          <p className="text-sm text-[#6b7280]">
+          <p className="mt-1 font-medium text-[var(--portal-ink)]">{team.name}</p>
+          <p className="text-sm text-[var(--portal-muted)]">
             {team.sessions?.name ?? "Class session"}
           </p>
-          <p className="mt-1 text-sm text-[#6b7280]">
+          <p className="mt-1 text-sm text-[var(--portal-muted)]">
             {team.industry} · {team.strategy}
           </p>
         </div>
@@ -157,7 +157,7 @@ export function JoinTeamForm({
 
       <Button
         type="submit"
-        className="w-full bg-[#e67e22] text-white hover:bg-[#d35400]"
+        className="w-full bg-[var(--portal-primary)] text-white hover:bg-[var(--portal-primary-hover)]"
         disabled={joinLoading || !normalized || previewLoading || !team}
       >
         {joinLoading

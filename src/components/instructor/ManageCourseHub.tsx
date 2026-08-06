@@ -57,22 +57,24 @@ export function ManageCourseHub({
         {
           title: "Course info",
           desc: "Session name, status, and round structure",
-          href: activeId ? `/sessions/${activeId}` : "/sessions/new",
+          href: activeId ? `/sessions/${activeId}/course` : "/sessions/new",
         },
         {
           title: "Team assignments",
           desc: "Create teams, set industry & strategy, share join codes",
-          href: activeId ? `/sessions/${activeId}` : "/sessions/new",
+          href: activeId ? `/sessions/${activeId}/teams` : "/sessions/new",
         },
         {
           title: "Enrollment",
           desc: "Student join codes and password reset help",
-          href: activeId ? `/sessions/${activeId}` : "/sessions/new",
+          href: activeId ? `/sessions/${activeId}/teams` : "/sessions/new",
         },
         {
           title: "Professor comments",
           desc: "Announcements shown on the student dashboard",
-          href: activeId ? `/sessions/${activeId}` : "/sessions/new",
+          href: activeId
+            ? `/sessions/${activeId}/announcements`
+            : "/sessions/new",
         },
       ],
     },
@@ -82,7 +84,7 @@ export function ManageCourseHub({
         {
           title: "Practice & competition rounds",
           desc: "Open, close, set economy, and compute outcomes",
-          href: activeId ? `/sessions/${activeId}` : "/sessions/new",
+          href: activeId ? `/sessions/${activeId}/rounds` : "/sessions/new",
         },
         {
           title: "Industry scoring",
@@ -133,7 +135,7 @@ export function ManageCourseHub({
   return (
     <div className="mx-auto w-full max-w-5xl space-y-8">
       <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-6 py-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-brand)]">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-primary)]">
           Manage Course
         </p>
         <h1 className="mt-1 text-2xl font-bold text-[var(--portal-ink)]">
@@ -151,7 +153,7 @@ export function ManageCourseHub({
                 href={`/sessions/manage?session=${s.id}`}
                 className={`rounded-full px-3 py-1.5 text-xs font-medium ${
                   s.id === activeId
-                    ? "bg-[var(--portal-brand)] text-white"
+                    ? "bg-[var(--portal-primary)] text-white"
                     : "bg-[var(--portal-sidebar)] text-[var(--portal-ink)] hover:bg-[var(--portal-sidebar-border)]"
                 }`}
               >
@@ -168,7 +170,7 @@ export function ManageCourseHub({
           <section key={group.group}>
             <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
               <GroupIcon
-                className="h-4 w-4 text-[var(--portal-brand)]"
+                className="h-4 w-4 text-[var(--portal-primary)]"
                 strokeWidth={2}
               />
               {group.group}
@@ -180,11 +182,11 @@ export function ManageCourseHub({
                   <Link
                     key={item.title}
                     href={item.href}
-                    className="flex items-start gap-3 rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm transition hover:border-[var(--portal-brand)] hover:shadow-md"
+                    className="flex items-start gap-3 rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm transition hover:border-[var(--portal-primary)] hover:shadow-md"
                   >
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--portal-brand-soft)]">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--portal-primary-soft)]">
                       <TileIcon
-                        className="h-5 w-5 text-[var(--portal-brand)]"
+                        className="h-5 w-5 text-[var(--portal-primary)]"
                         strokeWidth={2}
                       />
                     </span>
@@ -195,7 +197,7 @@ export function ManageCourseHub({
                       <p className="mt-1 text-sm text-[var(--portal-muted)]">
                         {item.desc}
                       </p>
-                      <p className="mt-3 text-xs font-semibold text-[var(--portal-brand)]">
+                      <p className="mt-3 text-xs font-semibold text-[var(--portal-primary)]">
                         Continue →
                       </p>
                     </div>

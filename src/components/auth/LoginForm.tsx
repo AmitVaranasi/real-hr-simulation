@@ -87,7 +87,7 @@ export function LoginForm() {
         </p>
       )}
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Email</span>
+        <span className="font-medium text-[var(--portal-ink)]">Email</span>
         <input
           type="email"
           required
@@ -98,7 +98,7 @@ export function LoginForm() {
         />
       </label>
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Password</span>
+        <span className="font-medium text-[var(--portal-ink)]">Password</span>
         <input
           type="password"
           required
@@ -111,7 +111,7 @@ export function LoginForm() {
       <div className="flex justify-end">
         <Link
           href="/forgot-password"
-          className="text-sm font-medium text-[#e67e22] hover:underline"
+          className="text-sm font-medium text-[var(--portal-primary)] hover:underline"
         >
           Forgot password?
         </Link>
@@ -119,7 +119,7 @@ export function LoginForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-[#e67e22] text-white hover:bg-[#d35400]"
+        className="w-full bg-[var(--portal-primary)] text-white hover:bg-[var(--portal-primary-hover)]"
       >
         {loading ? "Signing in…" : "Sign in"}
       </Button>

@@ -18,6 +18,6 @@ export function ScaffoldingText({ module }: { module: string }) {
   const text = MODULE_SCAFFOLDING[module];
   if (!text) return null;
   return (
-    <p className="mt-2 text-sm leading-relaxed text-slate-600">{text}</p>
+    <p className="mt-2 text-sm leading-relaxed text-[var(--portal-muted)]">{text}</p>
   );
 }

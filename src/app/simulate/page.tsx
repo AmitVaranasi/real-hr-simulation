@@ -33,19 +33,19 @@ export default function SimulatePage() {
   return (
     <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-6 sm:py-10">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className="text-2xl font-bold text-[var(--portal-title)]">
           Practice round — decision simulator
         </h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-[var(--portal-muted)]">
           Configure your team&apos;s industry and strategy, make HR decisions
           across seven modules, and run the simulation engine locally. Connect
           Supabase to persist teams, rounds, and class sessions.
         </p>
       </div>
 
-      <div className="mb-8 grid gap-4 rounded-xl border border-slate-200 bg-white p-4 grid-cols-1 sm:grid-cols-3">
+      <div className="mb-8 grid gap-4 rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 grid-cols-1 sm:grid-cols-3">
         <label className="text-sm">
-          <span className="font-medium text-slate-700">Industry</span>
+          <span className="font-medium text-[var(--portal-ink)]">Industry</span>
           <select
             className={`mt-1 ${formSelectClassName}`}
             value={industry}
@@ -59,7 +59,7 @@ export default function SimulatePage() {
           </select>
         </label>
         <label className="text-sm">
-          <span className="font-medium text-slate-700">Strategy</span>
+          <span className="font-medium text-[var(--portal-ink)]">Strategy</span>
           <select
             className={`mt-1 ${formSelectClassName}`}
             value={strategy}
@@ -73,7 +73,7 @@ export default function SimulatePage() {
           </select>
         </label>
         <label className="text-sm">
-          <span className="font-medium text-slate-700">Economy</span>
+          <span className="font-medium text-[var(--portal-ink)]">Economy</span>
           <select
             className={`mt-1 ${formSelectClassName}`}
             value={economy}

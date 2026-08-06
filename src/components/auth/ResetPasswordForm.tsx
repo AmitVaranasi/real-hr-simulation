@@ -72,7 +72,7 @@ export function ResetPasswordForm() {
         </p>
       )}
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">New password</span>
+        <span className="font-medium text-[var(--portal-ink)]">New password</span>
         <input
           type="password"
           required
@@ -84,7 +84,7 @@ export function ResetPasswordForm() {
         />
       </label>
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Confirm password</span>
+        <span className="font-medium text-[var(--portal-ink)]">Confirm password</span>
         <input
           type="password"
           required

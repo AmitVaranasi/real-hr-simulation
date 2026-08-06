@@ -55,7 +55,7 @@ export function RegisterForm() {
         </p>
       )}
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Display name</span>
+        <span className="font-medium text-[var(--portal-ink)]">Display name</span>
         <input
           required
           className={`mt-1 ${formInputClassName}`}
@@ -64,7 +64,7 @@ export function RegisterForm() {
         />
       </label>
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Role</span>
+        <span className="font-medium text-[var(--portal-ink)]">Role</span>
         <select
           className={`mt-1 ${formSelectClassName}`}
           value={role}
@@ -77,7 +77,7 @@ export function RegisterForm() {
         </select>
       </label>
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Email</span>
+        <span className="font-medium text-[var(--portal-ink)]">Email</span>
         <input
           type="email"
           required
@@ -87,7 +87,7 @@ export function RegisterForm() {
         />
       </label>
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Password</span>
+        <span className="font-medium text-[var(--portal-ink)]">Password</span>
         <input
           type="password"
           required
@@ -100,7 +100,7 @@ export function RegisterForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-[#e67e22] text-white hover:bg-[#d35400]"
+        className="w-full bg-[var(--portal-primary)] text-white hover:bg-[var(--portal-primary-hover)]"
       >
         {loading ? "Creating account…" : "Create account"}
       </Button>

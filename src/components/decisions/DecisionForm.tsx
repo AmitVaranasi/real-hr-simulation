@@ -142,7 +142,7 @@ function Field({
 }) {
   return (
     <label className="block text-sm">
-      <span className="font-medium text-slate-700">{label}</span>
+      <span className="font-medium text-[var(--portal-ink)]">{label}</span>
       <div className="mt-1">{children}</div>
     </label>
   );
@@ -152,7 +152,7 @@ export function DecisionForm(props: DecisionFormProps) {
   return (
     <Suspense
       fallback={
-        <p className="p-4 text-sm text-slate-500">Loading decision form…</p>
+        <p className="p-4 text-sm text-[var(--portal-muted)]">Loading decision form…</p>
       }
     >
       <DecisionFormInner {...props} />
@@ -292,15 +292,15 @@ function DecisionFormInner({
   return (
     <div className="space-y-6">
       {!configReady && (
-        <p className="text-xs text-slate-500">Loading simulation parameters…</p>
+        <p className="text-xs text-[var(--portal-muted)]">Loading simulation parameters…</p>
       )}
-      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-[#dde1e6] bg-white px-3 py-2 text-xs font-medium text-[#1f2937]">
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-3 py-2 text-xs font-medium text-[var(--portal-ink)]">
         <span>Industry: {industry}</span>
-        <span className="text-[#dde1e6]">|</span>
+        <span className="text-[var(--portal-sidebar-border)]">|</span>
         <span>Strategy: {strategy}</span>
-        <span className="text-[#dde1e6]">|</span>
+        <span className="text-[var(--portal-sidebar-border)]">|</span>
         <span>Economy: {economy}</span>
-        <span className="text-[#dde1e6]">|</span>
+        <span className="text-[var(--portal-sidebar-border)]">|</span>
         <span>
           HR Decisions {activeTab + 1} of {MODULES.length}
         </span>
@@ -308,7 +308,7 @@ function DecisionFormInner({
 
       <BudgetTracker budget={budget} />
 
-      <div className="overflow-x-auto border-b border-slate-200 pb-2">
+      <div className="overflow-x-auto border-b border-[var(--portal-sidebar-border)] pb-2">
         <div className="flex w-max min-w-full gap-1">
           {MODULES.map((mod, i) => (
             <button
@@ -317,8 +317,8 @@ function DecisionFormInner({
               onClick={() => selectTab(i)}
               className={`whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium ${
                 activeTab === i
-                  ? "bg-[#e67e22] text-white"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  ? "bg-[var(--portal-primary)] text-white"
+                  : "bg-[#f1f3f5] text-[var(--portal-ink)] hover:bg-[var(--portal-sidebar-border)]"
               }`}
             >
               {MODULE_LABELS[mod]}
@@ -327,11 +327,11 @@ function DecisionFormInner({
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
-        <p className="text-xs font-medium uppercase tracking-wide text-[#e67e22]">
+      <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 sm:p-6">
+        <p className="text-xs font-medium uppercase tracking-wide text-[var(--portal-primary)]">
           SHRM BASK · {SHRM_BADGES[MODULES[activeTab]]}
         </p>
-        <h2 className="mt-1 text-xl font-bold text-[#0f172a]">
+        <h2 className="mt-1 text-xl font-bold text-[var(--portal-title)]">
           {MODULE_LABELS[MODULES[activeTab]]}
         </h2>
         <ScaffoldingText module={MODULES[activeTab]} />
@@ -346,11 +346,11 @@ function DecisionFormInner({
           module={MODULES[activeTab]}
           yourInvestmentPct={yourInvestmentPct}
         />
-        <div className="mt-3 rounded-lg border border-[#dde1e6] bg-[#f8f9fb] px-3 py-2 text-sm">
-          <p className="text-xs font-bold uppercase tracking-wide text-[#6b7280]">
+        <div className="mt-3 rounded-lg border border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-3 py-2 text-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-[var(--portal-muted)]">
             Module Investment
           </p>
-          <p className="mt-1 font-semibold text-[#0f172a]">
+          <p className="mt-1 font-semibold text-[var(--portal-title)]">
             {formatCurrency(
               activeTab === 0
                 ? budget.recruitment_spend
@@ -366,7 +366,7 @@ function DecisionFormInner({
                           ? budget.org_design_spend
                           : budget.dei_spend
             )}{" "}
-            <span className="text-xs font-normal text-[#6b7280]">
+            <span className="text-xs font-normal text-[var(--portal-muted)]">
               ({(
                 ((activeTab === 0
                   ? budget.recruitment_spend
@@ -391,11 +391,11 @@ function DecisionFormInner({
 
         {activeTab === 0 && (
           <div className="mt-4 space-y-4">
-            <h3 className="font-semibold text-slate-900">Recruitment & Selection</h3>
+            <h3 className="font-semibold text-[var(--portal-title)]">Recruitment & Selection</h3>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[480px] text-sm">
                 <thead>
-                  <tr className="text-left text-slate-500">
+                  <tr className="text-left text-[var(--portal-muted)]">
                     <th className="py-2">Role group</th>
                     <th className="py-2">Count</th>
                   </tr>
@@ -405,7 +405,7 @@ function DecisionFormInner({
                     <tr key={role.id} className="border-t border-slate-100">
                       <td className="py-2 pr-4">
                         <p className="font-medium text-slate-800">{role.label}</p>
-                        <p className="text-xs text-slate-500">{role.description}</p>
+                        <p className="text-xs text-[var(--portal-muted)]">{role.description}</p>
                       </td>
                       <td className="py-2">
                         <input
@@ -482,7 +482,7 @@ function DecisionFormInner({
 
         {activeTab === 1 && (
           <div className="mt-4 space-y-4">
-            <h3 className="font-semibold text-slate-900">Performance Management</h3>
+            <h3 className="font-semibold text-[var(--portal-title)]">Performance Management</h3>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Review frequency">
                 <select
@@ -522,7 +522,7 @@ function DecisionFormInner({
                     {(
                       ["productivity", "teamwork", "leadership", "communication"] as const
                     ).map((key) => (
-                      <label key={key} className="text-xs text-slate-600">
+                      <label key={key} className="text-xs text-[var(--portal-muted)]">
                         {key} ({rp[key]})
                         <input
                           type="range"
@@ -550,7 +550,7 @@ function DecisionFormInner({
 
         {activeTab === 2 && (
           <div className="mt-4 space-y-4">
-            <h3 className="font-semibold text-slate-900">Training & Development</h3>
+            <h3 className="font-semibold text-[var(--portal-title)]">Training & Development</h3>
             <div className="space-y-2">
               {DEVELOPMENTAL_PROGRAMS.map((prog) => (
                 <label key={prog} className="flex items-center gap-2 text-sm">
@@ -582,7 +582,7 @@ function DecisionFormInner({
                 />
               </Field>
               <Field label="Derived training budget per employee">
-                <p className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-sm font-medium text-slate-800">
+                <p className="mt-2 rounded-lg bg-[var(--portal-page)] px-3 py-2 text-sm font-medium text-slate-800">
                   {formatCurrency(derivedTrainingPerEe)} (calculated from coverage
                   & programs)
                 </p>
@@ -603,7 +603,7 @@ function DecisionFormInner({
 
         {activeTab === 3 && (
           <div className="mt-4 space-y-4">
-            <h3 className="font-semibold text-slate-900">Employee Relations</h3>
+            <h3 className="font-semibold text-[var(--portal-title)]">Employee Relations</h3>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Engagement investment ($)">
                 <input
@@ -662,7 +662,7 @@ function DecisionFormInner({
 
         {activeTab === 4 && (
           <div className="mt-4 space-y-4">
-            <h3 className="font-semibold text-slate-900">Compensation, Benefits & HR Tech</h3>
+            <h3 className="font-semibold text-[var(--portal-title)]">Compensation, Benefits & HR Tech</h3>
             {decision.role_compensation.map((rc, idx) => {
               const role = getRoleById(rc.role_id);
               return (
@@ -854,7 +854,7 @@ function DecisionFormInner({
                 </select>
               </Field>
             </div>
-            <p className="rounded-lg bg-[#f8f9fb] px-3 py-2 text-sm text-[#1f2937]">
+            <p className="rounded-lg bg-[#f8fafc] px-3 py-2 text-sm text-[var(--portal-ink)]">
               {STRUCTURE_CUES[decision.organizational_structure]}
             </p>
             <MetricPreview
@@ -905,7 +905,7 @@ function DecisionFormInner({
             ).map(([key, label, cue]) => (
               <div
                 key={key}
-                className="rounded-lg border border-[#f0f1f3] bg-[#f8f9fb] p-3"
+                className="rounded-lg border border-[#f0f1f3] bg-[#f8fafc] p-3"
               >
                 <Field label={label}>
                   <select
@@ -922,7 +922,7 @@ function DecisionFormInner({
                     ))}
                   </select>
                 </Field>
-                <p className="mt-2 text-xs text-[#6b7280]">{cue}</p>
+                <p className="mt-2 text-xs text-[var(--portal-muted)]">{cue}</p>
               </div>
             ))}
             <MetricPreview
@@ -958,8 +958,8 @@ function DecisionFormInner({
       )}
 
       {outcome && (
-        <div className="space-y-6 border-t border-slate-200 pt-8">
-          <h2 className="text-xl font-semibold text-slate-900">Round results</h2>
+        <div className="space-y-6 border-t border-[var(--portal-sidebar-border)] pt-8">
+          <h2 className="text-xl font-semibold text-[var(--portal-title)]">Round results</h2>
           <BSCScorecard
             scores={outcome.bsc_scores}
             bscWeights={strategyConfig.bsc_weights}
@@ -984,9 +984,9 @@ function DecisionFormInner({
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="text-lg font-semibold text-slate-900">{value}</p>
+    <div className="rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-4">
+      <p className="text-xs text-[var(--portal-muted)]">{label}</p>
+      <p className="text-lg font-semibold text-[var(--portal-title)]">{value}</p>
     </div>
   );
 }

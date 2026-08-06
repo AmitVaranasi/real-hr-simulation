@@ -7,8 +7,8 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-md px-4 py-16">
-      <h1 className="text-2xl font-bold text-slate-900">Choose a new password</h1>
-      <p className="mt-2 text-slate-600">
+      <h1 className="text-2xl font-bold text-[var(--portal-title)]">Choose a new password</h1>
+      <p className="mt-2 text-[var(--portal-muted)]">
         Enter a new password for your account. You will stay signed in after
         updating.
       </p>
@@ -19,9 +19,9 @@ export default function ResetPasswordPage() {
       ) : (
         <ResetPasswordForm />
       )}
-      <p className="mt-6 text-sm text-slate-500">
+      <p className="mt-6 text-sm text-[var(--portal-muted)]">
         Link expired?{" "}
-        <Link href="/forgot-password" className="text-[#e67e22] hover:underline">
+        <Link href="/forgot-password" className="text-[var(--portal-primary)] hover:underline">
           Request a new reset email
         </Link>
       </p>

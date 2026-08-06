@@ -50,39 +50,39 @@ export function FormulaInspector({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Formula inspector</h1>
-        <p className="text-slate-600">
+        <h1 className="text-2xl font-bold text-[var(--portal-title)]">Formula inspector</h1>
+        <p className="text-[var(--portal-muted)]">
           {teamName} · {roundLabel}
         </p>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-[var(--portal-muted)]">
           Inputs → budget → HR metrics → financials → BSC → final score
         </p>
       </div>
 
       {carryForward && (
-        <section className="rounded-xl border border-[#f5d0a9] bg-[#fff4e8]/70 p-4">
-          <h2 className="font-semibold text-slate-900">
+        <section className="rounded-xl border border-[var(--portal-primary)]/30 bg-[var(--portal-primary-soft)]/70 p-4">
+          <h2 className="font-semibold text-[var(--portal-title)]">
             0. Carry-forward (prior → current)
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--portal-muted)]">
             {carryForward.prior_round_number != null
               ? `Prior round ${carryForward.prior_round_number} feeds rolling team state and metric momentum.`
               : "First scored round — using industry baseline as prior state."}
           </p>
           <dl className="mt-3 grid gap-1 text-sm sm:grid-cols-2">
-            <dt className="text-slate-500">Budget carryover into this round</dt>
+            <dt className="text-[var(--portal-muted)]">Budget carryover into this round</dt>
             <dd className="font-medium">
               {formatCurrency(carryForward.budget_carryover)}
             </dd>
-            <dt className="text-slate-500">Rolling headcount</dt>
+            <dt className="text-[var(--portal-muted)]">Rolling headcount</dt>
             <dd>{carryForward.team_rolling_state.headcount ?? "—"}</dd>
-            <dt className="text-slate-500">Rolling revenue</dt>
+            <dt className="text-[var(--portal-muted)]">Rolling revenue</dt>
             <dd>
               {carryForward.team_rolling_state.revenue != null
                 ? formatCurrency(Number(carryForward.team_rolling_state.revenue))
                 : "—"}
             </dd>
-            <dt className="text-slate-500">Rolling stock</dt>
+            <dt className="text-[var(--portal-muted)]">Rolling stock</dt>
             <dd>
               {carryForward.team_rolling_state.stock_price != null
                 ? `$${Number(carryForward.team_rolling_state.stock_price).toFixed(2)}`
@@ -90,7 +90,7 @@ export function FormulaInspector({
             </dd>
           </dl>
           {carryForward.prior_metrics && (
-            <div className="mt-3 grid gap-2 text-xs text-slate-600 sm:grid-cols-3">
+            <div className="mt-3 grid gap-2 text-xs text-[var(--portal-muted)] sm:grid-cols-3">
               <p>
                 Prior turnover:{" "}
                 {(carryForward.prior_metrics.turnover_rate * 100).toFixed(1)}%
@@ -109,7 +109,7 @@ export function FormulaInspector({
             </div>
           )}
           {carryForward.prior_financials && (
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-[var(--portal-muted)]">
               Prior BSC: {carryForward.prior_financials.total_score.toFixed(1)} ·
               Prior profit:{" "}
               {formatCurrency(carryForward.prior_financials.profit)}
@@ -119,9 +119,9 @@ export function FormulaInspector({
       )}
 
       {decision && (
-        <section className="rounded-xl border border-slate-200 bg-white p-4">
-          <h2 className="font-semibold text-slate-900">1. Student decisions</h2>
-          <ul className="mt-2 space-y-1 text-sm text-slate-600">
+        <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+          <h2 className="font-semibold text-[var(--portal-title)]">1. Student decisions</h2>
+          <ul className="mt-2 space-y-1 text-sm text-[var(--portal-muted)]">
             <li>
               Positions:{" "}
               {decision.positions_to_fill
@@ -140,8 +140,8 @@ export function FormulaInspector({
         </section>
       )}
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4">
-        <h2 className="font-semibold text-slate-900">2. Budget breakdown</h2>
+      <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+        <h2 className="font-semibold text-[var(--portal-title)]">2. Budget breakdown</h2>
         <dl className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
           <dt>Recruitment</dt>
           <dd>{formatCurrency(b.recruitment_spend)}</dd>
@@ -163,10 +163,10 @@ export function FormulaInspector({
         </dl>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 overflow-x-auto">
-        <h2 className="font-semibold text-slate-900">3. HR metrics</h2>
+      <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 overflow-x-auto">
+        <h2 className="font-semibold text-[var(--portal-title)]">3. HR metrics</h2>
         <table className="mt-2 w-full min-w-[480px] text-sm">
-          <thead className="text-left text-slate-500">
+          <thead className="text-left text-[var(--portal-muted)]">
             <tr>
               <th className="py-1">Metric</th>
               <th>Raw</th>
@@ -200,9 +200,9 @@ export function FormulaInspector({
         </table>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4">
-        <h2 className="font-semibold text-slate-900">4. Productivity engine</h2>
-        <ul className="mt-2 space-y-1 text-sm text-slate-600">
+      <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+        <h2 className="font-semibold text-[var(--portal-title)]">4. Productivity engine</h2>
+        <ul className="mt-2 space-y-1 text-sm text-[var(--portal-muted)]">
           <li>Training: {(pc.training * 100).toFixed(1)}% weight → {(pc.training * 0.3).toFixed(3)}</li>
           <li>Engagement: {(pc.engagement * 100).toFixed(1)}% → {(pc.engagement * 0.25).toFixed(3)}</li>
           <li>Retention: {(pc.retention * 100).toFixed(1)}% → {(pc.retention * 0.2).toFixed(3)}</li>
@@ -214,8 +214,8 @@ export function FormulaInspector({
         </ul>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4">
-        <h2 className="font-semibold text-slate-900">5. Financial cascade</h2>
+      <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+        <h2 className="font-semibold text-[var(--portal-title)]">5. Financial cascade</h2>
         <dl className="mt-2 grid gap-1 text-sm">
           <dt>Revenue</dt>
           <dd>{formatCurrency(fc.revenue)}</dd>
@@ -232,8 +232,8 @@ export function FormulaInspector({
         </dl>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4">
-        <h2 className="font-semibold text-slate-900">6. BSC scoring</h2>
+      <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+        <h2 className="font-semibold text-[var(--portal-title)]">6. BSC scoring</h2>
         <dl className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
           <dt>Financial</dt>
           <dd>{trace.bsc_scores.score_financial.toFixed(1)}</dd>
@@ -248,7 +248,7 @@ export function FormulaInspector({
           <dt>Industry penalty</dt>
           <dd>-{trace.bsc_scores.industry_penalty}</dd>
           <dt className="font-medium">Total</dt>
-          <dd className="font-medium text-[#c45f12]">
+          <dd className="font-medium text-[var(--portal-primary)]">
             {trace.bsc_scores.total_score.toFixed(1)}
           </dd>
         </dl>

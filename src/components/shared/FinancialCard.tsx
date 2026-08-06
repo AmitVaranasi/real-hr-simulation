@@ -24,9 +24,9 @@ export function FinancialCard({
         : value.toLocaleString();
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="text-lg font-semibold text-slate-900">{formatted}</p>
+    <div className="rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-4">
+      <p className="text-xs text-[var(--portal-muted)]">{label}</p>
+      <p className="text-lg font-semibold text-[var(--portal-title)]">{formatted}</p>
       {priorValue !== undefined && (
         <DeltaArrow
           current={value}

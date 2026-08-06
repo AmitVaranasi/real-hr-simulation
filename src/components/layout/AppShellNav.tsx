@@ -53,7 +53,7 @@ export function AppShellNav({ role }: Props) {
   if (!showStudent && !showProfessor) return null;
 
   return (
-    <div className="border-b border-slate-200 bg-slate-50">
+    <div className="border-b border-[var(--portal-sidebar-border)] bg-[var(--portal-page)]">
       <div className="mx-auto w-full max-w-6xl px-4 py-2.5">
         {showStudent && <StudentRoleNav openRoundId={openRoundId} />}
         {showProfessor && <ProfessorRoleNav sessionId={sessionId} />}

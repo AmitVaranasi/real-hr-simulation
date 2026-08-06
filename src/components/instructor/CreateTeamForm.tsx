@@ -46,10 +46,10 @@ export function CreateTeamForm({ sessionId }: { sessionId: string }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-4 grid grid-cols-1 gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end"
+      className="mt-4 grid grid-cols-1 gap-4 rounded-lg border border-[var(--portal-sidebar-border)] bg-[var(--portal-page)] p-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end"
     >
       <label className="flex min-w-0 flex-col text-sm sm:col-span-2 lg:col-span-1">
-        <span className="font-medium text-slate-700">Team name</span>
+        <span className="font-medium text-[var(--portal-ink)]">Team name</span>
         <input
           required
           className={`mt-1 ${formInputClassName}`}
@@ -58,7 +58,7 @@ export function CreateTeamForm({ sessionId }: { sessionId: string }) {
         />
       </label>
       <label className="flex min-w-0 flex-col text-sm">
-        <span className="font-medium text-slate-700">Industry</span>
+        <span className="font-medium text-[var(--portal-ink)]">Industry</span>
         <select
           className={`mt-1 ${formSelectClassName}`}
           value={industry}
@@ -70,7 +70,7 @@ export function CreateTeamForm({ sessionId }: { sessionId: string }) {
         </select>
       </label>
       <label className="flex min-w-0 flex-col text-sm">
-        <span className="font-medium text-slate-700">Strategy</span>
+        <span className="font-medium text-[var(--portal-ink)]">Strategy</span>
         <select
           className={`mt-1 ${formSelectClassName}`}
           value={strategy}

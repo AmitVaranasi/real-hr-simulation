@@ -43,26 +43,26 @@ export default async function ProfitLossPage() {
       <div className="grid gap-4 lg:grid-cols-[260px_1fr]">
         <ReportsRoundList />
         <div className="space-y-4">
-          <section className="rounded-xl border border-[#dde1e6] bg-white p-5 shadow-sm">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-[#2563eb]">
+          <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-[var(--portal-accent-blue)]">
               Profit &amp; Loss — Round {round?.round_number ?? "—"}
             </h2>
             <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
-              <dt className="text-[#6b7280]">Revenue</dt>
+              <dt className="text-[var(--portal-muted)]">Revenue</dt>
               <dd className="font-semibold">
                 {latest ? formatCurrency(Number(latest.revenue)) : "—"}
               </dd>
-              <dt className="text-[#6b7280]">Profit</dt>
+              <dt className="text-[var(--portal-muted)]">Profit</dt>
               <dd className="font-semibold">
                 {latest ? formatCurrency(Number(latest.profit)) : "—"}
               </dd>
-              <dt className="text-[#6b7280]">Total HR Budget Spent</dt>
+              <dt className="text-[var(--portal-muted)]">Total HR Budget Spent</dt>
               <dd className="font-semibold">
                 {latest?.total_budget_spent != null
                   ? formatCurrency(Number(latest.total_budget_spent))
                   : "—"}
               </dd>
-              <dt className="text-[#6b7280]">Other P&amp;L lines</dt>
+              <dt className="text-[var(--portal-muted)]">Other P&amp;L lines</dt>
               <dd className="font-semibold">—</dd>
             </dl>
           </section>

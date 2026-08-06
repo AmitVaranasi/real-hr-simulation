@@ -32,10 +32,13 @@ function statusLabel(status: RangeStatus) {
 }
 
 function statusClass(status: RangeStatus) {
-  if (status === "within") return "bg-emerald-50 text-emerald-800 border-emerald-200";
-  if (status === "below") return "bg-amber-50 text-amber-900 border-amber-200";
-  if (status === "above") return "bg-orange-50 text-orange-900 border-orange-200";
-  return "bg-slate-50 text-slate-600 border-slate-200";
+  if (status === "within")
+    return "bg-emerald-50 text-emerald-800 border-emerald-200";
+  if (status === "below")
+    return "bg-[var(--portal-primary-soft)] text-[var(--portal-title)] border-[var(--portal-primary)]/30";
+  if (status === "above")
+    return "bg-[var(--portal-primary-soft)] text-[var(--portal-primary)] border-[var(--portal-primary)]/40";
+  return "bg-[var(--portal-page)] text-[var(--portal-muted)] border-[var(--portal-sidebar-border)]";
 }
 
 /** Map DecisionForm module keys to warning module labels */
@@ -79,8 +82,8 @@ export function DecisionGuidance({
 
   return (
     <div className="mt-3 space-y-3">
-      <div className="rounded-lg border border-[#dde1e6] bg-white px-3 py-3">
-        <p className="text-xs font-bold uppercase tracking-wide text-[#e67e22]">
+      <div className="rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-3 py-3">
+        <p className="text-xs font-bold uppercase tracking-wide text-[var(--portal-primary)]">
           Decision Guidance
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -90,18 +93,18 @@ export function DecisionGuidance({
             {statusLabel(status)}
           </span>
           {yourInvestmentPct != null && primaryNorm ? (
-            <span className="text-xs text-[#6b7280]">
+            <span className="text-xs text-[var(--portal-muted)]">
               Your investment: {yourInvestmentPct.toFixed(1)}% of HR budget
               {primaryNorm ? ` · Suggested: ${formatNormRange(primaryNorm)}` : ""}
             </span>
           ) : (
-            <span className="text-xs text-[#6b7280]">
+            <span className="text-xs text-[var(--portal-muted)]">
               Suggested ranges for this module remain configurable until engine
               validation.
             </span>
           )}
         </div>
-        <p className="mt-2 text-sm text-[#1f2937]">
+        <p className="mt-2 text-sm text-[var(--portal-ink)]">
           Consider whether your current investment supports your workforce needs,
           organizational strategy, and other HR priorities.
         </p>
@@ -115,7 +118,7 @@ export function DecisionGuidance({
               className={`rounded-lg px-3 py-2 text-sm ${
                 w.severity === "critical"
                   ? "bg-red-50 text-red-800"
-                  : "bg-amber-50 text-amber-900"
+                  : "bg-[var(--portal-primary-soft)] text-[var(--portal-title)]"
               }`}
             >
               <strong>{w.module}:</strong> {w.message}

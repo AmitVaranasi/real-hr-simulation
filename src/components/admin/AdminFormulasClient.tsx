@@ -112,7 +112,7 @@ export function AdminFormulasClient() {
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6">
       <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-6 py-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-brand)]">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-primary)]">
           Formula Repository
         </p>
         <h1 className="mt-1 text-2xl font-bold text-[var(--portal-ink)]">
@@ -123,7 +123,7 @@ export function AdminFormulasClient() {
           tune related parameters in Configuration. Live traces run in the{" "}
           <Link
             href="/sessions/testing"
-            className="font-medium text-[var(--portal-brand)] hover:underline"
+            className="font-medium text-[var(--portal-primary)] hover:underline"
           >
             Testing Center
           </Link>
@@ -150,7 +150,7 @@ export function AdminFormulasClient() {
             onClick={() => setCategory(c)}
             className={`rounded-full px-3 py-1.5 text-xs font-medium ${
               category === c
-                ? "bg-[var(--portal-brand)] text-white"
+                ? "bg-[var(--portal-primary)] text-white"
                 : "bg-[var(--portal-sidebar)] text-[var(--portal-ink)]"
             }`}
           >
@@ -172,8 +172,8 @@ export function AdminFormulasClient() {
                     onClick={() => setSelectedId(f.id)}
                     className={`w-full rounded-md px-3 py-2 text-left text-sm ${
                       selectedId === f.id
-                        ? "bg-[#fff4e8] font-semibold text-[#c45f12]"
-                        : "text-[#1f2937] hover:bg-[#f4f5f7]"
+                        ? "bg-[var(--portal-primary-soft)] font-semibold text-[var(--portal-primary)]"
+                        : "text-[var(--portal-ink)] hover:bg-[#f4f5f7]"
                     }`}
                   >
                     <span className="block">{f.name}</span>

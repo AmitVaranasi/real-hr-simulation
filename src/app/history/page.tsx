@@ -39,16 +39,16 @@ export default async function HistoryPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <Link href="/dashboard" className="text-sm text-[#e67e22] hover:underline">
+      <Link href="/dashboard" className="text-sm text-[var(--portal-primary)] hover:underline">
         ← Dashboard
       </Link>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">
+      <h1 className="mt-4 text-2xl font-bold text-[var(--portal-title)]">
         Reports &amp; HR Analytics
       </h1>
-      <p className="text-slate-600">
+      <p className="text-[var(--portal-muted)]">
         {(membership.teams as unknown as { name: string }).name} · classic history
         view. Prefer{" "}
-        <Link href="/reports/workforce-brief" className="text-[#e67e22] hover:underline">
+        <Link href="/reports/workforce-brief" className="text-[var(--portal-primary)] hover:underline">
           The Workforce Brief
         </Link>
         .
@@ -76,17 +76,17 @@ export default async function HistoryPage() {
                   ? `/round/${r.id}/results`
                   : `/round/${r.id}/decisions`
               }
-              className="block rounded-xl border border-slate-200 bg-white p-4 hover:shadow-md"
+              className="block rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 hover:shadow-md"
             >
               <div className="flex justify-between">
                 <span className="font-medium">
                   Round {r.round_number} ({r.round_type})
                 </span>
-                <span className="text-[#e67e22] font-semibold">
+                <span className="text-[var(--portal-primary)] font-semibold">
                   {Number(o.instructor_override ?? o.total_score).toFixed(1)} / 100
                 </span>
               </div>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-[var(--portal-muted)]">
                 Revenue {formatCurrency(Number(o.revenue))} · Stock $
                 {Number(o.stock_price).toFixed(2)}
               </p>
@@ -94,7 +94,7 @@ export default async function HistoryPage() {
           );
         })}
         {(outcomes ?? []).length === 0 && (
-          <p className="text-slate-500">No completed rounds yet.</p>
+          <p className="text-[var(--portal-muted)]">No completed rounds yet.</p>
         )}
       </div>
     </div>

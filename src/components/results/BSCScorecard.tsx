@@ -31,7 +31,7 @@ export function BSCScorecard({ scores, bscWeights }: BSCScorecardProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between rounded-xl bg-[#e67e22] px-6 py-4 text-white">
+      <div className="flex items-center justify-between rounded-xl bg-[var(--portal-primary)] px-6 py-4 text-white">
         <div>
           <p className="text-sm opacity-90">Total Round Score</p>
           <p className="text-4xl font-bold">{scores.total_score.toFixed(1)}</p>
@@ -53,17 +53,17 @@ export function BSCScorecard({ scores, bscWeights }: BSCScorecardProps) {
           return (
             <div
               key={p.key}
-              className="rounded-lg border border-slate-200 bg-white p-4"
+              className="rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-4"
             >
               <div className="mb-2 flex justify-between text-sm">
-                <span className="font-medium text-slate-700">{p.label}</span>
-                <span className="text-slate-500">
+                <span className="font-medium text-[var(--portal-ink)]">{p.label}</span>
+                <span className="text-[var(--portal-muted)]">
                   {value.toFixed(1)} / {max}
                 </span>
               </div>
-              <div className="h-2 rounded-full bg-slate-100">
+              <div className="h-2 rounded-full bg-[#f1f3f5]">
                 <div
-                  className="h-full rounded-full bg-[#e67e22]"
+                  className="h-full rounded-full bg-[var(--portal-primary)]"
                   style={{ width: `${Math.min(pct, 100)}%` }}
                 />
               </div>
