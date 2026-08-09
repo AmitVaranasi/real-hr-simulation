@@ -249,7 +249,7 @@ export function PortalSidebar({
   if (collapsed) {
     return (
       <aside
-        className={`flex h-svh max-h-svh min-h-0 w-full flex-col border-r ${
+        className={`flex h-full min-h-0 w-full flex-col border-r ${
           darkNav
             ? "border-transparent bg-[var(--portal-navy)]"
             : "border-[var(--portal-sidebar-border)] bg-white"
@@ -271,8 +271,8 @@ export function PortalSidebar({
         : "—");
 
   const asideClass = darkNav
-    ? "flex h-svh max-h-svh min-h-0 w-full flex-col bg-[var(--portal-navy)] text-white"
-    : "flex h-svh max-h-svh min-h-0 w-full flex-col border-r border-[var(--portal-sidebar-border)] bg-white text-[var(--portal-ink)]";
+    ? "flex h-full min-h-0 w-full flex-col bg-[var(--portal-navy)] text-white"
+    : "flex h-full min-h-0 w-full flex-col border-r border-[var(--portal-sidebar-border)] bg-white text-[var(--portal-ink)]";
 
   return (
     <aside className={asideClass}>

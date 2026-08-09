@@ -1,26 +1,37 @@
-import {
-  ReportsRoundList,
-  ReportsShell,
-} from "@/components/student/ReportsShell";
-import { PlaceholderPanel } from "@/components/student/shell/StudentShell";
+import { CashFlowView } from "@/components/reports/CashFlowView";
+import { loadFinancialReportData } from "@/lib/reports/load-report-data";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-export default function CashFlowPage() {
+export default async function CashFlowPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ round?: string }>;
+}) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login?next=/reports/cash-flow");
+
+  const params = await searchParams;
+  const data = await loadFinancialReportData(
+    "/reports/cash-flow",
+    params.round
+  );
+
   return (
-    <ReportsShell
-      title="Cash Flow Statement"
-      subtitle="Architecture shell for round-based cash flow views of finalized simulation state."
-      activeHref="/reports/cash-flow"
-    >
-      <div className="grid gap-4 lg:grid-cols-[260px_1fr]">
-        <ReportsRoundList />
-        <PlaceholderPanel title="Cash Flow — pending financial mapping">
-          Operating, investing, and financing sections will display values from the
-          same finalized round dataset used by The Workforce Brief. Unsupported
-          lines show as — rather than invented figures.
-        </PlaceholderPanel>
-      </div>
-    </ReportsShell>
+    <div className="p-4 sm:p-6">
+      <CashFlowView
+        roundNumber={data.roundNumber}
+        asOfLabel={data.asOfLabel}
+        rounds={data.rounds}
+        selectedRoundId={data.selectedRoundId}
+        liveRevenue={data.liveRevenue}
+        liveCompensation={data.liveCompensation}
+      />
+    </div>
   );
 }

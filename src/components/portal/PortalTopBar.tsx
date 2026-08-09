@@ -36,8 +36,8 @@ export function PortalTopBar({
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[var(--portal-sidebar-border)] bg-white">
-      <div className="flex h-[52px] items-center justify-between gap-3 px-3 sm:px-5">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-[var(--portal-sidebar-border)] bg-white">
+      <div className="flex h-[52px] w-full items-center justify-between gap-3 px-3 sm:px-5">
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"

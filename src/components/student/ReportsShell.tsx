@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ReportsSubnav } from "@/components/student/ReportsSubnav";
 import { StudentPageHeader } from "@/components/student/shell/StudentShell";
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@/lib/utils";
@@ -90,18 +89,15 @@ export async function ReportsRoundList() {
 export function ReportsShell({
   title,
   subtitle,
-  activeHref,
   children,
 }: {
   title: string;
   subtitle: string;
-  activeHref: string;
   children: React.ReactNode;
 }) {
   return (
     <div>
       <StudentPageHeader title={title} subtitle={subtitle} />
-      <ReportsSubnav activeHref={activeHref} />
       {children}
     </div>
   );
