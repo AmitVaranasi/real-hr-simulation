@@ -2,13 +2,18 @@ import { cn } from "@/lib/utils";
 import { ButtonHTMLAttributes, forwardRef } from "react";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "outline" | "ghost" | "secondary";
+  variant?: "default" | "outline" | "ghost" | "secondary" | "orange" | "blue";
   size?: "default" | "sm" | "lg";
 }
 
 const variants = {
+  /** PNG secondary/default interactive = blue */
   default:
     "bg-[var(--portal-primary)] text-white hover:bg-[var(--portal-primary-hover)]",
+  blue: "bg-[var(--portal-primary)] text-white hover:bg-[var(--portal-primary-hover)]",
+  /** PNG primary CTA = orange (Continue to Decisions) */
+  orange:
+    "bg-[var(--portal-brand)] text-white hover:bg-[var(--portal-brand-hover)]",
   outline:
     "border border-[var(--portal-sidebar-border)] bg-white text-[var(--portal-ink)] hover:bg-[#f4f5f7]",
   ghost: "text-[var(--portal-ink)] hover:bg-[#f4f5f7]",

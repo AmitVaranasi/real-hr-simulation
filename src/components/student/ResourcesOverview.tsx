@@ -77,6 +77,16 @@ const METRIC_GROUPS = [
     body: "DEI Score and inclusion-related outcomes",
     icon: Scale,
   },
+  {
+    title: "Organization Effectiveness",
+    body: "Structure, change readiness, and capability",
+    icon: Network,
+  },
+  {
+    title: "HR Productivity Indicators",
+    body: "Output, quality, and cost efficiency signals",
+    icon: LineChart,
+  },
 ];
 
 const DOWNLOADS = [
@@ -130,7 +140,7 @@ export function ResourcesOverview({
               label: "Strategy",
               value: context.strategy,
               icon: Target,
-              iconClass: "text-[var(--portal-icon-blue)]",
+              iconClass: "text-[var(--portal-icon-orange)]",
             },
             {
               label: "Economy",
@@ -179,7 +189,7 @@ export function ResourcesOverview({
         <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
           <div className="flex items-start gap-3">
             <div className="rounded-lg bg-blue-50 p-2 text-[var(--portal-icon-blue)]">
-              <BookOpen className="h-5 w-5" strokeWidth={1.75} />
+              <GraduationCap className="h-5 w-5" strokeWidth={1.75} />
             </div>
             <div>
               <h2 className="text-[17px] font-bold text-[var(--portal-title)]">
@@ -318,7 +328,7 @@ export function ResourcesOverview({
 
         <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
           <div className="flex items-start gap-3">
-            <div className="rounded-lg bg-[var(--portal-primary-soft)] p-2 text-[var(--portal-primary)]">
+            <div className="rounded-lg bg-[var(--portal-brand-soft)] p-2 text-[var(--portal-brand)]">
               <FolderOpen className="h-5 w-5" strokeWidth={1.75} />
             </div>
             <div>
@@ -340,7 +350,7 @@ export function ResourcesOverview({
                 >
                   <span className="inline-flex items-center gap-2.5 font-medium text-[var(--portal-ink)]">
                     <Icon
-                      className="h-4 w-4 text-[var(--portal-primary)]"
+                      className="h-4 w-4 text-[var(--portal-brand)]"
                       strokeWidth={1.75}
                     />
                     {d.name}
@@ -354,7 +364,7 @@ export function ResourcesOverview({
           </ul>
           <Link
             href="/resources/downloads"
-            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[var(--portal-primary)] hover:underline"
+            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[var(--portal-brand)] hover:underline"
           >
             View All Downloads →
           </Link>
@@ -365,7 +375,7 @@ export function ResourcesOverview({
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-md border border-[var(--portal-sidebar-border)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--portal-accent-blue)] hover:bg-[var(--portal-accent-blue-soft)]"
+            className="inline-flex items-center gap-2 rounded-md border border-[var(--portal-accent-blue)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--portal-accent-blue)] hover:bg-[var(--portal-accent-blue-soft)]"
           >
             ← Back to Dashboard
           </Link>

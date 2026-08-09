@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CircleHelp, LogOut, Menu, X } from "lucide-react";
+import { CircleHelp, LogOut, Menu, Monitor, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -41,7 +41,7 @@ export function PortalTopBar({
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
-            className="rounded-md p-2 text-[var(--portal-ink)] hover:bg-[#f4f5f7]"
+            className="rounded-md p-2 text-[var(--portal-ink)] hover:bg-[#f4f5f7] lg:hidden"
             onClick={onToggleMobile}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
@@ -51,10 +51,19 @@ export function PortalTopBar({
               <Menu className="h-5 w-5" strokeWidth={1.75} />
             )}
           </button>
+          {/* Desktop: always hamburger per PNG (collapse sidebar) */}
+          <button
+            type="button"
+            className="hidden rounded-md p-2 text-[var(--portal-ink)] hover:bg-[#f4f5f7] lg:inline-flex"
+            onClick={onToggleMobile}
+            aria-label="Toggle menu"
+          >
+            <Menu className="h-5 w-5" strokeWidth={1.75} />
+          </button>
           {showBrandInBar ? (
             <Link
               href={homeHref}
-              className="truncate text-[15px] font-bold tracking-tight text-[var(--portal-primary)] sm:text-base"
+              className="truncate text-[15px] font-bold tracking-tight text-[var(--portal-brand)] sm:text-base"
             >
               Real HR Simulation
             </Link>
@@ -79,23 +88,27 @@ export function PortalTopBar({
         </div>
         <div className="flex shrink-0 items-center gap-3 sm:gap-4">
           {roleLabel === "Instructor" || roleLabel === "Admin" ? (
-            <span className="hidden text-[13px] font-medium text-[var(--portal-ink)] sm:inline">
+            <span className="hidden text-[13px] font-medium text-[var(--portal-navy)] sm:inline">
               {roleLabel}
             </span>
           ) : (
             <Link
               href="/simulate"
-              className="hidden text-[13px] font-medium text-[var(--portal-ink)] hover:text-[var(--portal-primary)] sm:inline"
+              className="hidden items-center gap-1.5 text-[13px] font-medium text-[var(--portal-navy)] hover:text-[var(--portal-brand)] sm:inline-flex"
             >
+              <Monitor
+                className="h-4 w-4 text-[var(--portal-navy)]"
+                strokeWidth={1.75}
+              />
               Simulator
             </Link>
           )}
           <Link
             href={helpHref}
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--portal-ink)] hover:text-[var(--portal-accent-blue)]"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--portal-navy)] hover:text-[var(--portal-primary)]"
           >
             <CircleHelp
-              className="h-4 w-4 text-[var(--portal-accent-blue)]"
+              className="h-4 w-4 text-[var(--portal-primary)]"
               strokeWidth={1.75}
             />
             <span className="hidden sm:inline">Help</span>
@@ -103,10 +116,10 @@ export function PortalTopBar({
           <button
             type="button"
             onClick={() => void signOut()}
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--portal-ink)] hover:text-[var(--portal-accent-blue)]"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--portal-navy)] hover:text-[var(--portal-primary)]"
           >
             <LogOut
-              className="h-4 w-4 text-[var(--portal-accent-blue)]"
+              className="h-4 w-4 text-[var(--portal-primary)]"
               strokeWidth={1.75}
             />
             <span className="hidden sm:inline">Logout</span>

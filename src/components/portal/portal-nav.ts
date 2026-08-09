@@ -136,7 +136,6 @@ export function studentNavItems(opts: {
       label: "HR Decisions",
       icon: ClipboardList,
       match: (p) => p.includes("/decisions"),
-      defaultExpanded: true,
       children: DECISION_TABS.map((t) => ({
         href: openRoundId
           ? `${decisionBase}?tab=${t.key}`
@@ -161,7 +160,7 @@ export function studentNavItems(opts: {
     },
     {
       href: "/reports",
-      label: "Reports & HR Analytics",
+      label: "Review & HR Analytics",
       icon: BarChart3,
       match: (p) =>
         p.startsWith("/reports") ||
@@ -246,7 +245,6 @@ export function studentNavItems(opts: {
       label: "Resources",
       icon: Library,
       match: (p) => p.startsWith("/resources"),
-      defaultExpanded: true,
       children: [
         {
           href: "/resources",

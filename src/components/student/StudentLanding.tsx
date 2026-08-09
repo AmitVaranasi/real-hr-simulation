@@ -201,7 +201,8 @@ export function StudentLanding({
       label: "Round",
       icon: CalendarDays,
       iconClass: "text-[var(--portal-icon-blue)]",
-      value: openRound ? `${roundTitle} (OPEN)` : "—",
+      value: openRound ? roundTitle : "—",
+      badge: openRound ? ("OPEN" as string | null) : null,
       sub: openRound ? decisionStateLabel : "Waiting for instructor",
     },
     {
@@ -209,13 +210,15 @@ export function StudentLanding({
       icon: Factory,
       iconClass: "text-[var(--portal-icon-green)]",
       value: team.industry,
+      badge: null as string | null,
       sub: "Competitive Intensity: Medium",
     },
     {
       label: "Strategy",
       icon: Target,
-      iconClass: "text-[var(--portal-icon-blue)]",
+      iconClass: "text-[var(--portal-icon-orange)]",
       value: team.strategy,
+      badge: null as string | null,
       sub: STRATEGY_BLURBS[team.strategy] ?? "Strategic focus",
     },
     {
@@ -226,6 +229,7 @@ export function StudentLanding({
         ? openRound.economy_condition.charAt(0).toUpperCase() +
           openRound.economy_condition.slice(1)
         : "—",
+      badge: null as string | null,
       sub: openRound
         ? ECONOMY_BLURBS[openRound.economy_condition] ?? "Environment"
         : "Set when round opens",
@@ -235,6 +239,7 @@ export function StudentLanding({
       icon: CircleDollarSign,
       iconClass: "text-[var(--portal-icon-blue)]",
       value: formatCurrency(availableBudget),
+      badge: null as string | null,
       sub:
         team.budget_carryover > 0
           ? `Includes ${formatCurrency(team.budget_carryover)} carryover`
@@ -260,7 +265,7 @@ export function StudentLanding({
     {
       label: "Operating Profit",
       icon: TrendingUp,
-      iconClass: "text-[var(--portal-icon-blue)]",
+      iconClass: "text-[var(--portal-icon-orange)]",
       value: lastProfit != null ? formatCurrency(lastProfit) : "$—",
       sub: "vs Last Round",
     },
@@ -350,9 +355,9 @@ export function StudentLanding({
         </Link>
       </div>
 
-      {/* 5-column status ribbon */}
+      {/* 5-column status ribbon — desktop matches PNG; wraps on smaller widths */}
       <div className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-        <div className="grid sm:grid-cols-2 xl:grid-cols-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {statusCards.map((card, i) => {
             const Icon = card.icon;
             return (
@@ -373,6 +378,11 @@ export function StudentLanding({
                 </div>
                 <p className="mt-1.5 text-[13px] font-bold text-[var(--portal-title)]">
                   {card.value}
+                  {card.badge ? (
+                    <span className="ml-1.5 inline-flex rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-emerald-700">
+                      {card.badge}
+                    </span>
+                  ) : null}
                 </p>
                 <p className="mt-0.5 text-[11px] text-[var(--portal-muted)]">
                   {card.sub}
@@ -394,7 +404,7 @@ export function StudentLanding({
         </section>
       )}
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
         <div className="space-y-4">
           <section className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--portal-sidebar-border)] px-5 py-3">
@@ -451,10 +461,11 @@ export function StudentLanding({
               <p className="font-bold uppercase tracking-wide text-[var(--portal-title)]">
                 Decisions Due:{" "}
                 <span className="font-normal normal-case text-[var(--portal-muted)]">
+                  {/* Cooper: deadline from instructor round settings; none stored yet */}
                   Set by your instructor when the round opens
                 </span>
               </p>
-              <p className="text-[var(--portal-muted)]">
+              <p className="font-semibold text-[var(--portal-accent-blue)]">
                 {checking ? "Updating…" : "Time Remaining: —"}
               </p>
             </div>
@@ -518,10 +529,10 @@ export function StudentLanding({
             </div>
           </section>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--portal-primary)]/30 bg-[var(--portal-primary-soft)] px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--portal-brand)]/30 bg-[var(--portal-brand-soft)] px-4 py-3">
             <div className="flex items-start gap-2.5 text-sm text-[var(--portal-title)]">
               <Bell
-                className="mt-0.5 h-4 w-4 shrink-0 text-[var(--portal-primary)]"
+                className="mt-0.5 h-4 w-4 shrink-0 text-[var(--portal-brand)]"
                 strokeWidth={2}
               />
               <p>
@@ -534,7 +545,7 @@ export function StudentLanding({
             </div>
             <Link
               href="/resources/reference"
-              className="shrink-0 rounded-md border border-[var(--portal-primary)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-primary-soft)]"
+              className="shrink-0 rounded-md border border-[var(--portal-brand)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--portal-brand)] hover:bg-[var(--portal-brand-soft)]"
             >
               View Grading Policy
             </Link>
@@ -561,7 +572,7 @@ export function StudentLanding({
                       Allocate your budget across 7 HR areas.
                     </p>
                     <Link href={decisionsHref} className="mt-2 block">
-                      <Button variant="default" className="w-full">
+                      <Button variant="orange" className="w-full">
                         Continue to Decisions →
                       </Button>
                     </Link>

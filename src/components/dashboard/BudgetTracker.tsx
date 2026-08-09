@@ -10,37 +10,47 @@ interface BudgetTrackerProps {
 export function BudgetTracker({ budget }: BudgetTrackerProps) {
   const pct = Math.min(
     100,
-    (budget.total_spend / budget.available_budget) * 100
+    (budget.total_spend / Math.max(1, budget.available_budget)) * 100
   );
   const over = budget.remaining < 0;
 
   return (
-    <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
-      <div className="mb-2 flex items-center justify-between text-sm">
-        <span className="font-medium text-[var(--portal-ink)]">Discretionary HR Budget</span>
-        <span className={over ? "font-semibold text-red-600" : "text-[var(--portal-muted)]"}>
-          {formatCurrency(budget.total_spend)} / {formatCurrency(budget.available_budget)}
+    <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-4 py-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-sm">
+        <span className="font-semibold text-[var(--portal-title)]">
+          Discretionary HR Budget
+        </span>
+        <span
+          className={
+            over
+              ? "font-semibold text-red-600"
+              : "font-semibold tabular-nums text-[var(--portal-ink)]"
+          }
+        >
+          {formatCurrency(budget.total_spend)} /{" "}
+          {formatCurrency(budget.available_budget)}
         </span>
       </div>
-      <div className="h-3 overflow-hidden rounded-full bg-[#f1f3f5]">
+      <div className="h-2.5 overflow-hidden rounded-full bg-[#eef1f4]">
         <div
-          className={`h-full transition-all ${over ? "bg-red-500" : "bg-[var(--portal-primary)]"}`}
-          style={{ width: `${Math.min(pct, 100)}%` }}
+          className={`h-full rounded-full transition-all ${
+            over ? "bg-red-500" : "bg-[var(--portal-success)]"
+          }`}
+          style={{ width: `${Math.min(Math.max(pct, 2), 100)}%` }}
         />
       </div>
-      <p className="mt-2 text-xs text-[var(--portal-muted)]">
-        Remaining:{" "}
-        <span className={over ? "text-red-600" : "text-emerald-600"}>
-          {formatCurrency(budget.remaining)}
+      <p className="mt-2 flex flex-wrap items-center gap-x-2 text-xs font-medium">
+        <span className={over ? "text-red-600" : "text-[var(--portal-success)]"}>
+          {formatCurrency(budget.remaining)} Remaining
         </span>
-        {" · "}
-        Adherence: {budget.adherence_pct.toFixed(0)}%
-        {over && (
-          <span className="block mt-1 text-red-600/90">
-            Total module spend exceeds the $500K discretionary pool — reduce
-            bonus %, hires, or training to balance the budget.
+        <span className="text-[var(--portal-muted)]">|</span>
+        <span className="text-[var(--portal-muted)]">{pct.toFixed(0)}% Used</span>
+        {over ? (
+          <span className="mt-1 block w-full text-red-600/90">
+            Total module spend exceeds the discretionary pool — reduce bonus %,
+            hires, or training to balance the budget.
           </span>
-        )}
+        ) : null}
       </p>
     </div>
   );

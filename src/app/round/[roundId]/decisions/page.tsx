@@ -1,7 +1,6 @@
 import { DecisionWorkspace } from "@/components/decisions/DecisionWorkspace";
 import { createClient } from "@/lib/supabase/server";
 import type { EconomyCondition, Industry, Strategy } from "@/lib/engine/types";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function RoundDecisionsPage({
@@ -48,27 +47,15 @@ export default async function RoundDecisionsPage({
     .maybeSingle();
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-10">
-      <Link href="/dashboard" className="text-sm text-[var(--portal-primary)] hover:underline">
-        ← Dashboard
-      </Link>
-      <h1 className="mt-4 text-2xl font-bold text-[var(--portal-title)]">
-        Round {round.round_number} decisions
-      </h1>
-      <p className="text-[var(--portal-muted)] capitalize">
-        {round.round_type} · {round.status} · Economy: {round.economy_condition}
-      </p>
-      <div className="mt-8">
-        <DecisionWorkspace
-          teamId={team.id}
-          roundId={roundId}
-          industry={team.industry ?? "Manufacturing"}
-          strategy={team.strategy ?? "Focus"}
-          economy={round.economy_condition as EconomyCondition}
-          initialDecision={decision}
-          roundOpen={round.status === "open"}
-        />
-      </div>
-    </div>
+    <DecisionWorkspace
+      teamId={team.id}
+      roundId={roundId}
+      industry={team.industry ?? "Manufacturing"}
+      strategy={team.strategy ?? "Focus"}
+      economy={round.economy_condition as EconomyCondition}
+      initialDecision={decision}
+      roundOpen={round.status === "open"}
+      roundNumber={round.round_number}
+    />
   );
 }
