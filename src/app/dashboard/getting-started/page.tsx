@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { GettingStarted } from "@/components/student/GettingStarted";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -57,6 +55,7 @@ export default async function GettingStartedPage() {
         industry={null}
         strategy={null}
         openRoundId={null}
+        openRoundNumber={null}
         openRoundLabel="Not Open — Waiting for Instructor"
         decisionDraft={false}
         decisionSubmitted={false}
@@ -101,32 +100,24 @@ export default async function GettingStartedPage() {
     .eq("team_id", team.id);
 
   return (
-    <div>
-      <div className="mb-4 flex justify-end">
-        <Link href="/dashboard">
-          <Button variant="outline" size="sm">
-            Go to Dashboard
-          </Button>
-        </Link>
-      </div>
-      <GettingStarted
-        displayName={displayName}
-        firstName={firstName}
-        hasTeam
-        teamName={team.name}
-        courseLabel={courseLabel || team.sessions?.name || "—"}
-        industry={team.industry}
-        strategy={team.strategy}
-        openRoundId={openRound?.id ?? null}
-        openRoundLabel={
-          openRound
-            ? `Round ${openRound.round_number} — ${openRound.status.toUpperCase()}`
-            : "Not Open — Waiting for Instructor"
-        }
-        decisionDraft={decisionDraft}
-        decisionSubmitted={decisionSubmitted}
-        roundsCompleted={roundsCompleted ?? 0}
-      />
-    </div>
+    <GettingStarted
+      displayName={displayName}
+      firstName={firstName}
+      hasTeam
+      teamName={team.name}
+      courseLabel={courseLabel || team.sessions?.name || "—"}
+      industry={team.industry}
+      strategy={team.strategy}
+      openRoundId={openRound?.id ?? null}
+      openRoundNumber={openRound?.round_number ?? null}
+      openRoundLabel={
+        openRound
+          ? `Round ${openRound.round_number} — ${openRound.status.toUpperCase()}`
+          : "Not Open — Waiting for Instructor"
+      }
+      decisionDraft={decisionDraft}
+      decisionSubmitted={decisionSubmitted}
+      roundsCompleted={roundsCompleted ?? 0}
+    />
   );
 }

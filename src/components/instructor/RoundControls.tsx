@@ -57,13 +57,13 @@ export function RoundControls({ sessionId, rounds }: RoundControlsProps) {
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              {round.status !== "open" && round.status !== "closed" && (
+              {round.status !== "open" && (
                 <Button
                   size="sm"
                   disabled={loadingId === round.id}
                   onClick={() => updateRound(round.id, "open")}
                 >
-                  Open round
+                  {round.status === "closed" ? "Reopen round" : "Open round"}
                 </Button>
               )}
               {round.status === "open" && (

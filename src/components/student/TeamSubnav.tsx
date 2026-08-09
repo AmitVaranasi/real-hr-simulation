@@ -9,17 +9,17 @@ const TABS = [
 
 export function TeamSubnav({ activeHref }: { activeHref: string }) {
   return (
-    <div className="mb-6 flex flex-wrap gap-2 border-b border-[var(--portal-sidebar-border)] pb-3">
+    <div className="mb-5 flex flex-wrap gap-1 border-b border-[var(--portal-sidebar-border)]">
       {TABS.map((t) => {
         const active = t.href === activeHref;
         return (
           <Link
             key={t.href}
             href={t.href}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+            className={`-mb-px border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${
               active
-                ? "bg-[var(--portal-primary-soft)] text-[var(--portal-primary)]"
-                : "text-[var(--portal-muted)] hover:bg-white hover:text-[var(--portal-ink)]"
+                ? "border-[var(--portal-brand)] font-semibold text-[var(--portal-brand)]"
+                : "border-transparent text-[var(--portal-muted)] hover:text-[var(--portal-ink)]"
             }`}
           >
             {t.label}

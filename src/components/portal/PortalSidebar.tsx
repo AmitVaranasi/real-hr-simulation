@@ -3,11 +3,15 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { Check, ChevronDown, ChevronRight } from "lucide-react";
 import {
   STUDENT_QUICK_LINKS,
   type PortalNavItem,
 } from "./portal-nav";
+import {
+  getVisitedModules,
+  subscribeModuleVisited,
+} from "@/lib/student/module-progress";
 
 function initialsFromName(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -23,6 +27,9 @@ function NavBranch({
   onNavigate,
   forceExpanded,
   dark,
+  /** Student PNG: orange active; professor: blue */
+  accent = "blue",
+  completedTabKeys = [],
 }: {
   item: PortalNavItem;
   search: string;
@@ -30,6 +37,9 @@ function NavBranch({
   onNavigate?: () => void;
   forceExpanded?: boolean;
   dark?: boolean;
+  accent?: "orange" | "blue";
+  /** Tab keys with green checks under HR Decisions (PNG) */
+  completedTabKeys?: string[];
 }) {
   const hasChildren = Boolean(item.children?.length);
   const selfActive = item.match
@@ -38,16 +48,30 @@ function NavBranch({
   const childActive = item.children?.some((c) =>
     c.match ? c.match(pathname, search) : pathname === c.href
   );
-  const [open, setOpen] = useState(
-    Boolean(forceExpanded || item.defaultExpanded || selfActive || childActive)
+  const shouldExpand = Boolean(
+    forceExpanded || item.defaultExpanded || selfActive || childActive
   );
+  const [open, setOpen] = useState(shouldExpand);
 
+  // Expand only when the current route requires it; collapse otherwise (PNG).
   useEffect(() => {
-    if (selfActive || childActive || forceExpanded) setOpen(true);
-  }, [selfActive, childActive, forceExpanded]);
+    setOpen(shouldExpand);
+  }, [shouldExpand]);
 
   const Icon = item.icon;
   const parentActive = selfActive || Boolean(childActive);
+  const activeColor =
+    accent === "orange" ? "text-[var(--portal-brand)]" : "text-[var(--portal-primary)]";
+  const activeSoft =
+    accent === "orange"
+      ? "bg-[var(--portal-brand-soft)]"
+      : "bg-[var(--portal-primary-soft)]";
+  const activeDot =
+    accent === "orange" ? "bg-[var(--portal-brand)]" : "bg-[var(--portal-primary)]";
+  const activeBar =
+    accent === "orange"
+      ? "border-l-[3px] border-[var(--portal-brand)]"
+      : "border-l-[3px] border-[var(--portal-primary)]";
 
   return (
     <li>
@@ -58,18 +82,20 @@ function NavBranch({
           className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-md px-3 py-2 text-[13px] transition-colors ${
             parentActive
               ? dark
-                ? "bg-white/10 font-semibold text-[var(--portal-primary)]"
-                : "bg-[var(--portal-primary-soft)] font-semibold text-[var(--portal-primary)]"
+                ? `bg-white/10 font-semibold ${activeColor}`
+                : accent === "orange"
+                  ? `${activeBar} font-semibold ${activeColor}`
+                  : `${activeSoft} ${activeBar} font-semibold ${activeColor}`
               : dark
                 ? "text-slate-200 hover:bg-white/5 hover:text-white"
-                : "text-[var(--portal-ink)] hover:bg-[#f4f5f7] hover:text-[var(--portal-primary)]"
+                : "text-[var(--portal-ink)] hover:bg-[#f4f5f7] hover:text-[var(--portal-brand)]"
           }`}
         >
           {Icon && (
             <Icon
               className={`h-[18px] w-[18px] shrink-0 ${
                 parentActive
-                  ? "text-[var(--portal-primary)]"
+                  ? activeColor
                   : dark
                     ? "text-slate-400"
                     : "text-[var(--portal-muted)]"
@@ -108,7 +134,11 @@ function NavBranch({
             const childIsActive = child.match
               ? child.match(pathname, search)
               : pathname === child.href;
-            const ChildIcon = child.icon;
+            const tabKey = child.href.includes("tab=")
+              ? new URLSearchParams(child.href.split("?")[1] ?? "").get("tab")
+              : null;
+            const completed =
+              Boolean(tabKey) && completedTabKeys.includes(tabKey!);
             return (
               <li key={`${child.href}-${child.label}`}>
                 <Link
@@ -117,24 +147,22 @@ function NavBranch({
                   className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-[12px] transition-colors ${
                     childIsActive
                       ? dark
-                        ? "bg-[var(--portal-primary-soft)]/15 font-semibold text-[var(--portal-primary)]"
-                        : "bg-[var(--portal-primary-soft)] font-semibold text-[var(--portal-primary)]"
+                        ? `bg-white/10 font-semibold ${activeColor}`
+                        : `font-semibold ${activeColor}`
                       : dark
                         ? "text-slate-300 hover:bg-white/5 hover:text-white"
                         : "text-[var(--portal-muted)] hover:bg-[#f4f5f7] hover:text-[var(--portal-ink)]"
                   }`}
                 >
-                  {childIsActive ? (
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--portal-primary)]" />
-                  ) : ChildIcon ? (
-                    <ChildIcon
-                      className={`h-3.5 w-3.5 shrink-0 ${
-                        dark ? "text-slate-500" : "text-[var(--portal-muted)]"
-                      }`}
-                      strokeWidth={1.75}
+                  {completed ? (
+                    <Check
+                      className="h-3.5 w-3.5 shrink-0 text-[var(--portal-success)]"
+                      strokeWidth={2.5}
                     />
+                  ) : childIsActive ? (
+                    <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${activeDot}`} />
                   ) : (
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-transparent" />
+                    <span className="h-3.5 w-3.5 shrink-0 rounded-full border border-[var(--portal-sidebar-border)]" />
                   )}
                   <span>{child.label}</span>
                 </Link>
@@ -191,15 +219,32 @@ export function PortalSidebar({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const search = searchParams?.toString() ? `?${searchParams.toString()}` : "";
+  const [completedTabKeys, setCompletedTabKeys] = useState<string[]>([]);
 
+  // Keep HR Decisions open on Review so module checkmarks stay visible (PNG 018).
   const decisionsExpanded = useMemo(
-    () => pathname.includes("/decisions") || pathname.includes("/review"),
+    () => pathname.includes("/review"),
     [pathname]
   );
-  const resourcesExpanded = useMemo(
-    () => pathname.startsWith("/resources"),
-    [pathname]
-  );
+
+  // Resolve open-round id from decision/review URLs for visit tracking.
+  const openRoundIdFromPath = useMemo(() => {
+    const m = pathname.match(/^\/round\/([0-9a-f-]{36})/i);
+    return m?.[1] ?? null;
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!openRoundIdFromPath) {
+      setCompletedTabKeys([]);
+      return;
+    }
+    setCompletedTabKeys(getVisitedModules(openRoundIdFromPath));
+    return subscribeModuleVisited((detail) => {
+      if (detail.roundId === openRoundIdFromPath) {
+        setCompletedTabKeys(getVisitedModules(openRoundIdFromPath));
+      }
+    });
+  }, [openRoundIdFromPath]);
 
   if (collapsed) {
     return (
@@ -288,15 +333,17 @@ export function PortalSidebar({
               pathname={pathname}
               onNavigate={onNavigate}
               dark={darkNav}
+              accent={showStudentChrome ? "orange" : "blue"}
+              completedTabKeys={
+                item.label === "HR Decisions" ? completedTabKeys : undefined
+              }
               forceExpanded={
                 item.label === "HR Decisions"
                   ? decisionsExpanded
-                  : item.label === "Resources"
-                    ? resourcesExpanded
-                    : item.label === "Simulation Lab" ||
-                        item.label === "Course Management"
-                      ? true
-                      : undefined
+                  : item.label === "Simulation Lab" ||
+                      item.label === "Course Management"
+                    ? true
+                    : undefined
               }
             />
           ))}
@@ -342,56 +389,71 @@ export function PortalSidebar({
       </nav>
 
       {showStudentChrome && simulation ? (
-        <div
-          className={`shrink-0 px-4 py-3 ${
-            darkNav
-              ? "border-t border-white/10 bg-[#102a4d]"
-              : "border-t border-[var(--portal-sidebar-border)] bg-[#f3f5f8]"
-          }`}
-        >
-          <p
-            className={`text-[10px] font-bold uppercase tracking-[0.08em] ${
-              darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"
+        <div className="shrink-0 p-3">
+          <div
+            className={`rounded-xl border px-3.5 py-3 ${
+              darkNav
+                ? "border-white/10 bg-[#102a4d]"
+                : "border-[var(--portal-sidebar-border)] bg-[#f3f5f8]"
             }`}
           >
-            Your Simulation
-          </p>
-          <dl className="mt-2 space-y-1.5 text-[12px]">
-            {[
-              ["Company", simulation.company],
-              ["Industry", simulation.industry],
-              ["Strategy", simulation.strategy],
-              ["Current Round", roundDisplay],
-            ].map(([label, value]) => (
-              <div key={label} className="flex justify-between gap-2">
+            <p
+              className={`text-[10px] font-bold uppercase tracking-[0.08em] ${
+                darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"
+              }`}
+            >
+              Your Simulation
+            </p>
+            <dl className="mt-2 space-y-1.5 text-[12px]">
+              {[
+                ["Company", simulation.company],
+                ["Industry", simulation.industry],
+                ["Strategy", simulation.strategy],
+              ].map(([label, value]) => (
+                <div key={label} className="flex justify-between gap-2">
+                  <dt className={darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"}>
+                    {label}
+                  </dt>
+                  <dd
+                    className={`truncate font-semibold ${
+                      darkNav ? "text-white" : "text-[var(--portal-ink)]"
+                    }`}
+                  >
+                    {value}
+                  </dd>
+                </div>
+              ))}
+              <div className="flex justify-between gap-2">
                 <dt className={darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"}>
-                  {label}
+                  Current Round
                 </dt>
-                <dd
-                  className={`truncate font-semibold ${
-                    darkNav ? "text-white" : "text-[var(--portal-ink)]"
-                  }`}
-                >
-                  {value}
+                <dd className="text-right">
+                  <p
+                    className={`font-semibold ${
+                      darkNav ? "text-white" : "text-[var(--portal-ink)]"
+                    }`}
+                  >
+                    {roundDisplay}
+                  </p>
+                  <p
+                    className={`text-[11px] ${
+                      statusDisplay.toLowerCase() === "open"
+                        ? "font-semibold text-[var(--portal-success)]"
+                        : darkNav
+                          ? "text-slate-300"
+                          : "text-[var(--portal-muted)]"
+                    }`}
+                  >
+                    {statusDisplay.toLowerCase() === "open"
+                      ? "Open"
+                      : statusDisplay === "Waiting"
+                        ? "Waiting for Instructor"
+                        : statusDisplay}
+                  </p>
                 </dd>
               </div>
-            ))}
-            <div className="flex justify-between gap-2">
-              <dt className={darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"}>
-                Round Status
-              </dt>
-              <dd className="font-semibold text-[var(--portal-success)]">
-                {statusDisplay}
-              </dd>
-            </div>
-          </dl>
-          <Link
-            href="/team"
-            onClick={onNavigate}
-            className="mt-3 inline-block text-[12px] font-semibold text-[var(--portal-accent-blue)] hover:underline"
-          >
-            View Simulation Details →
-          </Link>
+            </dl>
+          </div>
         </div>
       ) : courseSummary ? (
         <div

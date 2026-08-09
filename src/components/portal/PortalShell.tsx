@@ -251,7 +251,7 @@ function PortalShellInner({
           roleLabel={roleBadge(role)}
           contextTitle={contextTitle}
           contextMeta={contextMeta}
-          mobileOpen={mobileOpen || !desktopCollapsed}
+          mobileOpen={mobileOpen}
           onToggleMobile={toggleNav}
           homeHref={homeHref}
           helpHref={

@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { DecisionForm } from "@/components/decisions/DecisionForm";
 import { rowToDecision } from "@/lib/db/decisions";
 import { createDefaultDecision } from "@/lib/engine/defaults";
+import { markModuleVisited } from "@/lib/student/module-progress";
 import type {
   Decision,
   EconomyCondition,
@@ -12,6 +14,16 @@ import type {
   Strategy,
 } from "@/lib/engine/types";
 import { Button } from "@/components/ui/button";
+
+const TAB_KEYS = [
+  "recruitment",
+  "performance",
+  "training",
+  "relations",
+  "compensation",
+  "org-design",
+  "dei",
+] as const;
 
 interface DecisionWorkspaceProps {
   teamId: string;
@@ -21,9 +33,22 @@ interface DecisionWorkspaceProps {
   economy: EconomyCondition;
   initialDecision?: Record<string, unknown> | null;
   roundOpen: boolean;
+  roundNumber?: number;
 }
 
-export function DecisionWorkspace({
+export function DecisionWorkspace(props: DecisionWorkspaceProps) {
+  return (
+    <Suspense
+      fallback={
+        <p className="p-4 text-sm text-[var(--portal-muted)]">Loading decisions…</p>
+      }
+    >
+      <DecisionWorkspaceInner {...props} />
+    </Suspense>
+  );
+}
+
+function DecisionWorkspaceInner({
   teamId,
   roundId,
   industry,
@@ -31,7 +56,10 @@ export function DecisionWorkspace({
   economy,
   initialDecision,
   roundOpen,
+  roundNumber,
 }: DecisionWorkspaceProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [decision, setDecision] = useState<Decision>(() =>
     initialDecision
       ? rowToDecision(initialDecision)
@@ -44,7 +72,7 @@ export function DecisionWorkspace({
 
   const save = useCallback(
     async (submit = false) => {
-      if (!roundOpen) return;
+      if (!roundOpen) return false;
       setSaving(true);
       const res = await fetch("/api/decisions", {
         method: "POST",
@@ -60,16 +88,15 @@ export function DecisionWorkspace({
       if (!res.ok) {
         const data = await res.json();
         toast.error(data.error ?? "Failed to save");
-        return;
+        return false;
       }
       const data = await res.json();
       setDecision(data.decision);
       if (submit) {
         setSubmitted(true);
         toast.success("Decision submitted");
-      } else {
-        toast.success("Saved", { duration: 1500 });
       }
+      return true;
     },
     [decision, teamId, roundId, roundOpen]
   );
@@ -96,6 +123,21 @@ export function DecisionWorkspace({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- debounced save on field changes
   }, [decision, roundOpen, submitted, teamId, roundId]);
 
+  async function saveAndContinue() {
+    const tab = searchParams.get("tab") ?? "recruitment";
+    const idx = TAB_KEYS.indexOf(tab as (typeof TAB_KEYS)[number]);
+    const current = idx >= 0 ? TAB_KEYS[idx] : "recruitment";
+    markModuleVisited(roundId, current);
+    const ok = await save(false);
+    if (!ok) return;
+    if (idx < 0 || idx >= TAB_KEYS.length - 1) {
+      router.push(`/round/${roundId}/review`);
+      return;
+    }
+    const next = TAB_KEYS[idx + 1];
+    router.push(`/round/${roundId}/decisions?tab=${next}`);
+  }
+
   if (!roundOpen) {
     return (
       <p className="rounded-lg bg-amber-50 px-4 py-3 text-amber-900">
@@ -118,27 +160,19 @@ export function DecisionWorkspace({
   }
 
   return (
-    <div>
-      <p className="mb-4 text-sm text-[var(--portal-muted)]">
-        {saving ? "Saving…" : "Changes auto-save"}
-      </p>
-      <DecisionForm
-        industry={industry}
-        strategy={strategy}
-        economy={economy}
-        controlledDecision={decision}
-        onDecisionChange={setDecision}
-        hideRunButton
-      />
-      <div className="mt-6 flex flex-wrap gap-3">
-        <a href={`/round/${roundId}/review`}>
-          <Button variant="outline">Review & submit →</Button>
-        </a>
-        <Button onClick={() => save(true)}>Quick submit</Button>
-        <Button variant="outline" onClick={() => save(false)}>
-          Save now
-        </Button>
-      </div>
-    </div>
+    <DecisionForm
+      industry={industry}
+      strategy={strategy}
+      economy={economy}
+      controlledDecision={decision}
+      onDecisionChange={setDecision}
+      hideRunButton
+      roundNumber={roundNumber}
+      roundOpen={roundOpen}
+      roundId={roundId}
+      saving={saving}
+      onSaveNow={() => void save(false)}
+      onSaveAndContinue={() => void saveAndContinue()}
+    />
   );
 }

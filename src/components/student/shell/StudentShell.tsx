@@ -1,3 +1,12 @@
+import {
+  Building2,
+  CalendarDays,
+  Factory,
+  GraduationCap,
+  Target,
+  type LucideIcon,
+} from "lucide-react";
+
 export function StudentPageHeader({
   title,
   subtitle,
@@ -67,32 +76,85 @@ export function YourSimulationPanel({
   strategy: string;
   roundLabel: string;
 }) {
-  const cells = [
-    { label: "Company", value: company },
-    { label: "Course", value: course },
-    { label: "Industry", value: industry },
-    { label: "Strategy", value: strategy },
-    { label: "Current Round", value: roundLabel },
+  const cells: Array<{
+    label: string;
+    value: string;
+    icon: LucideIcon;
+    iconClass: string;
+  }> = [
+    {
+      label: "Company",
+      value: company,
+      icon: Building2,
+      iconClass: "text-[var(--portal-primary)]",
+    },
+    {
+      label: "Course",
+      value: course,
+      icon: GraduationCap,
+      iconClass: "text-[var(--portal-purple)]",
+    },
+    {
+      label: "Industry",
+      value: industry,
+      icon: Factory,
+      iconClass: "text-[var(--portal-icon-green)]",
+    },
+    {
+      label: "Strategy",
+      value: strategy,
+      icon: Target,
+      iconClass: "text-[var(--portal-brand)]",
+    },
+    {
+      label: "Current Round",
+      value: roundLabel,
+      icon: CalendarDays,
+      iconClass: "text-[var(--portal-primary)]",
+    },
   ];
   return (
-    <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm sm:p-5">
-      <p className="text-xs font-bold uppercase tracking-wider text-[var(--portal-primary)]">
+    <section className="h-full rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-3 py-3 sm:px-4 sm:py-3.5">
+      <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--portal-primary)]">
         Your Simulation
       </p>
-      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {cells.map((c) => (
-          <div
-            key={c.label}
-            className="rounded-lg border border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-3 py-2"
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
-              {c.label}
-            </p>
-            <p className="mt-1 text-sm font-semibold text-[var(--portal-title)]">
-              {c.value}
-            </p>
-          </div>
-        ))}
+      <div className="mt-2.5 grid gap-2 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
+        {cells.map((c, index) => {
+          const Icon = c.icon;
+          // Only split on em/en dash separators (e.g. "Not Open — Waiting…"),
+          // never on hyphens inside values like "High-Tech" or "MGMT-GAP".
+          const dashParts = c.value.split(/\s+[—–]\s+/);
+          const primary = dashParts[0]?.trim() || c.value;
+          const secondary =
+            dashParts.length > 1 ? dashParts.slice(1).join(" — ").trim() : null;
+          return (
+            <div
+              key={c.label}
+              className={`px-1.5 py-0.5 sm:px-2.5 ${
+                index > 0 ? "lg:border-l lg:border-[var(--portal-sidebar-border)]" : ""
+              }`}
+            >
+              <div className="flex items-start gap-2">
+                <span className={`mt-0.5 ${c.iconClass}`}>
+                  <Icon className="h-4 w-4" strokeWidth={1.75} />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
+                    {c.label}
+                  </p>
+                  <p className="mt-0.5 text-[13px] font-semibold leading-snug text-[var(--portal-title)]">
+                    {primary}
+                  </p>
+                  {secondary ? (
+                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                      {secondary}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
