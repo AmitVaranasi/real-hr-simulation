@@ -427,7 +427,7 @@ export function SimulationConfigCenter() {
                 title={m.hint}
               >
                 <Icon className="h-5 w-5" strokeWidth={1.75} />
-                <span className="mt-1 text-[10px] font-semibold leading-tight">
+                <span className="mt-1 text-[0.625rem] font-semibold leading-tight">
                   {m.label}
                 </span>
                 <span
@@ -498,7 +498,7 @@ export function SimulationConfigCenter() {
                           key={c.label}
                           className="rounded-lg border border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-3 py-2"
                         >
-                          <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
+                          <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
                             {c.label}
                           </p>
                           <p className="mt-1 text-sm font-semibold text-[var(--portal-title)]">
@@ -513,7 +513,7 @@ export function SimulationConfigCenter() {
                       <p className="text-xs font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                         Decision Modules
                       </p>
-                      <span className="text-[11px] font-semibold text-[var(--portal-accent-blue)]">
+                      <span className="text-[0.6875rem] font-semibold text-[var(--portal-accent-blue)]">
                         Select All | Clear All
                       </span>
                     </div>

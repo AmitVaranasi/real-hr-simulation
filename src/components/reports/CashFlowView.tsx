@@ -269,7 +269,7 @@ export function CashFlowView({
       </div>
 
       <div className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-        <div className="grid grid-cols-[minmax(0,1.6fr)_1fr_1fr_1fr_0.8fr] gap-2 bg-[var(--portal-navy)] px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide text-white">
+        <div className="grid grid-cols-[minmax(0,1.6fr)_1fr_1fr_1fr_0.8fr] gap-2 bg-[var(--portal-navy)] px-4 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wide text-white">
           <span>Cash Flow</span>
           <span className="text-right">Current Round</span>
           <span className="text-right">Prior Round</span>
@@ -361,13 +361,13 @@ export function CashFlowView({
                     <Icon className="h-4 w-4" />
                   </span>
                   <div>
-                    <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                    <p className="text-[0.6875rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                       {card.label}
                     </p>
                     <p className="mt-1 text-lg font-bold text-[var(--portal-title)]">
                       {formatMoneySigned(card.value)}
                     </p>
-                    <p className="mt-1 text-[11px] text-[var(--portal-muted)]">
+                    <p className="mt-1 text-[0.6875rem] text-[var(--portal-muted)]">
                       {pct.toFixed(1)}% of Cash Outflow
                     </p>
                   </div>

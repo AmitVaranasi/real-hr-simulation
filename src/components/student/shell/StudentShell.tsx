@@ -26,7 +26,7 @@ export function StudentPageHeader({
             {title}
           </h1>
           {badge ? (
-            <span className="rounded-full border border-[var(--portal-sidebar-border)] bg-white px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--portal-accent-blue)]">
+            <span className="rounded-full border border-[var(--portal-sidebar-border)] bg-white px-2.5 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-[var(--portal-accent-blue)]">
               {badge}
             </span>
           ) : null}
@@ -115,7 +115,7 @@ export function YourSimulationPanel({
   ];
   return (
     <section className="h-full rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-3 py-3 sm:px-4 sm:py-3.5">
-      <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--portal-primary)]">
+      <p className="text-[0.6875rem] font-bold uppercase tracking-wider text-[var(--portal-primary)]">
         Your Simulation
       </p>
       <div className="mt-2.5 grid gap-2 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
@@ -139,14 +139,14 @@ export function YourSimulationPanel({
                   <Icon className="h-4 w-4" strokeWidth={1.75} />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
+                  <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
                     {c.label}
                   </p>
-                  <p className="mt-0.5 text-[13px] font-semibold leading-snug text-[var(--portal-title)]">
+                  <p className="mt-0.5 text-[0.8125rem] font-semibold leading-snug text-[var(--portal-title)]">
                     {primary}
                   </p>
                   {secondary ? (
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       {secondary}
                     </p>
                   ) : null}

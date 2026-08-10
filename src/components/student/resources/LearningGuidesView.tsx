@@ -27,7 +27,7 @@ export function LearningGuidesView({ context }: { context: ResourcesContext }) {
 
       <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-2xl">
-          <h1 className="text-[28px] font-bold text-[var(--portal-title)]">
+          <h1 className="text-[1.75rem] font-bold text-[var(--portal-title)]">
             HR Decision Learning Guides
           </h1>
           <p className="mt-1 text-sm text-[var(--portal-muted)]">
@@ -74,14 +74,14 @@ export function LearningGuidesView({ context }: { context: ResourcesContext }) {
                     {g.body}
                   </p>
                   <div className="mt-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                    <p className="text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                       Key Metrics
                     </p>
                     <div className="mt-1.5 flex flex-wrap gap-1.5">
                       {g.metrics.map((m) => (
                         <span
                           key={m}
-                          className="inline-flex items-center gap-1 rounded-full border border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-2.5 py-1 text-[11px] font-medium text-[var(--portal-ink)]"
+                          className="inline-flex items-center gap-1 rounded-full border border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-2.5 py-1 text-[0.6875rem] font-medium text-[var(--portal-ink)]"
                         >
                           <Lightbulb className="h-3 w-3 text-[var(--portal-brand)]" />
                           {m}

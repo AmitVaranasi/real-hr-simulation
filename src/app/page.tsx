@@ -63,13 +63,13 @@ export default function Home() {
     <div className="w-full min-w-0 overflow-x-hidden bg-white">
       <section className="border-b border-[var(--portal-sidebar-border)]">
         <div className="mx-auto max-w-5xl px-4 pb-12 pt-14 text-center sm:pb-16 sm:pt-16">
-          <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--portal-brand)]">
+          <p className="text-[0.8125rem] font-bold uppercase tracking-[0.08em] text-[var(--portal-brand)]">
             Higher Education Business Simulation
           </p>
-          <h1 className="mt-3 text-4xl font-bold tracking-tight text-[var(--portal-title)] sm:text-5xl md:text-[58px] md:leading-tight">
+          <h1 className="mt-3 text-4xl font-bold tracking-tight text-[var(--portal-title)] sm:text-5xl md:text-[3.625rem] md:leading-tight">
             Real HR Simulation
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#24365a] sm:text-[19px]">
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#24365a] sm:text-[1.1875rem]">
             An HR business simulation where student teams make recruitment,
             compensation, training, and engagement decisions — then see how those
             choices affect workforce metrics, financial outcomes, and the Balanced
@@ -78,13 +78,13 @@ export default function Home() {
           <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
             <Link
               href="/simulate"
-              className="inline-flex h-[55px] items-center justify-center rounded-xl bg-[var(--portal-brand)] px-8 text-[17px] font-bold text-white hover:bg-[var(--portal-brand-hover)]"
+              className="inline-flex h-[55px] items-center justify-center rounded-xl bg-[var(--portal-brand)] px-8 text-[1.0625rem] font-bold text-white hover:bg-[var(--portal-brand-hover)]"
             >
               Try the simulation
             </Link>
             <Link
               href="/login"
-              className="inline-flex h-[55px] items-center justify-center rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-10 text-[17px] font-bold text-[var(--portal-title)] hover:bg-[#f8fafc]"
+              className="inline-flex h-[55px] items-center justify-center rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-10 text-[1.0625rem] font-bold text-[var(--portal-title)] hover:bg-[#f8fafc]"
             >
               Sign in
             </Link>
@@ -93,7 +93,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-5xl px-4 py-12 sm:py-14">
-        <h2 className="text-center text-[29px] font-bold text-[var(--portal-title)]">
+        <h2 className="text-center text-[1.8125rem] font-bold text-[var(--portal-title)]">
           Why Real HR Simulation?
         </h2>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -118,10 +118,10 @@ export default function Home() {
       </section>
 
       <section id="modules" className="mx-auto max-w-5xl px-4 pb-16 scroll-mt-20">
-        <h2 className="text-center text-[29px] font-bold text-[var(--portal-title)]">
+        <h2 className="text-center text-[1.8125rem] font-bold text-[var(--portal-title)]">
           Seven HR Decision Modules
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-center text-[15px] text-[#24365a]">
+        <p className="mx-auto mt-3 max-w-2xl text-center text-[0.9375rem] text-[#24365a]">
           Explore each module to see how your team&apos;s decisions drive real
           organizational outcomes.
         </p>
@@ -165,7 +165,7 @@ export default function Home() {
         <p className="mt-12 text-center">
           <Link
             href="/about"
-            className="text-[17px] text-[var(--portal-brand)] hover:underline"
+            className="text-[1.0625rem] text-[var(--portal-brand)] hover:underline"
           >
             About this application
           </Link>

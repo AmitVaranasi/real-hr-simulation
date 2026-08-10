@@ -82,27 +82,27 @@ function StatusPill({
 }) {
   if (state === "complete") {
     return (
-      <span className="mt-2 inline-flex items-center rounded-md border border-emerald-300 bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+      <span className="mt-2 inline-flex items-center rounded-md border border-emerald-300 bg-emerald-50 px-2 py-0.5 text-[0.6875rem] font-semibold text-emerald-700">
         ✓ Complete
       </span>
     );
   }
   if (state === "progress") {
     return (
-      <span className="mt-2 inline-flex items-center rounded-md border border-blue-300 bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">
+      <span className="mt-2 inline-flex items-center rounded-md border border-blue-300 bg-blue-50 px-2 py-0.5 text-[0.6875rem] font-semibold text-blue-700">
         • In Progress
       </span>
     );
   }
   if (state === "locked") {
     return (
-      <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--portal-muted)]">
+      <span className="mt-2 inline-flex items-center gap-1 text-[0.6875rem] font-semibold text-[var(--portal-muted)]">
         <Lock className="h-3 w-3" /> Locked
       </span>
     );
   }
   return (
-    <span className="mt-2 inline-flex text-[11px] font-semibold text-[var(--portal-muted)]">
+    <span className="mt-2 inline-flex text-[0.6875rem] font-semibold text-[var(--portal-muted)]">
       - Pending
     </span>
   );
@@ -338,7 +338,7 @@ export function StudentLanding({
     <div className="mx-auto w-full max-w-[1200px] space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-[28px] font-bold leading-tight text-[var(--portal-title)]">
+          <h1 className="text-[1.75rem] font-bold leading-tight text-[var(--portal-title)]">
             {team.name} Dashboard
           </h1>
           <p className="mt-1 text-sm text-[var(--portal-muted)]">
@@ -369,22 +369,22 @@ export function StudentLanding({
                     : ""
                 } ${i < 4 ? "border-b border-[var(--portal-sidebar-border)] xl:border-b-0" : ""}`}
               >
-                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                <div className="flex items-center gap-1.5 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                   <Icon
                     className={`h-3.5 w-3.5 ${card.iconClass}`}
                     strokeWidth={2}
                   />
                   {card.label}
                 </div>
-                <p className="mt-1.5 text-[13px] font-bold text-[var(--portal-title)]">
+                <p className="mt-1.5 text-[0.8125rem] font-bold text-[var(--portal-title)]">
                   {card.value}
                   {card.badge ? (
-                    <span className="ml-1.5 inline-flex rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-emerald-700">
+                    <span className="ml-1.5 inline-flex rounded bg-emerald-100 px-1.5 py-0.5 text-[0.625rem] font-bold uppercase text-emerald-700">
                       {card.badge}
                     </span>
                   ) : null}
                 </p>
-                <p className="mt-0.5 text-[11px] text-[var(--portal-muted)]">
+                <p className="mt-0.5 text-[0.6875rem] text-[var(--portal-muted)]">
                   {card.sub}
                 </p>
               </div>
@@ -408,7 +408,7 @@ export function StudentLanding({
         <div className="space-y-4">
           <section className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--portal-sidebar-border)] px-5 py-3">
-              <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+              <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
                 {openRound
                   ? `Round ${openRound.round_number} Status`
                   : "Round Status"}
@@ -432,7 +432,7 @@ export function StudentLanding({
                   >
                     <div className="flex items-start gap-3">
                       <div
-                        className={`flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-full text-[11px] font-bold ${
+                        className={`flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-full text-[0.6875rem] font-bold ${
                           step.state === "complete"
                             ? "bg-emerald-100 text-emerald-700"
                             : step.state === "progress"
@@ -444,10 +444,10 @@ export function StudentLanding({
                         <StepIcon className="mt-0.5 h-3 w-3" strokeWidth={2} />
                       </div>
                       <div>
-                        <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+                        <p className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
                           {step.title}
                         </p>
-                        <p className="mt-1 text-[11px] leading-snug text-[var(--portal-muted)]">
+                        <p className="mt-1 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                           {step.body}
                         </p>
                         <StatusPill state={step.state} />
@@ -457,7 +457,7 @@ export function StudentLanding({
                 );
               })}
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--portal-accent-blue)]/20 bg-[var(--portal-accent-blue-soft)] px-5 py-2.5 text-[12px]">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--portal-accent-blue)]/20 bg-[var(--portal-accent-blue-soft)] px-5 py-2.5 text-[0.75rem]">
               <p className="font-bold uppercase tracking-wide text-[var(--portal-title)]">
                 Decisions Due:{" "}
                 <span className="font-normal normal-case text-[var(--portal-muted)]">
@@ -473,7 +473,7 @@ export function StudentLanding({
 
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+              <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
                 Company Snapshot (End of Last Round)
               </h2>
               <Link
@@ -491,7 +491,7 @@ export function StudentLanding({
                     key={m.label}
                     className="rounded-lg border border-[var(--portal-sidebar-border)] bg-[#fafbfc] px-3 py-3"
                   >
-                    <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                    <div className="flex items-center gap-1.5 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                       <Icon
                         className={`h-3.5 w-3.5 ${m.iconClass}`}
                         strokeWidth={2}
@@ -501,7 +501,7 @@ export function StudentLanding({
                     <p className="mt-2 text-lg font-bold text-[var(--portal-title)]">
                       {m.value}
                     </p>
-                    <p className="mt-0.5 text-[10px] text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.625rem] text-[var(--portal-muted)]">
                       {m.sub}
                     </p>
                   </div>
@@ -554,7 +554,7 @@ export function StudentLanding({
 
         <aside className="space-y-4">
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Next Actions
             </h2>
             <ul className="mt-3 space-y-3">
@@ -568,7 +568,7 @@ export function StudentLanding({
                     <p className="text-sm font-semibold text-[var(--portal-title)]">
                       Make HR Decisions
                     </p>
-                    <p className="mt-0.5 text-[11px] text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] text-[var(--portal-muted)]">
                       Allocate your budget across 7 HR areas.
                     </p>
                     <Link href={decisionsHref} className="mt-2 block">
@@ -589,7 +589,7 @@ export function StudentLanding({
                     <p className="text-sm font-semibold text-[var(--portal-title)]">
                       Review &amp; Submit
                     </p>
-                    <p className="mt-0.5 text-[11px] text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] text-[var(--portal-muted)]">
                       Review your team&apos;s decisions before the deadline.
                     </p>
                     <Link
@@ -611,7 +611,7 @@ export function StudentLanding({
                     <p className="text-sm font-semibold text-[var(--portal-title)]">
                       Team Discussion
                     </p>
-                    <p className="mt-0.5 text-[11px] text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] text-[var(--portal-muted)]">
                       Collaborate with your team and finalize your strategy.
                     </p>
                     <Link
@@ -627,7 +627,7 @@ export function StudentLanding({
           </section>
 
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Team Snapshot
             </h2>
             <p className="mt-2 text-sm font-semibold text-[var(--portal-ink)]">

@@ -18,7 +18,7 @@ export function ReferenceCenterView({ context }: { context: ResourcesContext }) 
 
       <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-2xl">
-          <h1 className="text-[28px] font-bold text-[var(--portal-title)]">
+          <h1 className="text-[1.75rem] font-bold text-[var(--portal-title)]">
             Simulation Reference Center
           </h1>
           <p className="mt-1 text-sm text-[var(--portal-muted)]">
@@ -57,7 +57,7 @@ export function ReferenceCenterView({ context }: { context: ResourcesContext }) 
                 {card.body}
               </p>
               <div className="mt-4 flex-1">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                <p className="text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                   You&apos;ll Learn
                 </p>
                 <ul className="mt-2 space-y-2">

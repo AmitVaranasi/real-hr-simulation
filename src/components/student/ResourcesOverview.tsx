@@ -26,7 +26,7 @@ export function ResourcesOverview({ context }: { context: ResourcesContext }) {
     <div className="pb-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-[28px] font-bold text-[var(--portal-title)]">
+          <h1 className="text-[1.75rem] font-bold text-[var(--portal-title)]">
             Resources
           </h1>
           <p className="mt-1 max-w-xl text-sm text-[var(--portal-muted)]">
@@ -166,7 +166,7 @@ export function ResourcesOverview({ context }: { context: ResourcesContext }) {
                     <Icon className="h-3.5 w-3.5 text-[var(--portal-purple)]" />
                     {g.title}
                   </p>
-                  <p className="mt-1 text-[11px] leading-snug text-[var(--portal-muted)]">
+                  <p className="mt-1 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                     {g.metrics.map((m) => m.name).join(", ")}
                   </p>
                 </Link>
@@ -208,7 +208,7 @@ export function ResourcesOverview({ context }: { context: ResourcesContext }) {
                     <Icon className="h-4 w-4 text-[var(--portal-brand)]" />
                     {d.name}
                   </span>
-                  <span className="shrink-0 text-[11px] text-[var(--portal-muted)]">
+                  <span className="shrink-0 text-[0.6875rem] text-[var(--portal-muted)]">
                     {d.type} · {d.size}
                   </span>
                 </li>

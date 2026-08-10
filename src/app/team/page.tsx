@@ -109,14 +109,14 @@ export default async function TeamCompanyPage() {
                 key={card.label}
                 className="min-w-[120px] rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-3 py-2 shadow-sm"
               >
-                <p className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                <p className="flex items-center gap-1 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                   <Icon className={`h-3 w-3 ${card.iconClass}`} strokeWidth={2} />
                   {card.label}
                 </p>
-                <p className="mt-0.5 text-[13px] font-semibold text-[var(--portal-ink)]">
+                <p className="mt-0.5 text-[0.8125rem] font-semibold text-[var(--portal-ink)]">
                   {card.value}
                   {card.badge ? (
-                    <span className="ml-1.5 rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700">
+                    <span className="ml-1.5 rounded bg-emerald-100 px-1.5 py-0.5 text-[0.625rem] font-bold text-emerald-700">
                       {card.badge}
                     </span>
                   ) : null}
@@ -142,7 +142,7 @@ export default async function TeamCompanyPage() {
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Our Company
             </h2>
             <p className="mt-2 text-2xl font-bold text-[var(--portal-title)]">
@@ -170,7 +170,7 @@ export default async function TeamCompanyPage() {
                       className="mx-auto h-4 w-4 text-[var(--portal-accent-blue)]"
                       strokeWidth={1.75}
                     />
-                    <p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                    <p className="mt-1 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                       {meta.label}
                     </p>
                     <p className="text-xs font-semibold text-[var(--portal-title)]">
@@ -183,7 +183,7 @@ export default async function TeamCompanyPage() {
           </section>
 
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Company Snapshot
               {ctx.openRound ? ` (Round ${ctx.openRound.round_number})` : ""}
             </h2>
@@ -242,7 +242,7 @@ export default async function TeamCompanyPage() {
                     key={row.label}
                     className="rounded-lg border border-[var(--portal-sidebar-border)] bg-[#fafbfc] px-3 py-3"
                   >
-                    <dt className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                    <dt className="flex items-center gap-1 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                       <Icon className={`h-3 w-3 ${row.iconClass}`} strokeWidth={2} />
                       {row.label}
                     </dt>
@@ -253,14 +253,14 @@ export default async function TeamCompanyPage() {
                 );
               })}
             </dl>
-            <p className="mt-3 rounded-lg bg-[var(--portal-accent-blue-soft)] px-3 py-2 text-[11px] text-[var(--portal-title)]">
+            <p className="mt-3 rounded-lg bg-[var(--portal-accent-blue-soft)] px-3 py-2 text-[0.6875rem] text-[var(--portal-title)]">
               Snapshot values reflect the most recent completed round (or starting
               conditions before results exist).
             </p>
           </section>
 
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Current Round Context
             </h2>
             <ul className="mt-3 space-y-2.5 text-sm">
@@ -313,7 +313,7 @@ export default async function TeamCompanyPage() {
           </section>
 
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Company Values
             </h2>
             <ul className="mt-3 space-y-3">
@@ -328,7 +328,7 @@ export default async function TeamCompanyPage() {
                       <p className="text-sm font-semibold text-[var(--portal-title)]">
                         {v.title}
                       </p>
-                      <p className="text-[12px] text-[var(--portal-muted)]">
+                      <p className="text-[0.75rem] text-[var(--portal-muted)]">
                         {v.body}
                       </p>
                     </div>

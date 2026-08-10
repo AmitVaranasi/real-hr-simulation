@@ -95,7 +95,7 @@ function StatusBadge({
   const label = statusLabel(status, openRoundNumber);
   return (
     <span
-      className={`inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-md px-3 text-[10px] font-bold uppercase tracking-wide ${statusBadgeClass(status)}`}
+      className={`inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-md px-3 text-[0.625rem] font-bold uppercase tracking-wide ${statusBadgeClass(status)}`}
     >
       {status === "complete" ? (
         <CheckCircle2 className="h-3.5 w-3.5" />
@@ -215,7 +215,7 @@ export function GettingStarted({
     <div className="space-y-5">
       <div className="grid items-stretch gap-4 xl:grid-cols-[minmax(220px,280px)_minmax(0,1fr)]">
         <header className="flex flex-col justify-center">
-          <h1 className="text-2xl font-bold text-[var(--portal-title)] sm:text-[30px] sm:leading-tight">
+          <h1 className="text-2xl font-bold text-[var(--portal-title)] sm:text-[1.875rem] sm:leading-tight">
             Welcome, {firstName} 👋
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-[var(--portal-muted)]">
@@ -247,7 +247,7 @@ export function GettingStarted({
                 Complete these steps to prepare for the simulation.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-[11px] font-medium text-[var(--portal-muted)]">
+            <div className="flex flex-wrap items-center gap-3 text-[0.6875rem] font-medium text-[var(--portal-muted)]">
               <span className="inline-flex items-center gap-1">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                 Complete
@@ -353,7 +353,7 @@ export function GettingStarted({
                         )
                       ) : null}
                       {step.actionHint ? (
-                        <p className="text-center text-[11px] leading-snug text-[var(--portal-muted)]">
+                        <p className="text-center text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                           {step.actionHint}
                         </p>
                       ) : null}

@@ -177,7 +177,7 @@ export function AdminFormulasClient() {
                     }`}
                   >
                     <span className="block">{f.name}</span>
-                    <span className="text-[11px] text-[var(--portal-muted)]">
+                    <span className="text-[0.6875rem] text-[var(--portal-muted)]">
                       {f.category}
                     </span>
                   </button>

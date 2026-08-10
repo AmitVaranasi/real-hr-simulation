@@ -125,7 +125,7 @@ export function DecisionGuidance({
             {statusLabel(status)}
           </p>
           {yourInvestmentPct != null && suggested ? (
-            <p className="mt-1 text-[11px] leading-relaxed opacity-90">
+            <p className="mt-1 text-[0.6875rem] leading-relaxed opacity-90">
               Your {yourInvestmentPct.toFixed(1)}% investment is{" "}
               {status === "within"
                 ? "within"
@@ -137,7 +137,7 @@ export function DecisionGuidance({
               the suggested {suggested} range for {industry}.
             </p>
           ) : (
-            <p className="mt-1 text-[11px] leading-relaxed opacity-90">
+            <p className="mt-1 text-[0.6875rem] leading-relaxed opacity-90">
               Suggested ranges for this module remain configurable until engine
               validation.
             </p>
@@ -153,10 +153,10 @@ export function DecisionGuidance({
 
         {moduleSpend != null ? (
           <div className="rounded-lg border border-[var(--portal-sidebar-border)] bg-[var(--portal-page)] px-3 py-2.5">
-            <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+            <p className="text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
               Module Investment
             </p>
-            <p className="mt-1 text-[15px] font-bold text-[var(--portal-title)]">
+            <p className="mt-1 text-[0.9375rem] font-bold text-[var(--portal-title)]">
               {formatCurrency(moduleSpend)}
               {spendPct != null ? (
                 <span className="ml-1.5 text-sm font-semibold text-[var(--portal-muted)]">
@@ -174,7 +174,7 @@ export function DecisionGuidance({
           </div>
         ) : null}
 
-        <p className="text-[11px] leading-relaxed text-[var(--portal-muted)]">
+        <p className="text-[0.6875rem] leading-relaxed text-[var(--portal-muted)]">
           Consider whether your current investment supports your workforce needs,
           organizational strategy, and other HR priorities.
         </p>
@@ -184,7 +184,7 @@ export function DecisionGuidance({
             {filtered.map((w, i) => (
               <li
                 key={`${w.module}-${i}`}
-                className={`rounded-lg px-3 py-2 text-[12px] ${
+                className={`rounded-lg px-3 py-2 text-[0.75rem] ${
                   w.severity === "critical"
                     ? "bg-red-50 text-red-800"
                     : "bg-[var(--portal-primary-soft)] text-[var(--portal-title)]"
