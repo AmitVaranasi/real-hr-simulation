@@ -1,20 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { BSCScorecard } from "@/components/results/BSCScorecard";
-import { FeedbackPanel } from "@/components/results/FeedbackPanel";
-import { HRCoachPlaceholder } from "@/components/results/HRCoachPlaceholder";
-import { LearningInsightsPanel } from "@/components/results/LearningInsightsPanel";
-import { OutcomeMetricTable } from "@/components/results/MetricTable";
-import { TrendChart } from "@/components/results/TrendChart";
-import { ReflectionDisplay } from "@/components/reflection/ReflectionDisplay";
-import { ReflectionForm } from "@/components/reflection/ReflectionForm";
-import { FinancialCard } from "@/components/shared/FinancialCard";
-import { ReportsSubnav } from "@/components/student/ReportsSubnav";
-import { Button } from "@/components/ui/button";
+import { WorkforceBriefClient } from "@/components/results/WorkforceBriefClient";
+import type { RoundListItem } from "@/components/results/WorkforceBriefView";
 import { getStrategyConfig } from "@/lib/engine/config";
-import type { BSCScores, FeedbackPayload, Strategy } from "@/lib/engine/types";
-import { generateTeamPdf, outcomeToPdfData } from "@/lib/export/pdf";
+import type { Strategy } from "@/lib/engine/types";
 
 interface ResultsViewProps {
   teamId: string;
@@ -25,6 +14,7 @@ interface ResultsViewProps {
   outcome: Record<string, unknown>;
   priorOutcome?: Record<string, unknown> | null;
   reflection?: { content: string; submitted_at: string } | null;
+  rounds?: RoundListItem[];
   trendData?: Array<{
     round: string;
     total: number;
@@ -42,160 +32,67 @@ export function ResultsView({
   sessionName,
   team,
   outcome,
-  priorOutcome,
   reflection,
-  trendData,
+  rounds = [],
 }: ResultsViewProps) {
-  const displayScore = Number(
-    outcome.instructor_override ?? outcome.total_score
-  );
-
-  const bsc: BSCScores = {
-    score_financial: Number(outcome.score_financial),
-    score_employee: Number(outcome.score_employee),
-    score_process: Number(outcome.score_process),
-    score_learning: Number(outcome.score_learning),
-    total_score: displayScore,
-    strategy_bonus: Number(outcome.strategy_bonus),
-    industry_penalty: Number(outcome.industry_penalty),
-  };
-
-  const feedback = outcome.feedback_json as FeedbackPayload | undefined;
   const strategyConfig = getStrategyConfig(team.strategy as Strategy);
-
-  function handlePdf() {
-    const data = outcomeToPdfData(sessionName, team, roundNumber, outcome);
-    if (reflection) data.reflection = reflection.content;
-    generateTeamPdf(data);
-  }
+  const weights = strategyConfig.bsc_weights;
 
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="text-xs font-bold uppercase tracking-wider text-[var(--portal-primary)]">
-          Reports & HR Analytics
-        </p>
-        <h1 className="mt-1 text-2xl font-bold text-[var(--portal-title)] sm:text-3xl">
-          The Workforce Brief — Round {roundNumber}
-        </h1>
-        <p className="mt-2 text-sm text-[var(--portal-muted)]">
-          {sessionName} · {team.name} · {team.industry} · {team.strategy}
-        </p>
-      </div>
-
-      <ReportsSubnav activeHref="/reports/workforce-brief" />
-
-      {outcome.instructor_override != null && (
-        <p className="rounded-lg bg-amber-50 px-4 py-2 text-sm text-amber-800">
-          Instructor adjusted score: {Number(outcome.instructor_override).toFixed(1)}
-          {outcome.override_reason
-            ? ` — ${String(outcome.override_reason)}`
-            : ""}
-        </p>
-      )}
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href="/reports/workforce-brief"
-          className="text-sm font-medium text-[var(--portal-primary)] hover:underline"
-        >
-          ← All Workforce Briefs
-        </Link>
-        <Button variant="outline" size="sm" onClick={handlePdf}>
-          Download PDF Report
-        </Button>
-      </div>
-
-      <section>
-        <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[var(--portal-title)]">
-          HR Balance Scorecard
-        </h2>
-        <BSCScorecard scores={bsc} bscWeights={strategyConfig.bsc_weights} />
-      </section>
-
-      {trendData && trendData.length >= 2 && <TrendChart data={trendData} />}
-
-      <section>
-        <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[var(--portal-title)]">
-          Strategic Performance Metrics KPIs
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <FinancialCard
-            label="Revenue"
-            value={Number(outcome.revenue)}
-            priorValue={
-              priorOutcome ? Number(priorOutcome.revenue) : undefined
-            }
-          />
-          <FinancialCard
-            label="Profit"
-            value={Number(outcome.profit)}
-            priorValue={priorOutcome ? Number(priorOutcome.profit) : undefined}
-          />
-          <FinancialCard
-            label="Stock Price"
-            value={Number(outcome.stock_price)}
-            priorValue={
-              priorOutcome ? Number(priorOutcome.stock_price) : undefined
-            }
-            format="number"
-          />
-          <FinancialCard
-            label="Market Share"
-            value={Number(outcome.market_share)}
-            format="percent"
-          />
-          <FinancialCard
-            label="Profit Margin"
-            value={Number(outcome.profit_margin)}
-            format="percent"
-          />
-          <FinancialCard
-            label="Headcount"
-            value={Number(outcome.headcount)}
-            format="number"
-          />
-        </div>
-      </section>
-
-      {feedback && (
-        <section>
-          <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[var(--portal-title)]">
-            Feedback: Perspective Summaries
-          </h2>
-          <FeedbackPanel feedback={feedback} />
-        </section>
-      )}
-
-      <section>
-        <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[var(--portal-title)]">
-          Workforce Performance Metrics
-        </h2>
-        <OutcomeMetricTable outcome={outcome} />
-      </section>
-
-      {feedback?.learning_insights && (
-        <section>
-          <h2 className="mb-3 text-lg font-semibold uppercase tracking-wide text-[var(--portal-title)]">
-            Feedback: Workforce Performance Metrics
-          </h2>
-          <LearningInsightsPanel insights={feedback.learning_insights} />
-        </section>
-      )}
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <HRCoachPlaceholder />
-        <section>
-          {reflection ? (
-            <ReflectionDisplay
-              content={reflection.content}
-              submittedAt={reflection.submitted_at}
-            />
-          ) : (
-            <ReflectionForm teamId={teamId} roundId={roundId} />
-          )}
-        </section>
-      </div>
-    </div>
+    <WorkforceBriefClient
+      data={{
+        teamName: team.name,
+        industry: team.industry,
+        strategy: team.strategy,
+        roundNumber,
+        roundStatus: "closed",
+        totalScore: Number(
+          outcome.instructor_override ?? outcome.total_score ?? 0
+        ),
+        scoreFinancial: Number(outcome.score_financial ?? 0),
+        scoreEmployee: Number(outcome.score_employee ?? 0),
+        scoreProcess: Number(outcome.score_process ?? 0),
+        scoreLearning: Number(outcome.score_learning ?? 0),
+        maxFinancial: weights.financial,
+        maxEmployee: weights.employee,
+        maxProcess: weights.process,
+        maxLearning: weights.learning,
+        revenue: Number(outcome.revenue ?? 0),
+        profit: Number(outcome.profit ?? 0),
+        stockPrice: Number(outcome.stock_price ?? 0),
+        marketShare: Number(outcome.market_share ?? 0),
+        profitMargin: Number(outcome.profit_margin ?? 0),
+        headcount: Number(outcome.headcount ?? 0),
+        requiredHeadcount: 420,
+        turnoverRate: Number(outcome.turnover_rate ?? 0),
+        averageSalary:
+          Number(outcome.total_compensation ?? 0) /
+            Math.max(1, Number(outcome.headcount ?? 1)) || 0,
+        compensationRatio: Number(outcome.compensation_ratio ?? 0),
+        satisfaction: Number(outcome.employee_satisfaction ?? 0),
+        engagement: Number(outcome.engagement_level ?? 0),
+        costPerHire: Number(outcome.cost_per_hire ?? 0),
+        timeToFill: Number(outcome.time_to_fill ?? 0),
+        hiringQuality: Number(outcome.hiring_quality ?? 0),
+        turnoverCost: Number(outcome.turnover_cost ?? 0),
+        absenteeismRate: Number(outcome.absenteeism_rate ?? 0),
+        trainingRoi: Number(outcome.training_roi ?? 0),
+        trainingEffectiveness: Number(outcome.training_effectiveness ?? 0),
+        successionPipeline: Number(outcome.succession_pipeline ?? 0),
+        reviewCoverage: Number(outcome.review_coverage ?? 0),
+        productivityIndex: Number(outcome.productivity ?? 0),
+        budgetAdherence: Number(outcome.budget_adherence ?? 0),
+        deiScore: Number(outcome.dei_score ?? 0),
+        hrTechScore: Number(outcome.hr_tech_score ?? 0),
+        rounds,
+        selectedRoundId: roundId,
+        reflectionContent: reflection?.content ?? null,
+      }}
+      teamId={teamId}
+      roundId={roundId}
+      sessionName={sessionName}
+      team={team}
+      outcome={outcome}
+    />
   );
 }

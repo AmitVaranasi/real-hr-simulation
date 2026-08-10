@@ -198,8 +198,26 @@ function PortalShellInner({
 
   return (
     <div className="min-h-screen bg-[var(--portal-page)]">
+      <PortalTopBar
+        displayName={displayName}
+        roleLabel={roleBadge(role)}
+        contextTitle={contextTitle}
+        contextMeta={contextMeta}
+        mobileOpen={mobileOpen}
+        onToggleMobile={toggleNav}
+        homeHref={homeHref}
+        helpHref={
+          role === "student"
+            ? "/help"
+            : role === "instructor"
+              ? "/sessions/help"
+              : "/about"
+        }
+        showBrandInBar={role === "student" || role === "instructor"}
+      />
+
       <aside
-        className={`fixed inset-y-0 left-0 z-30 hidden overflow-hidden transition-[width] duration-200 lg:block ${
+        className={`fixed bottom-0 left-0 top-[52px] z-30 hidden overflow-hidden transition-[width] duration-200 lg:block ${
           desktopCollapsed ? "w-0" : "w-[260px]"
         }`}
       >
@@ -222,11 +240,11 @@ function PortalShellInner({
         <>
           <button
             type="button"
-            className="fixed inset-0 z-40 bg-black/30 lg:hidden"
+            className="fixed inset-x-0 bottom-0 top-[52px] z-40 bg-black/30 lg:hidden"
             aria-label="Close sidebar"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 z-50 w-[260px] lg:hidden">
+          <div className="fixed bottom-0 left-0 top-[52px] z-50 w-[260px] lg:hidden">
             <PortalSidebar
               items={items}
               brandSubtitle={roleHomeLabel(role)}
@@ -244,25 +262,8 @@ function PortalShellInner({
       )}
 
       <div
-        className={`flex min-h-screen min-w-0 flex-col ${desktopCollapsed ? "" : "lg:pl-[260px]"}`}
+        className={`flex min-w-0 flex-col pt-[52px] ${desktopCollapsed ? "" : "lg:pl-[260px]"}`}
       >
-        <PortalTopBar
-          displayName={displayName}
-          roleLabel={roleBadge(role)}
-          contextTitle={contextTitle}
-          contextMeta={contextMeta}
-          mobileOpen={mobileOpen}
-          onToggleMobile={toggleNav}
-          homeHref={homeHref}
-          helpHref={
-            role === "student"
-              ? "/help"
-              : role === "instructor"
-                ? "/sessions/help"
-                : "/about"
-          }
-          showBrandInBar={role === "student" || role === "instructor"}
-        />
         <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>

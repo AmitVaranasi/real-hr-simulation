@@ -1,4 +1,5 @@
 import { ResultsView } from "@/components/results/ResultsView";
+import type { RoundListItem } from "@/components/results/WorkforceBriefView";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -72,9 +73,9 @@ export default async function RoundResultsPage({
 
   const { data: allOutcomes } = await supabase
     .from("outcomes")
-    .select("*, rounds(id, round_number)")
+    .select("*, rounds(id, round_number, closed_at)")
     .eq("team_id", team.id)
-    .order("computed_at");
+    .order("computed_at", { ascending: false });
 
   const { data: priorList } = await supabase
     .from("outcomes")
@@ -91,43 +92,51 @@ export default async function RoundResultsPage({
     .eq("round_id", roundId)
     .maybeSingle();
 
-  const trendData = (allOutcomes ?? []).map((o) => {
-    const r = o.rounds as { round_number: number };
+  const rounds: RoundListItem[] = (allOutcomes ?? []).map((o) => {
+    const r = o.rounds as unknown as {
+      id: string;
+      round_number: number;
+      closed_at: string | null;
+    } | null;
+    const dateSource = r?.closed_at ?? (o.computed_at as string | undefined);
+    let dateLabel = "—";
+    if (dateSource) {
+      try {
+        dateLabel = new Date(dateSource).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      } catch {
+        dateLabel = "—";
+      }
+    }
     return {
-      round: `R${r.round_number}`,
-      total: Number(o.instructor_override ?? o.total_score),
-      financial: Number(o.score_financial),
-      employee: Number(o.score_employee),
-      process: Number(o.score_process),
-      learning: Number(o.score_learning),
+      id: o.id as string,
+      roundId: (o.round_id as string) ?? r?.id ?? "",
+      roundNumber: r?.round_number ?? 0,
+      dateLabel,
+      href: `/round/${o.round_id}/results`,
     };
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <Link href="/dashboard" className="text-sm text-[var(--portal-primary)] hover:underline">
-        ← Dashboard
-      </Link>
-      <h1 className="mt-4 text-2xl font-bold text-[var(--portal-title)]">
-        Round {round?.round_number} results
-      </h1>
-      <div className="mt-8">
-        <ResultsView
-          teamId={team.id}
-          roundId={roundId}
-          roundNumber={round?.round_number ?? 0}
-          sessionName={team.sessions?.name ?? "Session"}
-          team={{
-            name: team.name,
-            industry: team.industry,
-            strategy: team.strategy,
-          }}
-          outcome={outcome}
-          priorOutcome={priorList?.[0] ?? null}
-          reflection={reflection}
-          trendData={trendData}
-        />
-      </div>
+    <div className="p-4 sm:p-6">
+      <ResultsView
+        teamId={team.id}
+        roundId={roundId}
+        roundNumber={round?.round_number ?? 0}
+        sessionName={team.sessions?.name ?? "Session"}
+        team={{
+          name: team.name,
+          industry: team.industry,
+          strategy: team.strategy,
+        }}
+        outcome={outcome}
+        priorOutcome={priorList?.[0] ?? null}
+        reflection={reflection}
+        rounds={rounds}
+      />
     </div>
   );
 }

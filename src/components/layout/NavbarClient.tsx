@@ -107,7 +107,7 @@ export function NavbarClient() {
   }, [configured]);
 
   // Portal pages use Capsim-style shell chrome instead of the marketing navbar.
-  if (!loading && user && isPortalPath(pathname)) {
+  if (isPortalPath(pathname)) {
     return null;
   }
 
@@ -210,7 +210,7 @@ export function NavbarClient() {
       ) : (
         <Link
           href="/simulate"
-          className="text-[var(--portal-muted)] hover:text-[var(--portal-title)]"
+          className="font-bold text-[var(--portal-title)] hover:text-[var(--portal-brand)]"
           onClick={() => setMobileOpen(false)}
         >
           Simulator
@@ -272,17 +272,17 @@ export function NavbarClient() {
       )}
     </div>
   ) : configured ? (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-5">
       <Link
         href="/login"
-        className="text-sm text-[var(--portal-muted)] hover:text-[var(--portal-title)]"
+        className="text-sm font-bold text-[var(--portal-title)] hover:text-[var(--portal-brand)]"
         onClick={() => setMobileOpen(false)}
       >
         Sign in
       </Link>
       <Link
         href="/register"
-        className="inline-flex h-9 items-center rounded-lg bg-[var(--portal-primary)] px-3 text-sm font-medium text-white hover:bg-[var(--portal-primary-hover)]"
+        className="text-sm font-bold text-[var(--portal-brand)] hover:underline"
         onClick={() => setMobileOpen(false)}
       >
         Register
@@ -295,7 +295,7 @@ export function NavbarClient() {
       <div className="mx-auto flex h-14 w-full min-w-0 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4">
         <Link
           href={user ? homeHref : "/"}
-          className="min-w-0 truncate text-sm font-semibold text-[var(--portal-primary)] sm:text-base"
+          className="min-w-0 truncate text-sm font-bold text-[var(--portal-brand)] sm:text-base"
           onClick={() => setMobileOpen(false)}
         >
           <span className="sm:hidden">HR Simulation</span>

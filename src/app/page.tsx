@@ -1,19 +1,23 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
   BarChart3,
+  Briefcase,
+  ChevronRight,
   GraduationCap,
   HeartHandshake,
   Network,
   Scale,
-  Users,
   UserPlus,
+  Users,
   Wallet,
-  Briefcase,
   type LucideIcon,
 } from "lucide-react";
 
-const features = [
+const features: Array<{
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}> = [
   {
     icon: Users,
     title: "Team-based decisions",
@@ -56,78 +60,116 @@ const MODULES: Array<{
 
 export default function Home() {
   return (
-    <div className="w-full min-w-0 overflow-x-hidden bg-[var(--portal-page)]">
-      <section className="border-b border-[var(--portal-sidebar-border)] bg-gradient-to-br from-[var(--portal-primary-soft)] via-white to-[var(--portal-page)]">
-        <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:py-20">
-          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--portal-primary)] sm:text-sm">
+    <div className="w-full min-w-0 overflow-x-hidden bg-white">
+      <section className="border-b border-[var(--portal-sidebar-border)]">
+        <div className="mx-auto max-w-5xl px-4 pb-12 pt-14 text-center sm:pb-16 sm:pt-16">
+          <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--portal-brand)]">
             Higher Education Business Simulation
           </p>
-          <h1 className="mx-auto max-w-3xl text-3xl font-bold tracking-tight text-[var(--portal-primary)] sm:text-5xl">
+          <h1 className="mt-3 text-4xl font-bold tracking-tight text-[var(--portal-title)] sm:text-5xl md:text-[58px] md:leading-tight">
             Real HR Simulation
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-[var(--portal-muted)] sm:text-lg">
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#24365a] sm:text-[19px]">
             An HR business simulation where student teams make recruitment,
-            compensation, training, and engagement decisions — then see how
-            those choices affect workforce metrics, financial outcomes, and the
-            Balanced Scorecard.
+            compensation, training, and engagement decisions — then see how those
+            choices affect workforce metrics, financial outcomes, and the Balanced
+            Scorecard.
           </p>
           <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-            <Link href="/simulate" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto">
-                Try the simulation
-              </Button>
+            <Link
+              href="/simulate"
+              className="inline-flex h-[55px] items-center justify-center rounded-xl bg-[var(--portal-brand)] px-8 text-[17px] font-bold text-white hover:bg-[var(--portal-brand-hover)]"
+            >
+              Try the simulation
             </Link>
-            <Link href="/login" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                Sign in
-              </Button>
+            <Link
+              href="/login"
+              className="inline-flex h-[55px] items-center justify-center rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-10 text-[17px] font-bold text-[var(--portal-title)] hover:bg-[#f8fafc]"
+            >
+              Sign in
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="bg-white py-12 sm:py-16">
-        <div className="mx-auto max-w-6xl px-4">
-          <h2 className="mb-8 text-center text-xl font-semibold text-[var(--portal-title)] sm:text-2xl">
-            Why Real HR Simulation?
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-            {features.map((f) => (
-              <div
+      <section className="mx-auto max-w-5xl px-4 py-12 sm:py-14">
+        <h2 className="text-center text-[29px] font-bold text-[var(--portal-title)]">
+          Why Real HR Simulation?
+        </h2>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {features.map((f) => {
+            const Icon = f.icon;
+            return (
+              <article
                 key={f.title}
-                className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm sm:p-6"
+                className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-5 py-6"
               >
-                <f.icon className="mb-3 h-8 w-8 text-[var(--portal-primary)]" />
-                <h3 className="font-semibold text-[var(--portal-title)]">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--portal-muted)]">
+                <Icon className="h-9 w-9 text-[var(--portal-brand)]" strokeWidth={1.75} />
+                <h3 className="mt-5 text-base font-bold text-[var(--portal-title)]">
+                  {f.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#24365a]">
                   {f.description}
                 </p>
-              </div>
-            ))}
-          </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
 
-          <h2 className="mb-6 mt-14 text-center text-xl font-semibold text-[var(--portal-title)] sm:text-2xl">
-            Seven HR Decision Modules
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {MODULES.map((m) => (
+      <section id="modules" className="mx-auto max-w-5xl px-4 pb-16 scroll-mt-20">
+        <h2 className="text-center text-[29px] font-bold text-[var(--portal-title)]">
+          Seven HR Decision Modules
+        </h2>
+        <p className="mx-auto mt-3 max-w-2xl text-center text-[15px] text-[#24365a]">
+          Explore each module to see how your team&apos;s decisions drive real
+          organizational outcomes.
+        </p>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          {MODULES.slice(0, 6).map((m) => {
+            const Icon = m.icon;
+            return (
               <Link
                 key={m.slug}
                 href={`/learn/${m.slug}`}
-                className="rounded-xl border border-[var(--portal-sidebar-border)] bg-[var(--portal-page)] px-4 py-4 text-left shadow-sm transition hover:border-[var(--portal-primary)] hover:bg-[var(--portal-primary-soft)]"
+                className="flex items-center gap-4 rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-5 py-5 transition hover:border-[var(--portal-brand)]/40 hover:bg-[var(--portal-brand-soft)]/40"
               >
-                <m.icon className="mb-2 h-6 w-6 text-[var(--portal-primary)]" />
-                <p className="text-sm font-semibold text-[var(--portal-title)]">{m.title}</p>
-                <p className="mt-1 text-xs text-[var(--portal-primary)]">Learn more →</p>
+                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-[var(--portal-brand)]">
+                  <Icon className="h-8 w-8" strokeWidth={1.75} />
+                </span>
+                <span className="flex-1 text-base font-bold text-[var(--portal-title)]">
+                  {m.title}
+                </span>
+                <ChevronRight className="h-6 w-6 text-[var(--portal-title)]" />
               </Link>
-            ))}
-          </div>
-          <p className="mt-10 text-center text-sm text-[var(--portal-muted)]">
-            <Link href="/about" className="text-[var(--portal-primary)] hover:underline">
-              About this application
-            </Link>
-          </p>
+            );
+          })}
         </div>
+
+        <div className="mt-4 flex justify-center">
+          <Link
+            href={`/learn/${MODULES[6].slug}`}
+            className="flex w-full max-w-[487px] items-center gap-4 rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-5 py-5 transition hover:border-[var(--portal-brand)]/40 hover:bg-[var(--portal-brand-soft)]/40 sm:w-[487px]"
+          >
+            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-[var(--portal-brand)]">
+              <Scale className="h-8 w-8" strokeWidth={1.75} />
+            </span>
+            <span className="flex-1 text-base font-bold text-[var(--portal-title)]">
+              {MODULES[6].title}
+            </span>
+            <ChevronRight className="h-6 w-6 text-[var(--portal-title)]" />
+          </Link>
+        </div>
+
+        <p className="mt-12 text-center">
+          <Link
+            href="/about"
+            className="text-[17px] text-[var(--portal-brand)] hover:underline"
+          >
+            About this application
+          </Link>
+        </p>
       </section>
     </div>
   );
