@@ -69,7 +69,7 @@ export function MetricPreview({
         {showCalcLink ? (
           <button
             type="button"
-            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--portal-accent-blue)] hover:underline"
+            className="inline-flex items-center gap-1 text-[0.6875rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
             title={calcTitle}
           >
             <CircleHelp className="h-3.5 w-3.5" strokeWidth={2} />
@@ -99,7 +99,7 @@ export function MetricPreview({
                   <Icon className="h-4 w-4" strokeWidth={2} />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide opacity-80">
+                  <p className="text-[0.6875rem] font-semibold uppercase tracking-wide opacity-80">
                     {item.label}
                   </p>
                   <p className="mt-0.5 text-lg font-bold text-[var(--portal-title)]">

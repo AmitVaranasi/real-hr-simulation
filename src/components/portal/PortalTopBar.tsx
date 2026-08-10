@@ -63,7 +63,7 @@ export function PortalTopBar({
           {showBrandInBar ? (
             <Link
               href={homeHref}
-              className="truncate text-[15px] font-bold tracking-tight text-[var(--portal-brand)] sm:text-base"
+              className="truncate text-[0.9375rem] font-bold tracking-tight text-[var(--portal-brand)] sm:text-base"
             >
               Real HR Simulation
             </Link>
@@ -88,13 +88,13 @@ export function PortalTopBar({
         </div>
         <div className="flex shrink-0 items-center gap-3 sm:gap-4">
           {roleLabel === "Instructor" || roleLabel === "Admin" ? (
-            <span className="hidden text-[13px] font-medium text-[var(--portal-navy)] sm:inline">
+            <span className="hidden text-[0.8125rem] font-medium text-[var(--portal-navy)] sm:inline">
               {roleLabel}
             </span>
           ) : (
             <Link
               href="/simulate"
-              className="hidden items-center gap-1.5 text-[13px] font-medium text-[var(--portal-navy)] hover:text-[var(--portal-brand)] sm:inline-flex"
+              className="hidden items-center gap-1.5 text-[0.8125rem] font-medium text-[var(--portal-navy)] hover:text-[var(--portal-brand)] sm:inline-flex"
             >
               <Monitor
                 className="h-4 w-4 text-[var(--portal-navy)]"
@@ -105,7 +105,7 @@ export function PortalTopBar({
           )}
           <Link
             href={helpHref}
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--portal-navy)] hover:text-[var(--portal-primary)]"
+            className="inline-flex items-center gap-1.5 text-[0.8125rem] font-medium text-[var(--portal-navy)] hover:text-[var(--portal-primary)]"
           >
             <CircleHelp
               className="h-4 w-4 text-[var(--portal-primary)]"
@@ -116,7 +116,7 @@ export function PortalTopBar({
           <button
             type="button"
             onClick={() => void signOut()}
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--portal-navy)] hover:text-[var(--portal-primary)]"
+            className="inline-flex items-center gap-1.5 text-[0.8125rem] font-medium text-[var(--portal-navy)] hover:text-[var(--portal-primary)]"
           >
             <LogOut
               className="h-4 w-4 text-[var(--portal-primary)]"

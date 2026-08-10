@@ -289,10 +289,10 @@ export function FinancialRatiosView({
       </div>
 
       <div className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-        <div className="bg-[var(--portal-navy)] px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide text-white">
+        <div className="bg-[var(--portal-navy)] px-4 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wide text-white">
           Financial Ratio Summary
         </div>
-        <div className="grid grid-cols-[minmax(0,1.4fr)_1fr_1fr_1fr_1fr] gap-2 border-b border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+        <div className="grid grid-cols-[minmax(0,1.4fr)_1fr_1fr_1fr_1fr] gap-2 border-b border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-4 py-2 text-[0.6875rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
           <span>Ratio</span>
           <span className="text-right">Current Round</span>
           <span className="text-right">Prior Round</span>

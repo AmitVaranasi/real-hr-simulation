@@ -46,10 +46,10 @@ export function CompensationBreakdown({
         {parts.map((part, i) => (
           <div key={part.label} className="flex min-w-0 flex-1 items-stretch gap-2">
             <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-[var(--portal-sidebar-border)] bg-[var(--portal-page)] px-3 py-4 text-center">
-              <p className="text-[11px] font-semibold text-[var(--portal-muted)]">
+              <p className="text-[0.6875rem] font-semibold text-[var(--portal-muted)]">
                 {part.label}
               </p>
-              <p className="text-[10px] text-[var(--portal-muted)]">{part.sub}</p>
+              <p className="text-[0.625rem] text-[var(--portal-muted)]">{part.sub}</p>
               <p className="mt-2 text-sm font-bold text-[var(--portal-title)]">
                 {formatCurrency(part.value)}
               </p>
@@ -67,16 +67,16 @@ export function CompensationBreakdown({
         ))}
 
         <div className="flex min-w-[160px] flex-col items-center justify-center rounded-xl border-2 border-red-200 bg-red-50/60 px-4 py-4 text-center lg:min-w-[180px]">
-          <p className="text-[11px] font-semibold text-[var(--portal-muted)]">
+          <p className="text-[0.6875rem] font-semibold text-[var(--portal-muted)]">
             Total Compensation
           </p>
-          <p className="text-[10px] text-[var(--portal-muted)]">(est.)</p>
+          <p className="text-[0.625rem] text-[var(--portal-muted)]">(est.)</p>
           <p className="mt-2 text-lg font-bold text-[var(--portal-title)]">
             {formatCurrency(totalCompEstimate)}
           </p>
           {compRatio != null ? (
             <>
-              <p className="mt-3 text-[10px] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
+              <p className="mt-3 text-[0.625rem] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
                 Compensation Ratio
               </p>
               <p className="text-xs font-semibold text-[var(--portal-title)]">
@@ -85,13 +85,13 @@ export function CompensationBreakdown({
             </>
           ) : null}
           {budget.compensation_spend > 0 ? (
-            <p className="mt-2 text-[10px] text-[var(--portal-muted)]">
+            <p className="mt-2 text-[0.625rem] text-[var(--portal-muted)]">
               Discretionary HR spend: {formatCurrency(budget.compensation_spend)}
             </p>
           ) : null}
         </div>
       </div>
-      <p className="mt-3 text-[11px] text-[var(--portal-muted)]">
+      <p className="mt-3 text-[0.6875rem] text-[var(--portal-muted)]">
         Estimates update as you change your decisions.
       </p>
     </div>

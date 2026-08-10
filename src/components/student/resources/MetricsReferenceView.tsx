@@ -30,7 +30,7 @@ export function MetricsReferenceView({
 
       <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-2xl">
-          <h1 className="text-[28px] font-bold text-[var(--portal-title)]">
+          <h1 className="text-[1.75rem] font-bold text-[var(--portal-title)]">
             HR Metrics Reference
           </h1>
           <p className="mt-1 text-sm text-[var(--portal-muted)]">
@@ -83,7 +83,7 @@ export function MetricsReferenceView({
                             <span className="block text-sm font-semibold text-[var(--portal-title)]">
                               {m.name}
                             </span>
-                            <span className="mt-0.5 block text-[11px] text-[var(--portal-muted)]">
+                            <span className="mt-0.5 block text-[0.6875rem] text-[var(--portal-muted)]">
                               {m.def}
                             </span>
                           </span>

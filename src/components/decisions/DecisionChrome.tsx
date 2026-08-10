@@ -50,7 +50,7 @@ export function DecisionStatusStrip({
 
   return (
     <div className="flex flex-col items-stretch gap-1.5 sm:items-end">
-      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-brand)]">
+      <p className="text-[0.625rem] font-bold uppercase tracking-[0.08em] text-[var(--portal-brand)]">
         HR Decisions {moduleIndex} of {moduleTotal}
       </p>
       <div className="flex flex-wrap items-stretch justify-end gap-2">
@@ -61,14 +61,14 @@ export function DecisionStatusStrip({
               key={c.label}
               className="min-w-[108px] rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-2.5 py-2 shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
             >
-              <p className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+              <p className="flex items-center gap-1 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                 <Icon className={`h-3 w-3 ${c.iconClass}`} strokeWidth={2} />
                 {c.label}
               </p>
-              <p className="mt-0.5 text-[13px] font-semibold leading-tight text-[var(--portal-ink)]">
+              <p className="mt-0.5 text-[0.8125rem] font-semibold leading-tight text-[var(--portal-ink)]">
                 {c.value}
                 {c.badge ? (
-                  <span className="ml-1.5 inline-block rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-700">
+                  <span className="ml-1.5 inline-block rounded bg-emerald-100 px-1.5 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-emerald-700">
                     {c.badge}
                   </span>
                 ) : null}
@@ -134,7 +134,7 @@ export function DecisionStickyFooter({
                 {continueLabel}
               </button>
               {continueHint ? (
-                <p className="max-w-[260px] text-right text-[10px] text-[var(--portal-muted)]">
+                <p className="max-w-[260px] text-right text-[0.625rem] text-[var(--portal-muted)]">
                   {continueHint}
                 </p>
               ) : null}

@@ -408,7 +408,7 @@ export default function ReviewPage() {
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.06fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-4">
           <div>
-            <h1 className="text-[28px] font-bold text-[var(--portal-title)]">
+            <h1 className="text-[1.75rem] font-bold text-[var(--portal-title)]">
               Review &amp; Submit
             </h1>
             <p className="mt-1 max-w-2xl text-sm text-[var(--portal-muted)]">
@@ -428,13 +428,13 @@ export default function ReviewPage() {
 
           <section>
             <div className="mb-3 flex items-center justify-between gap-3">
-              <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+              <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
                 Your HR Decisions
               </h2>
               <button
                 type="button"
                 onClick={() => setCollapsed((v) => !v)}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--portal-accent-blue)] hover:underline"
+                className="inline-flex items-center gap-1 text-[0.6875rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
               >
                 {collapsed ? (
                   <>
@@ -472,10 +472,10 @@ export default function ReviewPage() {
                       <dl className="mt-3 flex-1 space-y-2">
                         {rows.map((row) => (
                           <div key={row.label}>
-                            <dt className="text-[10px] font-medium uppercase tracking-wide text-[var(--portal-muted)]">
+                            <dt className="text-[0.625rem] font-medium uppercase tracking-wide text-[var(--portal-muted)]">
                               {row.label}
                             </dt>
-                            <dd className="text-[12px] font-semibold text-[var(--portal-ink)]">
+                            <dd className="text-[0.75rem] font-semibold text-[var(--portal-ink)]">
                               {row.value}
                             </dd>
                           </div>
@@ -487,7 +487,7 @@ export default function ReviewPage() {
 
                     <div className="mt-3 flex items-end justify-between gap-2 border-t border-[var(--portal-sidebar-border)] pt-3">
                       <div>
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-[var(--portal-muted)]">
+                        <p className="text-[0.625rem] font-medium uppercase tracking-wide text-[var(--portal-muted)]">
                           Investment
                         </p>
                         <p className="text-sm font-bold text-emerald-700">
@@ -508,7 +508,7 @@ export default function ReviewPage() {
           </section>
 
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               <span className="mr-1.5 inline-flex text-[var(--portal-accent-blue)]">
                 <Wallet className="inline h-4 w-4" />
               </span>
@@ -531,7 +531,7 @@ export default function ReviewPage() {
 
         <aside className="flex flex-col gap-3 xl:sticky xl:top-20 xl:self-start">
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Budget Summary
             </h2>
             <div className="mt-3 flex items-center gap-4">
@@ -560,7 +560,7 @@ export default function ReviewPage() {
                   <span className="text-sm font-bold text-[var(--portal-title)]">
                     {util.toFixed(1)}%
                   </span>
-                  <span className="text-[10px] text-[var(--portal-muted)]">Used</span>
+                  <span className="text-[0.625rem] text-[var(--portal-muted)]">Used</span>
                 </span>
               </div>
               <dl className="flex-1 space-y-1.5 text-xs">
@@ -617,7 +617,7 @@ export default function ReviewPage() {
                   }}
                 />
               </div>
-              <p className="mt-2 text-[11px] text-[var(--portal-muted)]">
+              <p className="mt-2 text-[0.6875rem] text-[var(--portal-muted)]">
                 Remaining:{" "}
                 <span
                   className={
@@ -634,7 +634,7 @@ export default function ReviewPage() {
           </section>
 
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Cost Breakdown{" "}
               <span className="font-medium normal-case tracking-normal text-[var(--portal-muted)]">
                 (of HR Budget)
@@ -670,16 +670,16 @@ export default function ReviewPage() {
 
           {warnings.length > 0 ? (
             <section className="rounded-xl border border-[var(--portal-brand)]/30 bg-[var(--portal-brand-soft)] p-4">
-              <h2 className="flex items-center justify-between gap-2 text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+              <h2 className="flex items-center justify-between gap-2 text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
                 <span className="inline-flex items-center gap-1.5">
                   <AlertTriangle className="h-3.5 w-3.5 text-[var(--portal-brand)]" />
                   Warnings
                 </span>
-                <span className="rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-bold text-red-700">
+                <span className="rounded bg-red-100 px-1.5 py-0.5 text-[0.625rem] font-bold text-red-700">
                   {warnings.length} Issues
                 </span>
               </h2>
-              <ul className="mt-2 space-y-1.5 text-[12px] text-[var(--portal-title)]">
+              <ul className="mt-2 space-y-1.5 text-[0.75rem] text-[var(--portal-title)]">
                 {visibleWarnings.map((w, i) => (
                   <li key={`${w.module}-${i}`}>
                     • <strong>{w.module}:</strong> {w.message}
@@ -690,7 +690,7 @@ export default function ReviewPage() {
                 <button
                   type="button"
                   onClick={() => setShowAllWarnings((v) => !v)}
-                  className="mt-2 text-[11px] font-semibold text-[var(--portal-accent-blue)] hover:underline"
+                  className="mt-2 text-[0.6875rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
                 >
                   {showAllWarnings
                     ? "Show fewer warnings"
@@ -702,7 +702,7 @@ export default function ReviewPage() {
 
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-[13px] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+              <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
                 Expected Outcomes{" "}
                 <span className="font-medium normal-case tracking-normal text-[var(--portal-muted)]">
                   (Projected)
@@ -710,7 +710,7 @@ export default function ReviewPage() {
               </h2>
               <Link
                 href="/reports/workforce-brief"
-                className="text-[11px] font-semibold text-[var(--portal-accent-blue)] hover:underline"
+                className="text-[0.6875rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
               >
                 View Details
               </Link>
@@ -723,7 +723,7 @@ export default function ReviewPage() {
                     key={item.label}
                     className="rounded-lg border border-[var(--portal-sidebar-border)] bg-[#fafbfc] px-2.5 py-2"
                   >
-                    <p className="flex items-center gap-1 text-[10px] font-bold uppercase text-[var(--portal-muted)]">
+                    <p className="flex items-center gap-1 text-[0.625rem] font-bold uppercase text-[var(--portal-muted)]">
                       <Icon className="h-3 w-3 shrink-0 text-[var(--portal-accent-blue)]" />
                       <span className="truncate">{item.label}</span>
                     </p>
@@ -734,7 +734,7 @@ export default function ReviewPage() {
                 );
               })}
               <div className="col-span-2 rounded-xl border border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50 px-3 py-2.5">
-                <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-amber-800">
+                <p className="flex items-center gap-1.5 text-[0.6875rem] font-bold uppercase tracking-wide text-amber-800">
                   <Trophy className="h-3.5 w-3.5 shrink-0 text-amber-600" strokeWidth={2} />
                   BSC Total (Projected)
                 </p>

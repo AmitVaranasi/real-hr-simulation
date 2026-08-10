@@ -78,14 +78,14 @@ export function ResourcesContextCards({ context }: { context: ResourcesContext }
             key={b.label}
             className="min-w-[130px] rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-3 py-2.5 shadow-sm"
           >
-            <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+            <p className="flex items-center gap-1.5 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
               <Icon className={`h-3.5 w-3.5 ${b.iconClass}`} />
               {b.label}
             </p>
             <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-[var(--portal-title)]">
               {b.value}
               {b.badge ? (
-                <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700">
+                <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[0.5625rem] font-bold text-emerald-700">
                   {b.badge}
                 </span>
               ) : null}

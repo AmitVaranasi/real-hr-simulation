@@ -49,7 +49,7 @@ function DownloadTable({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[var(--portal-sidebar-border)] text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+            <tr className="border-b border-[var(--portal-sidebar-border)] text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
               <th className="px-4 py-2.5 font-bold">Resource</th>
               <th className="px-4 py-2.5 font-bold">Description</th>
               <th className="px-4 py-2.5 font-bold">Type</th>
@@ -114,7 +114,7 @@ export function DownloadsView({ context }: { context: ResourcesContext }) {
 
       <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-2xl">
-          <h1 className="text-[28px] font-bold text-[var(--portal-title)]">
+          <h1 className="text-[1.75rem] font-bold text-[var(--portal-title)]">
             Downloads &amp; Course Resources
           </h1>
           <p className="mt-1 text-sm text-[var(--portal-muted)]">

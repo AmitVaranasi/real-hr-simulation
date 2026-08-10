@@ -79,7 +79,7 @@ function NavBranch({
         <Link
           href={item.href}
           onClick={onNavigate}
-          className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-md px-3 py-2 text-[13px] transition-colors ${
+          className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-md px-3 py-2 text-[0.8125rem] transition-colors ${
             parentActive
               ? dark
                 ? `bg-white/10 font-semibold ${activeColor}`
@@ -144,7 +144,7 @@ function NavBranch({
                 <Link
                   href={child.href}
                   onClick={onNavigate}
-                  className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-[12px] transition-colors ${
+                  className={`flex min-w-0 items-center gap-2 rounded-md px-2 py-1.5 text-[0.75rem] transition-colors ${
                     childIsActive
                       ? dark
                         ? `bg-white/10 font-semibold ${activeColor}`
@@ -164,7 +164,7 @@ function NavBranch({
                   ) : (
                     <span className="h-3.5 w-3.5 shrink-0 rounded-full border border-[var(--portal-sidebar-border)]" />
                   )}
-                  <span>{child.label}</span>
+                  <span className="min-w-0 truncate">{child.label}</span>
                 </Link>
               </li>
             );
@@ -352,7 +352,7 @@ export function PortalSidebar({
         {showStudentChrome && (
           <>
             <div
-              className={`mt-6 px-3 text-[10px] font-bold uppercase tracking-[0.08em] ${
+              className={`mt-6 px-3 text-[0.625rem] font-bold uppercase tracking-[0.08em] ${
                 darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"
               }`}
             >
@@ -366,7 +366,7 @@ export function PortalSidebar({
                     <Link
                       href={item.href}
                       onClick={onNavigate}
-                      className={`flex items-center gap-2.5 rounded-md px-3 py-1.5 text-[12px] ${
+                      className={`flex items-center gap-2.5 rounded-md px-3 py-1.5 text-[0.75rem] ${
                         darkNav
                           ? "text-slate-300 hover:bg-white/5 hover:text-white"
                           : "text-[var(--portal-muted)] hover:bg-[#f4f5f7] hover:text-[var(--portal-ink)]"
@@ -398,13 +398,13 @@ export function PortalSidebar({
             }`}
           >
             <p
-              className={`text-[10px] font-bold uppercase tracking-[0.08em] ${
+              className={`text-[0.625rem] font-bold uppercase tracking-[0.08em] ${
                 darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"
               }`}
             >
               Your Simulation
             </p>
-            <dl className="mt-2 space-y-1.5 text-[12px]">
+            <dl className="mt-2 space-y-1.5 text-[0.75rem]">
               {[
                 ["Company", simulation.company],
                 ["Industry", simulation.industry],
@@ -436,7 +436,7 @@ export function PortalSidebar({
                     {roundDisplay}
                   </p>
                   <p
-                    className={`text-[11px] ${
+                    className={`text-[0.6875rem] ${
                       statusDisplay.toLowerCase() === "open"
                         ? "font-semibold text-[var(--portal-success)]"
                         : darkNav
@@ -464,7 +464,7 @@ export function PortalSidebar({
           }`}
         >
           <p
-            className={`text-[10px] font-bold uppercase tracking-[0.08em] ${
+            className={`text-[0.625rem] font-bold uppercase tracking-[0.08em] ${
               darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"
             }`}
           >
@@ -490,14 +490,14 @@ export function PortalSidebar({
           <Link
             href="/sessions/manage"
             onClick={onNavigate}
-            className="mt-3 inline-block text-[12px] font-semibold text-[var(--portal-accent-blue)] hover:underline"
+            className="mt-3 inline-block text-[0.75rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
           >
             View Course Settings →
           </Link>
         </div>
       ) : (
         <div
-          className={`shrink-0 px-4 py-3 text-[11px] ${
+          className={`shrink-0 px-4 py-3 text-[0.6875rem] ${
             darkNav
               ? "border-t border-white/10 text-slate-500"
               : "border-t border-[var(--portal-sidebar-border)] text-[var(--portal-muted)]"

@@ -732,14 +732,14 @@ function DecisionFormInner({
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
-          <h1 className="text-[28px] font-bold leading-tight text-[var(--portal-title)]">
+          <h1 className="text-[1.75rem] font-bold leading-tight text-[var(--portal-title)]">
             {MODULE_LABELS[MODULES[activeTab]]}
           </h1>
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-[var(--portal-brand)]/35 bg-[var(--portal-brand-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--portal-brand)]">
+            <span className="rounded-full border border-[var(--portal-brand)]/35 bg-[var(--portal-brand-soft)] px-2.5 py-0.5 text-[0.6875rem] font-semibold text-[var(--portal-brand)]">
               SHRM BASK
             </span>
-            <span className="rounded-full bg-[var(--portal-brand)] px-2.5 py-0.5 text-[11px] font-semibold text-white">
+            <span className="rounded-full bg-[var(--portal-brand)] px-2.5 py-0.5 text-[0.6875rem] font-semibold text-white">
               {SHRM_BADGES[MODULES[activeTab]]}
             </span>
           </div>
@@ -769,7 +769,7 @@ function DecisionFormInner({
                   </span>
                   <div>
                     <h3 className="text-sm font-bold text-emerald-700">1. Hiring Needs</h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Employees to hire by role group
                     </p>
                   </div>
@@ -778,7 +778,7 @@ function DecisionFormInner({
                   {ROLE_GROUPS.map((role) => (
                     <li
                       key={role.id}
-                      className="flex items-center justify-between gap-2 text-[13px]"
+                      className="flex items-center justify-between gap-2 text-[0.8125rem]"
                     >
                       <span className="min-w-0 truncate font-medium text-[var(--portal-ink)]">
                         {role.label}
@@ -809,7 +809,7 @@ function DecisionFormInner({
                     </li>
                   ))}
                 </ul>
-                <p className="mt-3 border-t border-emerald-100 pt-2.5 text-[12px] font-bold uppercase tracking-wide text-emerald-700">
+                <p className="mt-3 border-t border-emerald-100 pt-2.5 text-[0.75rem] font-bold uppercase tracking-wide text-emerald-700">
                   Total New Hires{" "}
                   <span className="ml-1 text-base tabular-nums">{hireTotal}</span>
                 </p>
@@ -824,12 +824,12 @@ function DecisionFormInner({
                     <h3 className="text-sm font-bold text-[var(--portal-accent-blue)]">
                       2. Selection Approach
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Screening rigor for new hires
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Screening Rigor
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -843,7 +843,7 @@ function DecisionFormInner({
                     <option value={3}>Full Panel</option>
                   </select>
                 </label>
-                <p className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 pt-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 pt-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   {screeningHint}
                 </p>
               </section>
@@ -857,14 +857,14 @@ function DecisionFormInner({
                     <h3 className="text-sm font-bold text-[var(--portal-icon-purple)]">
                       3. Diversity Sourcing Goal
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Target diverse candidate share
                     </p>
                   </div>
                 </div>
                 <div className="mt-4">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-[11px] font-semibold text-[var(--portal-ink)]">
+                    <span className="text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                       Diversity Sourcing Goal
                     </span>
                     <span className="text-2xl font-bold tabular-nums text-[var(--portal-icon-purple)]">
@@ -881,12 +881,12 @@ function DecisionFormInner({
                       update("diversity_goal_pct", Number(e.target.value))
                     }
                   />
-                  <div className="mt-1 flex justify-between text-[10px] text-[var(--portal-muted)]">
+                  <div className="mt-1 flex justify-between text-[0.625rem] text-[var(--portal-muted)]">
                     <span>0%</span>
                     <span>50%</span>
                   </div>
                 </div>
-                <p className="mt-auto rounded-lg bg-violet-50 px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-violet-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   Investing in diverse sourcing expands the talent pool and can
                   strengthen long-term DEI outcomes.
                 </p>
@@ -901,12 +901,12 @@ function DecisionFormInner({
                     <h3 className="text-sm font-bold text-teal-700">
                       4. Onboarding Investment
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Dollars per new hire
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Onboarding Investment (per hire)
                   <div className="mt-1.5 flex items-center gap-2">
                     <button
@@ -943,7 +943,7 @@ function DecisionFormInner({
                     </button>
                   </div>
                 </label>
-                <p className="mt-auto rounded-lg bg-teal-50 px-2.5 py-2 text-[11px] font-medium leading-snug text-teal-900">
+                <p className="mt-auto rounded-lg bg-teal-50 px-2.5 py-2 text-[0.6875rem] font-medium leading-snug text-teal-900">
                   {hireTotal} New Hires × {formatCurrency(decision.onboarding_investment)}{" "}
                   = {formatCurrency(hireTotal * decision.onboarding_investment)}{" "}
                   Estimated Onboarding Investment
@@ -984,12 +984,12 @@ function DecisionFormInner({
                     <h3 className="text-sm font-bold text-emerald-700">
                       1. Review Cadence
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       How often formal reviews occur
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Review Frequency
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -1006,7 +1006,7 @@ function DecisionFormInner({
                     <option value={4}>Quarterly</option>
                   </select>
                 </label>
-                <div className="mt-auto rounded-lg bg-emerald-50 px-2.5 py-2 text-[11px] leading-snug text-emerald-950">
+                <div className="mt-auto rounded-lg bg-emerald-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-emerald-950">
                   <p className="font-bold text-emerald-800">Industry Practice</p>
                   <p className="mt-0.5 font-medium">
                     {reviewPracticeHint(decision.review_frequency, industry)}
@@ -1023,7 +1023,7 @@ function DecisionFormInner({
                     <h3 className="text-sm font-bold text-[var(--portal-accent-blue)]">
                       2. 360° Feedback
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Multi-rater leadership assessment
                     </p>
                   </div>
@@ -1036,15 +1036,15 @@ function DecisionFormInner({
                     onChange={(e) => update("feedback_360", e.target.checked)}
                   />
                   <span>
-                    <span className="block text-[13px] font-semibold text-[var(--portal-ink)]">
+                    <span className="block text-[0.8125rem] font-semibold text-[var(--portal-ink)]">
                       Enable ($8,000 / year)
                     </span>
-                    <span className="mt-0.5 block text-[11px] text-[var(--portal-muted)]">
+                    <span className="mt-0.5 block text-[0.6875rem] text-[var(--portal-muted)]">
                       Adds multi-source feedback into the review cycle
                     </span>
                   </span>
                 </label>
-                <p className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   360° feedback strengthens leadership assessment and development
                   conversations across role groups.
                 </p>
@@ -1060,7 +1060,7 @@ function DecisionFormInner({
                   <h3 className="text-sm font-bold text-[var(--portal-icon-orange)]">
                     3. Performance Criteria by Role Group
                   </h3>
-                  <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                  <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                     Set importance (1–10) for each evaluation dimension
                   </p>
                 </div>
@@ -1070,16 +1070,16 @@ function DecisionFormInner({
                 <table className="w-full min-w-[640px] border-separate border-spacing-y-2">
                   <thead>
                     <tr>
-                      <th className="px-2 pb-1 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                      <th className="px-2 pb-1 text-left text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
                         Role Group
                       </th>
                       {PERF_CRITERIA.map((dim) => (
                         <th key={dim.key} className="px-2 pb-1 text-left">
                           <span
-                            className={`inline-flex items-center gap-1.5 text-[11px] font-bold ${dim.headerClass}`}
+                            className={`inline-flex items-center gap-1.5 text-[0.6875rem] font-bold ${dim.headerClass}`}
                           >
                             <span
-                              className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-bold ${dim.iconWrap}`}
+                              className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[0.5625rem] font-bold ${dim.iconWrap}`}
                             >
                               {dim.label.charAt(0)}
                             </span>
@@ -1094,7 +1094,7 @@ function DecisionFormInner({
                       const role = getRoleById(rp.role_id);
                       return (
                         <tr key={rp.role_id} className="align-middle">
-                          <td className="rounded-l-lg bg-[var(--portal-page)] px-2.5 py-2.5 text-[12px] font-semibold text-[var(--portal-ink)]">
+                          <td className="rounded-l-lg bg-[var(--portal-page)] px-2.5 py-2.5 text-[0.75rem] font-semibold text-[var(--portal-ink)]">
                             {role?.label ?? rp.role_id}
                           </td>
                           {PERF_CRITERIA.map((dim, dimIdx) => (
@@ -1124,7 +1124,7 @@ function DecisionFormInner({
                                   aria-label={`${role?.label ?? rp.role_id} ${dim.label}`}
                                 />
                                 <span
-                                  className={`w-5 shrink-0 text-right text-[12px] font-bold tabular-nums ${dim.headerClass}`}
+                                  className={`w-5 shrink-0 text-right text-[0.75rem] font-bold tabular-nums ${dim.headerClass}`}
                                 >
                                   {rp[dim.key]}
                                 </span>
@@ -1138,7 +1138,7 @@ function DecisionFormInner({
                 </table>
               </div>
 
-              <p className="mt-2 border-t border-orange-100 pt-2.5 text-[11px] text-[var(--portal-muted)]">
+              <p className="mt-2 border-t border-orange-100 pt-2.5 text-[0.6875rem] text-[var(--portal-muted)]">
                 Scale: <span className="font-semibold text-[var(--portal-ink)]">1</span>{" "}
                 = Low importance ·{" "}
                 <span className="font-semibold text-[var(--portal-ink)]">10</span>{" "}
@@ -1196,7 +1196,7 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.emerald.title}`}>
                       1. Training Programs
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Select the average number of participants per program
                     </p>
                   </div>
@@ -1208,7 +1208,7 @@ function DecisionFormInner({
                     return (
                       <li
                         key={prog}
-                        className="flex items-center justify-between gap-2 text-[13px]"
+                        className="flex items-center justify-between gap-2 text-[0.8125rem]"
                       >
                         <span className="flex min-w-0 items-center gap-2">
                           <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
@@ -1218,7 +1218,7 @@ function DecisionFormInner({
                             <span className="block truncate font-medium text-[var(--portal-ink)]">
                               {prog}
                             </span>
-                            <span className="block text-[10px] text-[var(--portal-muted)]">
+                            <span className="block text-[0.625rem] text-[var(--portal-muted)]">
                               {formatCurrency(PROGRAM_COSTS[prog])} / participant
                             </span>
                           </span>
@@ -1253,7 +1253,7 @@ function DecisionFormInner({
                     );
                   })}
                 </ul>
-                <p className="mt-auto rounded-lg bg-emerald-50 px-2.5 py-2 text-[11px] leading-snug text-emerald-950">
+                <p className="mt-auto rounded-lg bg-emerald-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-emerald-950">
                   Program costs will be applied based on the participants you
                   select (driven by coverage %).
                 </p>
@@ -1272,14 +1272,14 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.blue.title}`}>
                       2. Training Coverage
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       What percentage of your total employees will receive training?
                     </p>
                   </div>
                 </div>
                 <div className="mt-4">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-[11px] font-semibold text-[var(--portal-ink)]">
+                    <span className="text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                       Employees Trained
                     </span>
                     <span className="text-2xl font-bold tabular-nums text-[var(--portal-accent-blue)]">
@@ -1296,12 +1296,12 @@ function DecisionFormInner({
                       update("pct_employees_trained", Number(e.target.value))
                     }
                   />
-                  <div className="mt-1 flex justify-between text-[10px] text-[var(--portal-muted)]">
+                  <div className="mt-1 flex justify-between text-[0.625rem] text-[var(--portal-muted)]">
                     <span>0%</span>
                     <span>50%</span>
                   </div>
                 </div>
-                <p className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   Higher coverage increases development opportunities across the
                   workforce (~{trainingEstParticipants} participants).
                 </p>
@@ -1320,7 +1320,7 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.violet.title}`}>
                       3. Derived Training Budget
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Estimated average training investment per employee
                     </p>
                   </div>
@@ -1329,11 +1329,11 @@ function DecisionFormInner({
                   <p className="text-3xl font-bold tabular-nums text-[var(--portal-icon-purple)]">
                     {formatCurrency(derivedTrainingPerEe)}
                   </p>
-                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
+                  <p className="mt-1 text-[0.6875rem] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
                     Per-Employee Training Budget
                   </p>
                 </div>
-                <p className="mt-auto rounded-lg bg-violet-50 px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-violet-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   Calculated from coverage &amp; selected programs.
                 </p>
               </section>
@@ -1351,12 +1351,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.orange.title}`}>
                       4. Succession Investment
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Set aside funds to strengthen your leadership pipeline
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Succession Investment ($)
                   <div className="mt-1.5 flex items-center gap-2">
                     <button
@@ -1393,7 +1393,7 @@ function DecisionFormInner({
                     </button>
                   </div>
                 </label>
-                <p className="mt-auto rounded-lg bg-orange-50 px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-orange-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   Succession investment builds bench strength and long-term
                   leadership continuity.
                 </p>
@@ -1449,12 +1449,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.emerald.title}`}>
                       1. Engagement Investment
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Fund recognition, culture, and listening programs
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Engagement Investment ($)
                   <div className="mt-1.5 flex items-center gap-2">
                     <button
@@ -1491,7 +1491,7 @@ function DecisionFormInner({
                     </button>
                   </div>
                 </label>
-                <div className="mt-auto rounded-lg bg-emerald-50 px-2.5 py-2 text-[11px] leading-snug text-emerald-950">
+                <div className="mt-auto rounded-lg bg-emerald-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-emerald-950">
                   <p className="font-bold text-emerald-800">Why it matters</p>
                   <p className="mt-0.5 font-medium">
                     Higher engagement improves satisfaction, reduces absenteeism,
@@ -1513,12 +1513,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.blue.title}`}>
                       2. Conflict Approach
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       How workplace conflicts are resolved
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Conflict Approach
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -1539,7 +1539,7 @@ function DecisionFormInner({
                     )}
                   </select>
                 </label>
-                <div className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <div className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   <p className="font-bold text-[var(--portal-accent-blue)]">
                     About this option
                   </p>
@@ -1562,12 +1562,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.violet.title}`}>
                       3. Workplace Flexibility
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Where and how work gets done
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Flexibility Model
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -1584,7 +1584,7 @@ function DecisionFormInner({
                     <option value={2}>Full flexibility</option>
                   </select>
                 </label>
-                <div className="mt-auto rounded-lg bg-violet-50 px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <div className="mt-auto rounded-lg bg-violet-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   <p className="font-bold text-[var(--portal-icon-purple)]">
                     Consider
                   </p>
@@ -1607,12 +1607,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.orange.title}`}>
                       4. Voice Mechanisms
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       How employees share feedback
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Voice Level
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -1629,7 +1629,7 @@ function DecisionFormInner({
                     <option value={2}>Advanced</option>
                   </select>
                 </label>
-                <div className="mt-auto rounded-lg bg-orange-50 px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <div className="mt-auto rounded-lg bg-orange-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   <p className="font-bold text-[var(--portal-icon-orange)]">
                     What this includes
                   </p>
@@ -1689,7 +1689,7 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.emerald.title}`}>
                       1. Salary Strategy by Role
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Position each role vs market
                     </p>
                   </div>
@@ -1699,7 +1699,7 @@ function DecisionFormInner({
                     const role = getRoleById(rc.role_id);
                     return (
                       <li key={rc.role_id}>
-                        <label className="block text-[11px] font-semibold text-[var(--portal-ink)]">
+                        <label className="block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                           {role?.label ?? rc.role_id}
                           <select
                             className={`mt-1 ${formSelectClassName}`}
@@ -1724,7 +1724,7 @@ function DecisionFormInner({
                     );
                   })}
                 </ul>
-                <p className="mt-auto rounded-lg bg-emerald-50 px-2.5 py-2 text-[11px] leading-snug text-emerald-950">
+                <p className="mt-auto rounded-lg bg-emerald-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-emerald-950">
                   Salary position options compare to industry market benchmarks.
                 </p>
               </section>
@@ -1742,14 +1742,14 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.blue.title}`}>
                       2. Benefits Level
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Benefits as % of salary
                     </p>
                   </div>
                 </div>
                 <div className="mt-4">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-[11px] font-semibold text-[var(--portal-ink)]">
+                    <span className="text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                       Benefits %
                     </span>
                     <span className="text-2xl font-bold tabular-nums text-[var(--portal-accent-blue)]">
@@ -1766,12 +1766,12 @@ function DecisionFormInner({
                       update("benefits_pct", Number(e.target.value))
                     }
                   />
-                  <div className="mt-1 flex justify-between text-[10px] text-[var(--portal-muted)]">
+                  <div className="mt-1 flex justify-between text-[0.625rem] text-[var(--portal-muted)]">
                     <span>6%</span>
                     <span>20%</span>
                   </div>
                 </div>
-                <p className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   Richer benefits packages strengthen attraction and retention
                   while raising total rewards cost.
                 </p>
@@ -1790,12 +1790,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.violet.title}`}>
                       3. Bonus Tier
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Variable pay as % of salary
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Bonus Tier
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -1812,7 +1812,7 @@ function DecisionFormInner({
                     <option value={15}>15% of annual salary</option>
                   </select>
                 </label>
-                <p className="mt-auto rounded-lg bg-violet-50 px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-violet-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   Higher bonus tiers can boost motivation and retention with
                   greater variable cost exposure.
                 </p>
@@ -1831,12 +1831,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.orange.title}`}>
                       4. Equity / Stock Options
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Long-term ownership incentives
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Equity Level
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -1850,7 +1850,7 @@ function DecisionFormInner({
                     <option value={2}>Full</option>
                   </select>
                 </label>
-                <p className="mt-auto rounded-lg bg-orange-50 px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-orange-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   Equity can strengthen retention for key talent, especially in
                   competitive markets.
                 </p>
@@ -1869,12 +1869,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.teal.title}`}>
                       5. HR Technology
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Systems that run HR operations
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   HR Tech Level
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -1888,7 +1888,7 @@ function DecisionFormInner({
                     <option value={2}>HRIS + Analytics ($30,000/year)</option>
                   </select>
                 </label>
-                <p className="mt-auto rounded-lg bg-teal-50 px-2.5 py-2 text-[11px] leading-snug text-teal-900">
+                <p className="mt-auto rounded-lg bg-teal-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-teal-900">
                   Stronger HR tech improves data quality, process efficiency, and
                   decision support.
                 </p>
@@ -1951,12 +1951,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.emerald.title}`}>
                       1. Organizational Structure
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       How work and authority are organized
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Structure Type
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -1975,7 +1975,7 @@ function DecisionFormInner({
                     ))}
                   </select>
                 </label>
-                <p className="mt-auto rounded-lg bg-emerald-50 px-2.5 py-2 text-[11px] leading-snug text-emerald-950">
+                <p className="mt-auto rounded-lg bg-emerald-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-emerald-950">
                   {STRUCTURE_CUES[decision.organizational_structure]}
                 </p>
               </section>
@@ -1993,12 +1993,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.blue.title}`}>
                       2. Span of Control
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Average direct reports per manager
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Average Span of Control
                   <div className="mt-1.5 flex items-center gap-2">
                     <button
@@ -2029,11 +2029,11 @@ function DecisionFormInner({
                       +
                     </button>
                   </div>
-                  <p className="mt-1.5 text-[10px] text-[var(--portal-muted)]">
+                  <p className="mt-1.5 text-[0.625rem] text-[var(--portal-muted)]">
                     Recommended: 4 – 8
                   </p>
                 </label>
-                <p className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-[var(--portal-accent-blue-soft)] px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   Wider spans reduce layers but can stretch managerial capacity;
                   narrower spans add coaching bandwidth.
                 </p>
@@ -2052,12 +2052,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.violet.title}`}>
                       3. Process Focus
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Primary operating priority
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Primary Focus
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -2073,7 +2073,7 @@ function DecisionFormInner({
                     ))}
                   </select>
                 </label>
-                <p className="mt-auto rounded-lg bg-violet-50 px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-violet-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   {PROCESS_FOCUS_HINTS[decision.process_focus]}
                 </p>
               </section>
@@ -2091,12 +2091,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.orange.title}`}>
                       4. Change Management Capability
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Investment in change readiness
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Investment Level
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -2115,7 +2115,7 @@ function DecisionFormInner({
                     ))}
                   </select>
                 </label>
-                <p className="mt-auto rounded-lg bg-orange-50 px-2.5 py-2 text-[11px] leading-snug text-[var(--portal-title)]">
+                <p className="mt-auto rounded-lg bg-orange-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-[var(--portal-title)]">
                   {CHANGE_MGMT_HINTS[decision.change_management_capability]}
                 </p>
               </section>
@@ -2133,12 +2133,12 @@ function DecisionFormInner({
                     <h3 className={`text-sm font-bold ${CARD_ACCENT.teal.title}`}>
                       5. Collaboration Enablement
                     </h3>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                    <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       Tools and rituals for teamwork
                     </p>
                   </div>
                 </div>
-                <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                   Collaboration Level
                   <select
                     className={`mt-1.5 ${formSelectClassName}`}
@@ -2157,7 +2157,7 @@ function DecisionFormInner({
                     ))}
                   </select>
                 </label>
-                <p className="mt-auto rounded-lg bg-teal-50 px-2.5 py-2 text-[11px] leading-snug text-teal-900">
+                <p className="mt-auto rounded-lg bg-teal-50 px-2.5 py-2 text-[0.6875rem] leading-snug text-teal-900">
                   {COLLABORATION_HINTS[decision.collaboration_enablement]}
                 </p>
               </section>
@@ -2217,12 +2217,12 @@ function DecisionFormInner({
                         <h3 className={`text-sm font-bold ${accent.title}`}>
                           {idx + 1}. {card.label}
                         </h3>
-                        <p className="mt-0.5 text-[11px] leading-snug text-[var(--portal-muted)]">
+                        <p className="mt-0.5 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                           Set investment intensity for this pillar
                         </p>
                       </div>
                     </div>
-                    <label className="mt-4 block text-[11px] font-semibold text-[var(--portal-ink)]">
+                    <label className="mt-4 block text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
                       Investment Level
                       <select
                         className={`mt-1.5 ${formSelectClassName}`}
@@ -2239,7 +2239,7 @@ function DecisionFormInner({
                       </select>
                     </label>
                     <p
-                      className={`mt-auto rounded-lg px-2.5 py-2 text-[11px] leading-snug ${accent.footer}`}
+                      className={`mt-auto rounded-lg px-2.5 py-2 text-[0.6875rem] leading-snug ${accent.footer}`}
                     >
                       {card.cue}
                     </p>

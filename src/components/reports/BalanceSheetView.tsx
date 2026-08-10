@@ -36,7 +36,7 @@ function StatementTable({
 }) {
   return (
     <div className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-      <div className="grid grid-cols-[minmax(0,1.4fr)_1fr_1fr] gap-2 bg-[var(--portal-navy)] px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide text-white">
+      <div className="grid grid-cols-[minmax(0,1.4fr)_1fr_1fr] gap-2 bg-[var(--portal-navy)] px-4 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wide text-white">
         <span>{title}</span>
         <span className="text-right">{columns[1]}</span>
         <span className="text-right">{columns[2]}</span>
@@ -392,7 +392,7 @@ export function BalanceSheetView({
             { label: "Turnover Cost", value: d.turnover },
           ].map((item) => (
             <div key={item.label}>
-              <p className="text-[11px] font-semibold text-[var(--portal-muted)]">
+              <p className="text-[0.6875rem] font-semibold text-[var(--portal-muted)]">
                 {item.label}
               </p>
               <p className="mt-1 text-lg font-bold text-[var(--portal-title)]">
@@ -401,7 +401,7 @@ export function BalanceSheetView({
             </div>
           ))}
           <div className="rounded-xl border border-emerald-300 bg-white p-3 text-center">
-            <p className="text-[11px] font-semibold text-emerald-800">
+            <p className="text-[0.6875rem] font-semibold text-emerald-800">
               Total Workforce Investment
             </p>
             <p className="mt-1 text-xl font-bold text-emerald-700">
@@ -409,7 +409,7 @@ export function BalanceSheetView({
             </p>
           </div>
         </div>
-        <p className="mt-4 text-[11px] text-[var(--portal-muted)]">
+        <p className="mt-4 text-[0.6875rem] text-[var(--portal-muted)]">
           Note: Workforce Financial Impact represents key HR-related investments
           and costs that influence the financial position of the organization.
         </p>

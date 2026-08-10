@@ -134,7 +134,7 @@ export function FinancialReportChrome({
                         >
                           Round {r.roundNumber}
                         </p>
-                        <p className="mt-1 text-[11px] text-[var(--portal-muted)]">
+                        <p className="mt-1 text-[0.6875rem] text-[var(--portal-muted)]">
                           {r.dateLabel}
                         </p>
                       </div>
@@ -222,7 +222,7 @@ export function SummaryMetricCard({
           {icon}
         </span>
         <div className="min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+          <p className="text-[0.6875rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
             {label}
           </p>
           <p
@@ -232,7 +232,7 @@ export function SummaryMetricCard({
           </p>
         </div>
       </div>
-      <p className="mt-3 text-[11px] text-[var(--portal-muted)]">{priorLabel}</p>
+      <p className="mt-3 text-[0.6875rem] text-[var(--portal-muted)]">{priorLabel}</p>
       <div className="mt-1">
         <TrendBadge change={change} unit={changeUnit} invert={invertTrend} />
       </div>

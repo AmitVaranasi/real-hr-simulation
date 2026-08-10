@@ -44,13 +44,13 @@ export function IndustryGuidance({
 
   const body = (
     <>
-      <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--portal-accent-blue)]">
+      <p className="text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-accent-blue)]">
         Industry Guidance
       </p>
-      <p className="mt-1 text-[12px] font-semibold text-[var(--portal-ink)]">
+      <p className="mt-1 text-[0.75rem] font-semibold text-[var(--portal-ink)]">
         {industry} · {primaryNorm.label ?? module} Investment
       </p>
-      <p className="mt-0.5 text-[11px] text-[var(--portal-muted)]">
+      <p className="mt-0.5 text-[0.6875rem] text-[var(--portal-muted)]">
         Suggested Range: {formatNormRange(primaryNorm)}
       </p>
 
@@ -80,7 +80,7 @@ export function IndustryGuidance({
           />
         </div>
       </div>
-      <div className="mt-2 flex items-start justify-between gap-2 text-[10px]">
+      <div className="mt-2 flex items-start justify-between gap-2 text-[0.625rem]">
         <span className="font-medium text-[var(--portal-muted)]">
           Suggested Range
           <span className="mt-0.5 block font-semibold text-emerald-700">
@@ -93,7 +93,7 @@ export function IndustryGuidance({
       </div>
 
       {norms.benefits_pct_of_comp && module === "Compensation" && (
-        <p className="mt-2 text-[11px] text-[var(--portal-muted)]">
+        <p className="mt-2 text-[0.6875rem] text-[var(--portal-muted)]">
           Benefits: {norms.benefits_pct_of_comp.min}%–
           {norms.benefits_pct_of_comp.max}% of salary
         </p>

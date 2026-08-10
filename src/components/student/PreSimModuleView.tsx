@@ -64,7 +64,7 @@ export function PreSimModuleView({
                 <p className="mt-2 text-base text-[#24365a]">{content.subtitle}</p>
               </div>
             </div>
-            <p className="mt-5 text-sm leading-relaxed text-[#24365a] sm:text-[15px]">
+            <p className="mt-5 text-sm leading-relaxed text-[#24365a] sm:text-[0.9375rem]">
               {content.intro}
             </p>
           </div>
@@ -81,10 +81,10 @@ export function PreSimModuleView({
         </div>
 
         <section className="mt-10">
-          <h2 className="text-[23px] font-bold text-[var(--portal-title)]">
+          <h2 className="text-[1.4375rem] font-bold text-[var(--portal-title)]">
             {content.whatIsTitle}
           </h2>
-          <p className="mt-4 max-w-4xl text-sm leading-relaxed text-[#24365a] sm:text-[15px]">
+          <p className="mt-4 max-w-4xl text-sm leading-relaxed text-[#24365a] sm:text-[0.9375rem]">
             {content.whatIs}
           </p>
         </section>
@@ -92,7 +92,7 @@ export function PreSimModuleView({
         <hr className="my-8 border-[var(--portal-sidebar-border)]" />
 
         <section>
-          <h2 className="text-[23px] font-bold text-[var(--portal-title)]">
+          <h2 className="text-[1.4375rem] font-bold text-[var(--portal-title)]">
             2. Why Does It Matter?
           </h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -109,7 +109,7 @@ export function PreSimModuleView({
                   <h3 className="mt-3 text-sm font-bold leading-snug text-[var(--portal-title)]">
                     {card.title}
                   </h3>
-                  <p className="mt-3 text-[13px] leading-relaxed text-[#24365a]">
+                  <p className="mt-3 text-[0.8125rem] leading-relaxed text-[#24365a]">
                     {card.body}
                   </p>
                 </article>
@@ -122,7 +122,7 @@ export function PreSimModuleView({
 
         <div className="grid gap-8 lg:grid-cols-2">
           <section>
-            <h2 className="text-[22px] font-bold text-[var(--portal-title)]">
+            <h2 className="text-[1.375rem] font-bold text-[var(--portal-title)]">
               3. Decisions You May Encounter
             </h2>
             <p className="mt-3 text-sm text-[#24365a]">
@@ -142,14 +142,14 @@ export function PreSimModuleView({
                 <Lightbulb className="h-4 w-4" />
                 Think Like an HR Leader
               </p>
-              <p className="mt-2 text-[13px] leading-relaxed text-[#24365a]">
+              <p className="mt-2 text-[0.8125rem] leading-relaxed text-[#24365a]">
                 {content.thinkLike}
               </p>
             </div>
           </section>
 
           <section>
-            <h2 className="text-[21px] font-bold text-[var(--portal-title)]">
+            <h2 className="text-[1.3125rem] font-bold text-[var(--portal-title)]">
               {content.connectingTitle}
             </h2>
             <p className="mt-3 text-sm text-[#24365a]">{content.connecting}</p>
@@ -183,14 +183,14 @@ export function PreSimModuleView({
 
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-start">
           <div>
-            <h2 className="text-[22px] font-bold text-[var(--portal-title)]">
+            <h2 className="text-[1.375rem] font-bold text-[var(--portal-title)]">
               Before You Enter the Simulation
             </h2>
             <p className="mt-3 text-sm font-medium text-[#24365a]">Consider:</p>
             <ol className="mt-3 space-y-2.5">
               {content.beforeQuestions.map((q, i) => (
                 <li key={q} className="flex gap-2.5 text-sm text-[#24365a]">
-                  <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--portal-brand)] text-[10px] font-bold text-white">
+                  <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--portal-brand)] text-[0.625rem] font-bold text-white">
                     {i + 1}
                   </span>
                   {q}
@@ -250,7 +250,7 @@ function FlowCard({
   return (
     <div className={`min-w-0 flex-1 rounded-xl border p-3 ${toneClass}`}>
       <p className="text-xs font-bold text-[var(--portal-title)]">{title}</p>
-      <ul className="mt-2 space-y-1.5 text-[11px] leading-snug text-[#24365a]">
+      <ul className="mt-2 space-y-1.5 text-[0.6875rem] leading-snug text-[#24365a]">
         {items.map((item) => (
           <li key={item}>• {item}</li>
         ))}

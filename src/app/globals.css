@@ -66,6 +66,8 @@
 html {
   color-scheme: light;
   overflow-x: hidden;
+  /* Fluid root: rem-based type (Tailwind + text-[Nrem]) scales with viewport */
+  font-size: clamp(13px, 11.2px + 0.35vw, 16px);
 }
 
 body {
@@ -74,6 +76,7 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   overflow-x: hidden;
   max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 select,
@@ -90,4 +93,41 @@ select {
 select option {
   background-color: #ffffff;
   color: #1f2937;
+}
+
+/* Help Center semantic type scale (scales with root font-size) */
+@utility text-hc-title {
+  font-size: 1.75rem;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+}
+
+@utility text-hc-section {
+  font-size: 1rem;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+@utility text-hc-card {
+  font-size: 0.875rem;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+@utility text-hc-body {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  overflow-wrap: break-word;
+}
+
+@utility text-hc-small {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.help-center {
+  min-width: 0;
+  overflow-x: clip;
+  overflow-wrap: break-word;
 }

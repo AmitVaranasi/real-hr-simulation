@@ -39,6 +39,8 @@ import {
   Lightbulb,
   FolderOpen,
   IdCard,
+  Map,
+  Wrench,
 } from "lucide-react";
 
 export type PortalNavItem = {
@@ -283,6 +285,50 @@ export function studentNavItems(opts: {
       label: "Help Center",
       icon: CircleHelp,
       match: (p) => p.startsWith("/help"),
+      children: [
+        {
+          href: "/help",
+          label: "Overview",
+          icon: LayoutDashboard,
+          match: (p) => p === "/help",
+        },
+        {
+          href: "/help/getting-started",
+          label: "Getting Started Help",
+          icon: Home,
+          match: (p) => p.startsWith("/help/getting-started"),
+        },
+        {
+          href: "/help/navigation",
+          label: "Simulation Navigation",
+          icon: Map,
+          match: (p) => p.startsWith("/help/navigation"),
+        },
+        {
+          href: "/help/decisions",
+          label: "Making HR Decisions",
+          icon: ClipboardList,
+          match: (p) => p.startsWith("/help/decisions"),
+        },
+        {
+          href: "/help/reports",
+          label: "Reports & Results",
+          icon: BarChart3,
+          match: (p) => p.startsWith("/help/reports"),
+        },
+        {
+          href: "/help/faq",
+          label: "Frequently Asked Questions",
+          icon: CircleHelp,
+          match: (p) => p.startsWith("/help/faq"),
+        },
+        {
+          href: "/help/technical-support",
+          label: "Technical Support",
+          icon: Wrench,
+          match: (p) => p.startsWith("/help/technical-support"),
+        },
+      ],
     },
   ];
 }
