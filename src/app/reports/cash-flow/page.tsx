@@ -23,7 +23,6 @@ export default async function CashFlowPage({
   );
 
   return (
-    <div className="p-4 sm:p-6">
       <CashFlowView
         roundNumber={data.roundNumber}
         asOfLabel={data.asOfLabel}
@@ -32,6 +31,5 @@ export default async function CashFlowPage({
         liveRevenue={data.liveRevenue}
         liveCompensation={data.liveCompensation}
       />
-    </div>
   );
 }

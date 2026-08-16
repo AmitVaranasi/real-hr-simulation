@@ -6,7 +6,6 @@ import {
   ClipboardList,
   FileCheck2,
   BarChart3,
-  Trophy,
   BookOpen,
   LineChart,
   Search,
@@ -19,7 +18,7 @@ import {
   Briefcase,
   GraduationCap,
   HeartHandshake,
-  Wallet,
+  CircleDollarSign,
   FunctionSquare,
   History,
   ScrollText,
@@ -27,7 +26,7 @@ import {
   Library,
   CircleHelp,
   Network,
-  Scale,
+  UsersRound,
   MessageSquare,
   Mail,
   FileText,
@@ -41,6 +40,8 @@ import {
   IdCard,
   Map,
   Wrench,
+  ClipboardCheck,
+  Trophy,
 } from "lucide-react";
 
 export type PortalNavItem = {
@@ -65,7 +66,7 @@ export const DECISION_TABS = [
     key: "performance",
     label: "Performance Management",
     index: 1,
-    icon: Briefcase,
+    icon: ClipboardCheck,
     shrm: "Performance Management",
   },
   {
@@ -86,7 +87,7 @@ export const DECISION_TABS = [
     key: "compensation",
     label: "Compensation & Benefits",
     index: 4,
-    icon: Wallet,
+    icon: CircleDollarSign,
     shrm: "Total Rewards",
   },
   {
@@ -100,7 +101,7 @@ export const DECISION_TABS = [
     key: "dei",
     label: "DEI Initiatives",
     index: 6,
-    icon: Scale,
+    icon: UsersRound,
     shrm: "Diversity, Equity & Inclusion",
   },
 ] as const;
@@ -162,7 +163,7 @@ export function studentNavItems(opts: {
     },
     {
       href: "/reports",
-      label: "Review & HR Analytics",
+      label: "Reports & HR Analytics",
       icon: BarChart3,
       match: (p) =>
         p.startsWith("/reports") ||
@@ -193,7 +194,7 @@ export function studentNavItems(opts: {
         {
           href: "/reports/cash-flow",
           label: "Cash Flow Statement",
-          icon: Wallet,
+          icon: CircleDollarSign,
           match: (p) => p.startsWith("/reports/cash-flow"),
         },
         {
@@ -201,12 +202,6 @@ export function studentNavItems(opts: {
           label: "Financial Ratios",
           icon: BarChart3,
           match: (p) => p.startsWith("/reports/financial-ratios"),
-        },
-        {
-          href: "/leaderboard",
-          label: "Leaderboard",
-          icon: Trophy,
-          match: (p) => p.startsWith("/leaderboard"),
         },
       ],
     },

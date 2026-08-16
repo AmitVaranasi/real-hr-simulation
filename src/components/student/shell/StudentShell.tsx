@@ -19,7 +19,7 @@ export function StudentPageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
       <div>
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-bold text-[var(--portal-title)] sm:text-3xl">
@@ -118,7 +118,7 @@ export function YourSimulationPanel({
       <p className="text-[0.6875rem] font-bold uppercase tracking-wider text-[var(--portal-primary)]">
         Your Simulation
       </p>
-      <div className="mt-2.5 grid gap-2 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
+      <div className="mt-2.5 grid gap-2 sm:grid-cols-2 md:grid-cols-5 md:gap-0">
         {cells.map((c, index) => {
           const Icon = c.icon;
           // Only split on em/en dash separators (e.g. "Not Open — Waiting…"),
@@ -131,7 +131,7 @@ export function YourSimulationPanel({
             <div
               key={c.label}
               className={`px-1.5 py-0.5 sm:px-2.5 ${
-                index > 0 ? "lg:border-l lg:border-[var(--portal-sidebar-border)]" : ""
+                index > 0 ? "md:border-l md:border-[var(--portal-sidebar-border)]" : ""
               }`}
             >
               <div className="flex items-start gap-2">

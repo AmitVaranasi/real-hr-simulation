@@ -23,7 +23,6 @@ export default async function ProfitLossPage({
   );
 
   return (
-    <div className="p-4 sm:p-6">
       <ProfitLossView
         roundNumber={data.roundNumber}
         asOfLabel={data.asOfLabel}
@@ -35,6 +34,5 @@ export default async function ProfitLossPage({
         liveTurnover={data.liveTurnover}
         liveHeadcount={data.liveHeadcount}
       />
-    </div>
   );
 }

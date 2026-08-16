@@ -121,7 +121,6 @@ export default async function RoundResultsPage({
   });
 
   return (
-    <div className="p-4 sm:p-6">
       <ResultsView
         teamId={team.id}
         roundId={roundId}
@@ -137,6 +136,5 @@ export default async function RoundResultsPage({
         reflection={reflection}
         rounds={rounds}
       />
-    </div>
   );
 }

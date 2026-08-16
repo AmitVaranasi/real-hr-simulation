@@ -65,6 +65,30 @@ export function TrendBadge({
   );
 }
 
+function padFinancialRounds(
+  rounds: FinancialRoundItem[]
+): Array<FinancialRoundItem & { placeholder?: boolean }> {
+  const byNumber = new Map(rounds.map((r) => [r.roundNumber, r]));
+  const maxShown = Math.max(
+    5,
+    ...rounds.map((r) => r.roundNumber),
+    0
+  );
+  return Array.from({ length: maxShown }, (_, i) => {
+    const n = i + 1;
+    return (
+      byNumber.get(n) ?? {
+        id: `placeholder-${n}`,
+        roundId: "",
+        roundNumber: n,
+        dateLabel: "—",
+        href: "#",
+        placeholder: true,
+      }
+    );
+  });
+}
+
 export function FinancialReportChrome({
   reportLabel,
   rounds,
@@ -86,7 +110,7 @@ export function FinancialReportChrome({
 }) {
   return (
     <div className="space-y-5">
-      <div className="grid items-start gap-5 xl:grid-cols-[260px_minmax(0,1fr)]">
+      <div className="grid items-start gap-4 lg:grid-cols-[200px_minmax(0,1fr)]">
         <aside className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
           <h2 className="text-sm font-bold text-[var(--portal-title)]">
             Financial Reports
@@ -95,18 +119,58 @@ export function FinancialReportChrome({
             Select a round to view results
           </p>
           <ul className="mt-4 space-y-2">
-            {rounds.length === 0 ? (
-              <li className="rounded-lg border border-dashed border-[var(--portal-sidebar-border)] px-3 py-3 text-xs text-[var(--portal-muted)]">
-                No finalized rounds yet. Results appear after the instructor
-                closes a round.
-              </li>
-            ) : (
-              rounds.map((r) => {
-                const active = selectedRoundId
-                  ? selectedRoundId === r.roundId
-                  : r === rounds[0];
-                return (
-                  <li key={r.id}>
+            {padFinancialRounds(rounds).map((r) => {
+              const active = Boolean(
+                r.roundId &&
+                  (selectedRoundId
+                    ? selectedRoundId === r.roundId
+                    : r.roundId === rounds[0]?.roundId)
+              );
+              const inner = (
+                <>
+                  <div>
+                    <p
+                      className={`text-sm font-semibold ${
+                        active
+                          ? "text-[var(--portal-primary)]"
+                          : r.placeholder
+                            ? "text-[var(--portal-muted)]"
+                            : "text-[var(--portal-title)]"
+                      }`}
+                    >
+                      {reportLabel} –
+                    </p>
+                    <p
+                      className={`text-sm font-semibold ${
+                        active
+                          ? "text-[var(--portal-primary)]"
+                          : r.placeholder
+                            ? "text-[var(--portal-muted)]"
+                            : "text-[var(--portal-title)]"
+                      }`}
+                    >
+                      Round {r.roundNumber}
+                    </p>
+                    <p className="mt-1 text-[0.6875rem] text-[var(--portal-muted)]">
+                      {r.dateLabel}
+                    </p>
+                  </div>
+                  <ChevronRight
+                    className={`mt-1 h-4 w-4 shrink-0 ${
+                      active
+                        ? "text-[var(--portal-primary)]"
+                        : "text-[var(--portal-muted)]"
+                    }`}
+                  />
+                </>
+              );
+              return (
+                <li key={r.id}>
+                  {r.placeholder ? (
+                    <div className="flex items-start justify-between gap-2 rounded-lg border border-dashed border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-3 py-2.5">
+                      {inner}
+                    </div>
+                  ) : (
                     <Link
                       href={r.href}
                       className={`flex items-start justify-between gap-2 rounded-lg border px-3 py-2.5 transition-colors ${
@@ -115,41 +179,12 @@ export function FinancialReportChrome({
                           : "border-[var(--portal-sidebar-border)] bg-[#f8fafc] hover:border-[var(--portal-primary)]/40"
                       }`}
                     >
-                      <div>
-                        <p
-                          className={`text-sm font-semibold ${
-                            active
-                              ? "text-[var(--portal-primary)]"
-                              : "text-[var(--portal-title)]"
-                          }`}
-                        >
-                          {reportLabel} –
-                        </p>
-                        <p
-                          className={`text-sm font-semibold ${
-                            active
-                              ? "text-[var(--portal-primary)]"
-                              : "text-[var(--portal-title)]"
-                          }`}
-                        >
-                          Round {r.roundNumber}
-                        </p>
-                        <p className="mt-1 text-[0.6875rem] text-[var(--portal-muted)]">
-                          {r.dateLabel}
-                        </p>
-                      </div>
-                      <ChevronRight
-                        className={`mt-1 h-4 w-4 shrink-0 ${
-                          active
-                            ? "text-[var(--portal-primary)]"
-                            : "text-[var(--portal-muted)]"
-                        }`}
-                      />
+                      {inner}
                     </Link>
-                  </li>
-                );
-              })
-            )}
+                  )}
+                </li>
+              );
+            })}
           </ul>
           <Link
             href="/reports/workforce-brief"
@@ -226,7 +261,7 @@ export function SummaryMetricCard({
             {label}
           </p>
           <p
-            className={`mt-1 truncate text-xl font-bold ${valueClass ?? "text-[var(--portal-title)]"}`}
+            className={`mt-1 whitespace-nowrap text-xl font-bold tabular-nums ${valueClass ?? "text-[var(--portal-title)]"}`}
           >
             {value}
           </p>

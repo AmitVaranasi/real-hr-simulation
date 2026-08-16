@@ -23,7 +23,6 @@ export default async function BalanceSheetPage({
   );
 
   return (
-    <div className="p-4 sm:p-6">
       <BalanceSheetView
         roundNumber={data.roundNumber}
         asOfLabel={data.asOfLabel}
@@ -33,6 +32,5 @@ export default async function BalanceSheetPage({
         liveCompensation={data.liveCompensation}
         liveTurnover={data.liveTurnover}
       />
-    </div>
   );
 }

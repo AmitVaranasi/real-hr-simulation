@@ -268,7 +268,7 @@ export function FinancialRatiosView({
       subtitle={`Financial Health & Workforce Efficiency · As of ${asOfLabel}`}
       infoText="Financial ratios provide a quick view of the organization’s financial health and efficiency. Use this report to track trends and understand how your decisions impact key financial outcomes."
     >
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-3 lg:grid-cols-3">
         {cards.map((card) => {
           const Icon = card.icon;
           return (

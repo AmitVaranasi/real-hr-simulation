@@ -286,7 +286,7 @@ export function PortalSidebar({
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#2f6fed] text-sm font-bold text-white ring-2 ring-white/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2f6fed] text-xs font-bold text-white ring-2 ring-white/20">
               {initialsFromName(displayName)}
             </div>
             <div className="min-w-0">
@@ -388,6 +388,26 @@ export function PortalSidebar({
         )}
       </nav>
 
+      {showStudentChrome && pathname.startsWith("/help") ? (
+        <div className="shrink-0 px-3 pb-2">
+          <div className="rounded-lg border border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-3 py-3">
+            <p className="text-[0.6875rem] font-bold text-[var(--portal-title)]">
+              Need Immediate Help?
+            </p>
+            <p className="mt-1 text-[0.625rem] leading-snug text-[var(--portal-muted)]">
+              Response time: within 1 business day.
+            </p>
+            <Link
+              href="/help/technical-support"
+              onClick={onNavigate}
+              className="mt-2 inline-block text-[0.6875rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
+            >
+              Contact Technical Support →
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
       {showStudentChrome && simulation ? (
         <div className="shrink-0 p-3">
           <div
@@ -427,32 +447,42 @@ export function PortalSidebar({
                 <dt className={darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"}>
                   Current Round
                 </dt>
-                <dd className="text-right">
-                  <p
-                    className={`font-semibold ${
-                      darkNav ? "text-white" : "text-[var(--portal-ink)]"
-                    }`}
-                  >
-                    {roundDisplay}
-                  </p>
-                  <p
-                    className={`text-[0.6875rem] ${
-                      statusDisplay.toLowerCase() === "open"
-                        ? "font-semibold text-[var(--portal-success)]"
-                        : darkNav
-                          ? "text-slate-300"
-                          : "text-[var(--portal-muted)]"
-                    }`}
-                  >
-                    {statusDisplay.toLowerCase() === "open"
-                      ? "Open"
-                      : statusDisplay === "Waiting"
-                        ? "Waiting for Instructor"
-                        : statusDisplay}
-                  </p>
+                <dd
+                  className={`truncate font-semibold ${
+                    darkNav ? "text-white" : "text-[var(--portal-ink)]"
+                  }`}
+                >
+                  {roundDisplay}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className={darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"}>
+                  Round Status
+                </dt>
+                <dd
+                  className={`text-right text-[0.6875rem] ${
+                    statusDisplay.toLowerCase() === "open"
+                      ? "font-semibold text-[var(--portal-success)]"
+                      : darkNav
+                        ? "text-slate-300"
+                        : "text-[var(--portal-muted)]"
+                  }`}
+                >
+                  {statusDisplay.toLowerCase() === "open"
+                    ? "Open"
+                    : statusDisplay === "Waiting"
+                      ? "Waiting for Instructor"
+                      : statusDisplay}
                 </dd>
               </div>
             </dl>
+            <Link
+              href="/team"
+              onClick={onNavigate}
+              className="mt-3 inline-block text-[0.75rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
+            >
+              View Simulation Details →
+            </Link>
           </div>
         </div>
       ) : courseSummary ? (

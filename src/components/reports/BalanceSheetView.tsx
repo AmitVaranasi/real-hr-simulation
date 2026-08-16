@@ -164,7 +164,7 @@ export function BalanceSheetView({
       subtitle={`As of ${asOfLabel}`}
       infoText="The Balance Sheet reflects the financial position of the company at the end of the round. Use these reports to understand how your HR decisions are impacting organizational financial health."
     >
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 lg:grid-cols-4">
         <SummaryMetricCard
           label="Total Assets"
           value={formatMoneySigned(totalAssets)}
@@ -339,7 +339,7 @@ export function BalanceSheetView({
         <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-[var(--portal-primary)]">
           Financial Health Indicators
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 lg:grid-cols-4">
           <SummaryMetricCard
             label="Current Ratio"
             value={`${currentRatio.toFixed(2)} : 1`}
@@ -383,7 +383,7 @@ export function BalanceSheetView({
         <h2 className="text-sm font-bold uppercase tracking-wider text-emerald-800">
           Workforce Financial Impact (Supplemental Information)
         </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-4 grid gap-3 grid-cols-2 lg:grid-cols-6">
           {[
             { label: "Total Compensation & Benefits", value: d.compensation },
             { label: "Recruitment Investment", value: d.recruitment },

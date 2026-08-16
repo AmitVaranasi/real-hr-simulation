@@ -8,6 +8,10 @@ import {
 } from "./PortalSidebar";
 import { PortalTopBar } from "./PortalTopBar";
 import {
+  ReportTabsBar,
+  isReportsEnvironment,
+} from "./ReportTabsBar";
+import {
   adminNavItems,
   professorNavItems,
   studentNavItems,
@@ -179,6 +183,8 @@ function PortalShellInner({
     return professorNavItems({ sessionId });
   }, [role, openRoundId, sessionId]);
 
+  const reportsMode = role === "student" && isReportsEnvironment(pathname);
+
   const homeHref =
     role === "student"
       ? hasTeam
@@ -202,7 +208,9 @@ function PortalShellInner({
         displayName={displayName}
         roleLabel={roleBadge(role)}
         contextTitle={contextTitle}
-        contextMeta={contextMeta}
+        contextMeta={
+          reportsMode ? simulation?.course ?? contextMeta : contextMeta
+        }
         mobileOpen={mobileOpen}
         onToggleMobile={toggleNav}
         homeHref={homeHref}
@@ -214,12 +222,17 @@ function PortalShellInner({
               : "/about"
         }
         showBrandInBar={role === "student" || role === "instructor"}
+        reportsMode={reportsMode}
       />
 
+      {reportsMode ? <ReportTabsBar /> : null}
+
+      {!reportsMode ? (
       <aside
-        className={`fixed bottom-0 left-0 top-[52px] z-30 hidden overflow-hidden transition-[width] duration-200 lg:block ${
-          desktopCollapsed ? "w-0" : "w-[260px]"
+        className={`fixed bottom-0 left-0 z-30 hidden overflow-hidden transition-[width] duration-200 lg:block ${
+          desktopCollapsed ? "w-0" : "w-[var(--portal-sidebar-width)]"
         }`}
+        style={{ top: "var(--portal-topbar-height)" }}
       >
         {!desktopCollapsed && (
           <PortalSidebar
@@ -235,16 +248,21 @@ function PortalShellInner({
           />
         )}
       </aside>
+      ) : null}
 
-      {mobileOpen && (
+      {mobileOpen && !reportsMode && (
         <>
           <button
             type="button"
-            className="fixed inset-x-0 bottom-0 top-[52px] z-40 bg-black/30 lg:hidden"
+            className="fixed inset-x-0 bottom-0 z-40 bg-black/30 lg:hidden"
+            style={{ top: "var(--portal-topbar-height)" }}
             aria-label="Close sidebar"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="fixed bottom-0 left-0 top-[52px] z-50 w-[260px] lg:hidden">
+          <div
+            className="fixed bottom-0 left-0 z-50 w-[var(--portal-sidebar-width)] lg:hidden"
+            style={{ top: "var(--portal-topbar-height)" }}
+          >
             <PortalSidebar
               items={items}
               brandSubtitle={roleHomeLabel(role)}
@@ -262,9 +280,20 @@ function PortalShellInner({
       )}
 
       <div
-        className={`flex min-w-0 flex-col pt-[52px] ${desktopCollapsed ? "" : "lg:pl-[260px]"}`}
+        className={`flex min-w-0 flex-col ${
+          reportsMode
+            ? ""
+            : desktopCollapsed
+              ? ""
+              : "lg:pl-[var(--portal-sidebar-width)]"
+        }`}
+        style={{
+          paddingTop: reportsMode
+            ? "calc(var(--portal-topbar-height) + var(--portal-report-tabs-height))"
+            : "var(--portal-topbar-height)",
+        }}
       >
-        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="min-w-0 flex-1 p-4 lg:px-5 lg:py-4">{children}</main>
       </div>
     </div>
   );

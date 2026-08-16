@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BarChart3, BookOpen, Check, ChevronRight, FolderOpen, GraduationCap } from "lucide-react";
+import { BarChart3, BookOpen, ChevronRight, FolderOpen, GraduationCap } from "lucide-react";
 import {
   ResourcesContextCards,
   ResourcesInfoBanner,
@@ -224,23 +224,13 @@ export function ResourcesOverview({ context }: { context: ResourcesContext }) {
         </section>
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--portal-sidebar-border)] pt-4">
+      <div className="mt-8">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-2 rounded-lg border border-[var(--portal-primary)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-primary-soft)]"
         >
           ← Back to Dashboard
         </Link>
-        <p className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700">
-          <Check className="h-3.5 w-3.5" />
-          All changes auto-saved
-        </p>
-        <button
-          type="button"
-          className="rounded-lg bg-[var(--portal-primary)] px-5 py-2 text-sm font-semibold text-white hover:bg-[var(--portal-primary-hover)]"
-        >
-          Save Now
-        </button>
       </div>
     </div>
   );

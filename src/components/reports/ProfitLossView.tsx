@@ -259,7 +259,7 @@ export function ProfitLossView({
       subtitle={`For the Period Ending ${asOfLabel}`}
       infoText="The Profit & Loss Statement summarizes the organization’s financial performance during this round. Use this report to understand how HR investments and decisions are impacting profitability."
     >
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 lg:grid-cols-4">
         <SummaryMetricCard
           label="Total Revenue"
           value={formatMoneySigned(revenue)}
@@ -426,7 +426,7 @@ export function ProfitLossView({
         <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-[var(--portal-primary)]">
           Profitability Indicators
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 lg:grid-cols-4">
           <SummaryMetricCard
             label="Operating Margin"
             value={`${opMargin.toFixed(1)}%`}

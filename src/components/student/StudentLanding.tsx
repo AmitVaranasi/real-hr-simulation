@@ -8,6 +8,7 @@ import {
   Briefcase,
   CalendarDays,
   CheckCircle2,
+  ChevronRight,
   ClipboardList,
   DoorOpen,
   Factory,
@@ -21,7 +22,7 @@ import {
   CircleDollarSign,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/lib/utils";
+import { formatCompactCurrency, formatCurrency } from "@/lib/utils";
 
 type OpenRound = {
   id: string;
@@ -169,9 +170,6 @@ export function StudentLanding({
   const reviewHref = openRound
     ? `/round/${openRound.id}/review`
     : "/review";
-  const resultsHref = openRound
-    ? `/round/${openRound.id}/results`
-    : "/reports/workforce-brief";
 
   const roundOpenDone = Boolean(openRound);
   const decisionsInProgress = Boolean(openRound) && !decision?.is_submitted;
@@ -259,14 +257,14 @@ export function StudentLanding({
       label: "Revenue",
       icon: CircleDollarSign,
       iconClass: "text-[var(--portal-icon-green)]",
-      value: team.revenue != null ? formatCurrency(Number(team.revenue)) : "—",
+      value: team.revenue != null ? formatCompactCurrency(Number(team.revenue)) : "—",
       sub: "vs Last Round",
     },
     {
       label: "Operating Profit",
       icon: TrendingUp,
       iconClass: "text-[var(--portal-icon-orange)]",
-      value: lastProfit != null ? formatCurrency(lastProfit) : "$—",
+      value: lastProfit != null ? formatCompactCurrency(lastProfit) : "$—",
       sub: "vs Last Round",
     },
     {
@@ -335,224 +333,218 @@ export function StudentLanding({
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-[1.75rem] font-bold leading-tight text-[var(--portal-title)]">
-            {team.name} Dashboard
-          </h1>
-          <p className="mt-1 text-sm text-[var(--portal-muted)]">
-            Here&apos;s where you are in the simulation and what&apos;s happening
-            now.
-          </p>
+    <div className="grid w-full items-start gap-4 lg:grid-cols-[minmax(0,1fr)_var(--portal-right-rail)]">
+      <div className="min-w-0 space-y-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-[1.75rem] font-bold leading-tight text-[var(--portal-title)]">
+              {team.name} Dashboard
+            </h1>
+            <p className="mt-1 text-sm text-[var(--portal-muted)]">
+              Here&apos;s where you are in the simulation and what&apos;s happening
+              now.
+            </p>
+          </div>
+          <Link
+            href="/dashboard/getting-started"
+            className="inline-flex items-center gap-2 rounded-md border border-[var(--portal-accent-blue)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--portal-accent-blue)] hover:bg-[var(--portal-accent-blue-soft)]"
+          >
+            <PlayCircle className="h-4 w-4" strokeWidth={1.75} />
+            How It Works
+          </Link>
         </div>
-        <Link
-          href="/dashboard/getting-started"
-          className="inline-flex items-center gap-2 rounded-md border border-[var(--portal-accent-blue)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--portal-accent-blue)] hover:bg-[var(--portal-accent-blue-soft)]"
-        >
-          <PlayCircle className="h-4 w-4" strokeWidth={1.75} />
-          How It Works
-        </Link>
-      </div>
 
-      {/* 5-column status ribbon — desktop matches PNG; wraps on smaller widths */}
-      <div className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-          {statusCards.map((card, i) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.label}
-                className={`px-4 py-3.5 ${
-                  i < statusCards.length - 1
-                    ? "xl:border-r xl:border-[var(--portal-sidebar-border)]"
-                    : ""
-                } ${i < 4 ? "border-b border-[var(--portal-sidebar-border)] xl:border-b-0" : ""}`}
-              >
-                <div className="flex items-center gap-1.5 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
-                  <Icon
-                    className={`h-3.5 w-3.5 ${card.iconClass}`}
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5">
+            {statusCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <div
+                  key={card.label}
+                  className="min-w-0 rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-2.5 py-2.5 shadow-sm"
+                >
+                  <div className="flex items-center gap-1 text-[0.5625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                    <Icon
+                      className={`h-3 w-3 shrink-0 ${card.iconClass}`}
+                      strokeWidth={2}
+                    />
+                    <span className="truncate">{card.label}</span>
+                  </div>
+                  <p className="mt-1 text-[0.8125rem] font-bold leading-snug text-[var(--portal-title)]">
+                    {card.value}
+                    {card.badge ? (
+                      <span className="ml-1 inline-flex rounded bg-emerald-100 px-1 py-px text-[0.5625rem] font-bold uppercase text-emerald-700">
+                        {card.badge}
+                      </span>
+                    ) : null}
+                  </p>
+                  <p className="mt-0.5 truncate text-[0.625rem] text-[var(--portal-muted)]">
+                    {card.sub}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+
+        {announcement && (
+          <section className="rounded-xl border border-[var(--portal-primary)]/30 bg-[var(--portal-primary-soft)] px-5 py-4">
+            <h2 className="text-sm font-semibold text-[var(--portal-primary)]">
+              Professor announcement
+            </h2>
+            <p className="mt-1 whitespace-pre-wrap text-sm text-[var(--portal-title)]">
+              {announcement}
+            </p>
+          </section>
+        )}
+
+        <section>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+              {openRound
+                ? `Round ${openRound.round_number} Status`
+                : "Round Status"}
+            </h2>
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-accent-blue)]">
+              <CalendarDays className="h-3.5 w-3.5" strokeWidth={1.75} />
+              View Round Calendar
+            </span>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map((step, i) => {
+              const StepIcon = step.icon;
+              return (
+                <div key={step.n} className="relative">
+                <article
+                  className="h-full rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-3.5 py-3.5 shadow-sm"
+                >
+                  <div className="flex items-start gap-2.5">
+                    <div
+                      className={`flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-full text-[0.6875rem] font-bold ${
+                        step.state === "complete"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : step.state === "progress"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-[#f1f3f5] text-[var(--portal-muted)]"
+                      }`}
+                    >
+                      <span className="leading-none">{step.n}</span>
+                      <StepIcon className="mt-0.5 h-3 w-3" strokeWidth={2} />
+                    </div>
+                    <div>
+                      <p className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+                        {step.title}
+                      </p>
+                      <p className="mt-1 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
+                        {step.body}
+                      </p>
+                      <StatusPill state={step.state} />
+                    </div>
+                  </div>
+                </article>
+                {i < steps.length - 1 ? (
+                  <ChevronRight
+                    className="pointer-events-none absolute -right-2.5 top-1/2 hidden h-4 w-4 -translate-y-1/2 text-[var(--portal-muted)] lg:block"
                     strokeWidth={2}
                   />
-                  {card.label}
+                ) : null}
                 </div>
-                <p className="mt-1.5 text-[0.8125rem] font-bold text-[var(--portal-title)]">
-                  {card.value}
-                  {card.badge ? (
-                    <span className="ml-1.5 inline-flex rounded bg-emerald-100 px-1.5 py-0.5 text-[0.625rem] font-bold uppercase text-emerald-700">
-                      {card.badge}
-                    </span>
-                  ) : null}
-                </p>
-                <p className="mt-0.5 text-[0.6875rem] text-[var(--portal-muted)]">
-                  {card.sub}
-                </p>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--portal-accent-blue)]/20 bg-[var(--portal-accent-blue-soft)] px-5 py-2.5 text-[0.75rem]">
+            <p className="font-bold uppercase tracking-wide text-[var(--portal-title)]">
+              Decisions Due:{" "}
+              <span className="font-normal normal-case text-[var(--portal-muted)]">
+                Set by your instructor when the round opens
+              </span>
+            </p>
+            <p className="font-semibold text-[var(--portal-accent-blue)]">
+              {checking ? "Updating…" : "Time Remaining: —"}
+            </p>
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+              Company Snapshot (End of Last Round)
+            </h2>
+            <Link
+              href="/reports/workforce-brief"
+              className="text-xs font-semibold text-[var(--portal-accent-blue)] hover:underline"
+            >
+              View Full Report →
+            </Link>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            {metrics.map((m) => {
+              const Icon = m.icon;
+              return (
+                <div
+                  key={m.label}
+                  className="min-w-0 rounded-lg border border-[var(--portal-sidebar-border)] bg-[#fafbfc] px-2.5 py-2.5"
+                >
+                  <div className="flex items-center gap-1 text-[0.5625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                    <Icon
+                      className={`h-3 w-3 shrink-0 ${m.iconClass}`}
+                      strokeWidth={2}
+                    />
+                    <span className="truncate">{m.label}</span>
+                  </div>
+                  <p className="mt-1.5 whitespace-nowrap text-lg font-bold leading-none tabular-nums text-[var(--portal-title)] lg:text-xl">
+                    {m.value}
+                  </p>
+                  <p className="mt-1 truncate text-[0.5625rem] text-[var(--portal-muted)]">
+                    {m.sub}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-5">
+            <div className="flex items-center justify-between text-xs text-[var(--portal-muted)]">
+              <span>
+                Simulation Progress · Round{" "}
+                {Math.min(roundsCompleted + (openRound ? 1 : 0), roundsTotal)}{" "}
+                of {roundsTotal}
+              </span>
+              <span className="font-semibold text-[var(--portal-accent-blue)]">
+                {progressPct}% Complete
+              </span>
+            </div>
+            <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-[#f1f3f5]">
+              <div
+                className="h-full rounded-full bg-[var(--portal-accent-blue)]"
+                style={{ width: `${Math.max(progressPct, 4)}%` }}
+              />
+            </div>
+          </div>
+        </section>
+
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--portal-brand)]/30 bg-[var(--portal-brand-soft)] px-4 py-3">
+          <div className="flex items-start gap-2.5 text-sm text-[var(--portal-title)]">
+            <Bell
+              className="mt-0.5 h-4 w-4 shrink-0 text-[var(--portal-brand)]"
+              strokeWidth={2}
+            />
+            <p>
+              <span className="font-bold uppercase tracking-wide">
+                Important.
+              </span>{" "}
+              Your instructor controls when rounds open and close. Submit your
+              decisions before the deadline to avoid penalties.
+            </p>
+          </div>
+          <Link
+            href="/resources/reference"
+            className="shrink-0 rounded-md border border-[var(--portal-brand)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--portal-brand)] hover:bg-[var(--portal-brand-soft)]"
+          >
+            View Grading Policy
+          </Link>
         </div>
       </div>
 
-      {announcement && (
-        <section className="rounded-xl border border-[var(--portal-primary)]/30 bg-[var(--portal-primary-soft)] px-5 py-4">
-          <h2 className="text-sm font-semibold text-[var(--portal-primary)]">
-            Professor announcement
-          </h2>
-          <p className="mt-1 whitespace-pre-wrap text-sm text-[var(--portal-title)]">
-            {announcement}
-          </p>
-        </section>
-      )}
-
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div className="space-y-4">
-          <section className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--portal-sidebar-border)] px-5 py-3">
-              <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
-                {openRound
-                  ? `Round ${openRound.round_number} Status`
-                  : "Round Status"}
-              </h2>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-accent-blue)]">
-                <CalendarDays className="h-3.5 w-3.5" strokeWidth={1.75} />
-                View Round Calendar
-              </span>
-            </div>
-            <div className="grid gap-0 md:grid-cols-4">
-              {steps.map((step, i) => {
-                const StepIcon = step.icon;
-                return (
-                  <div
-                    key={step.n}
-                    className={`relative px-4 py-4 ${
-                      i < 3
-                        ? "md:border-r md:border-[var(--portal-sidebar-border)]"
-                        : ""
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={`flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-full text-[0.6875rem] font-bold ${
-                          step.state === "complete"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : step.state === "progress"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-[#f1f3f5] text-[var(--portal-muted)]"
-                        }`}
-                      >
-                        <span className="leading-none">{step.n}</span>
-                        <StepIcon className="mt-0.5 h-3 w-3" strokeWidth={2} />
-                      </div>
-                      <div>
-                        <p className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
-                          {step.title}
-                        </p>
-                        <p className="mt-1 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
-                          {step.body}
-                        </p>
-                        <StatusPill state={step.state} />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--portal-accent-blue)]/20 bg-[var(--portal-accent-blue-soft)] px-5 py-2.5 text-[0.75rem]">
-              <p className="font-bold uppercase tracking-wide text-[var(--portal-title)]">
-                Decisions Due:{" "}
-                <span className="font-normal normal-case text-[var(--portal-muted)]">
-                  {/* Cooper: deadline from instructor round settings; none stored yet */}
-                  Set by your instructor when the round opens
-                </span>
-              </p>
-              <p className="font-semibold text-[var(--portal-accent-blue)]">
-                {checking ? "Updating…" : "Time Remaining: —"}
-              </p>
-            </div>
-          </section>
-
-          <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
-                Company Snapshot (End of Last Round)
-              </h2>
-              <Link
-                href="/reports/workforce-brief"
-                className="text-xs font-semibold text-[var(--portal-accent-blue)] hover:underline"
-              >
-                View Full Report →
-              </Link>
-            </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-              {metrics.map((m) => {
-                const Icon = m.icon;
-                return (
-                  <div
-                    key={m.label}
-                    className="rounded-lg border border-[var(--portal-sidebar-border)] bg-[#fafbfc] px-3 py-3"
-                  >
-                    <div className="flex items-center gap-1.5 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
-                      <Icon
-                        className={`h-3.5 w-3.5 ${m.iconClass}`}
-                        strokeWidth={2}
-                      />
-                      {m.label}
-                    </div>
-                    <p className="mt-2 text-lg font-bold text-[var(--portal-title)]">
-                      {m.value}
-                    </p>
-                    <p className="mt-0.5 text-[0.625rem] text-[var(--portal-muted)]">
-                      {m.sub}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-5">
-              <div className="flex items-center justify-between text-xs text-[var(--portal-muted)]">
-                <span>
-                  Simulation Progress · Round{" "}
-                  {Math.min(roundsCompleted + (openRound ? 1 : 0), roundsTotal)}{" "}
-                  of {roundsTotal}
-                </span>
-                <span className="font-semibold text-[var(--portal-accent-blue)]">
-                  {progressPct}% Complete
-                </span>
-              </div>
-              <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-[#f1f3f5]">
-                <div
-                  className="h-full rounded-full bg-[var(--portal-accent-blue)]"
-                  style={{ width: `${Math.max(progressPct, 4)}%` }}
-                />
-              </div>
-            </div>
-          </section>
-
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--portal-brand)]/30 bg-[var(--portal-brand-soft)] px-4 py-3">
-            <div className="flex items-start gap-2.5 text-sm text-[var(--portal-title)]">
-              <Bell
-                className="mt-0.5 h-4 w-4 shrink-0 text-[var(--portal-brand)]"
-                strokeWidth={2}
-              />
-              <p>
-                <span className="font-bold uppercase tracking-wide">
-                  Important.
-                </span>{" "}
-                Your instructor controls when rounds open and close. Submit your
-                decisions before the deadline to avoid penalties.
-              </p>
-            </div>
-            <Link
-              href="/resources/reference"
-              className="shrink-0 rounded-md border border-[var(--portal-brand)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--portal-brand)] hover:bg-[var(--portal-brand-soft)]"
-            >
-              View Grading Policy
-            </Link>
-          </div>
-        </div>
-
-        <aside className="space-y-4">
+      <aside className="space-y-4 lg:sticky lg:top-[calc(var(--portal-topbar-height)+1rem)]">
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
             <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Next Actions
@@ -656,29 +648,8 @@ export function StudentLanding({
               <BarChart3 className="h-3.5 w-3.5" strokeWidth={1.75} />
               View Leaderboard
             </Link>
-            {!openRound && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="mt-2 w-full"
-                onClick={() => void fetchStatus()}
-                disabled={checking}
-              >
-                {checking ? "Checking…" : "Check round status"}
-              </Button>
-            )}
-            {decision?.is_submitted && (
-              <Link
-                href={resultsHref}
-                className="mt-2 block text-center text-xs font-semibold text-[var(--portal-accent-blue)] hover:underline"
-              >
-                View results when available →
-              </Link>
-            )}
           </section>
         </aside>
-      </div>
     </div>
   );
 }

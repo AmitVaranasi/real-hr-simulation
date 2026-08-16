@@ -55,7 +55,6 @@ export function NavbarClient() {
   const [loading, setLoading] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [studentHasTeam, setStudentHasTeam] = useState(true);
   const configured = isSupabaseConfigured();
 
   useEffect(() => {
@@ -78,19 +77,8 @@ export function NavbarClient() {
           .eq("id", u.id)
           .single();
         setProfile(p as Profile | null);
-        if (p?.role === "student") {
-          const { data: membership } = await supabase
-            .from("team_members")
-            .select("team_id")
-            .eq("user_id", u.id)
-            .maybeSingle();
-          setStudentHasTeam(!!membership);
-        } else {
-          setStudentHasTeam(true);
-        }
       } else {
         setProfile(null);
-        setStudentHasTeam(true);
       }
       setLoading(false);
     }
@@ -184,28 +172,19 @@ export function NavbarClient() {
       ) : user && profile?.role === "student" ? (
         <>
           <Link
-            href="/dashboard"
-            className="text-[var(--portal-muted)] hover:text-[var(--portal-title)]"
+            href="/simulate"
+            className="font-bold text-[var(--portal-title)] hover:text-[var(--portal-brand)]"
             onClick={() => setMobileOpen(false)}
           >
-            Dashboard
+            Simulator
           </Link>
           <Link
-            href="/history"
+            href="/help"
             className="text-[var(--portal-muted)] hover:text-[var(--portal-title)]"
             onClick={() => setMobileOpen(false)}
           >
-            Reports
+            Help
           </Link>
-          {!studentHasTeam && (
-            <Link
-              href="/join"
-              className="font-medium text-[var(--portal-primary)] hover:text-[var(--portal-primary-hover)]"
-              onClick={() => setMobileOpen(false)}
-            >
-              Join team
-            </Link>
-          )}
         </>
       ) : (
         <Link
@@ -295,7 +274,7 @@ export function NavbarClient() {
       <div className="mx-auto flex h-14 w-full min-w-0 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4">
         <Link
           href={user ? homeHref : "/"}
-          className="min-w-0 truncate text-sm font-bold text-[var(--portal-brand)] sm:text-base"
+          className="min-w-0 truncate text-[24px] font-bold leading-none text-[var(--portal-brand)]"
           onClick={() => setMobileOpen(false)}
         >
           <span className="sm:hidden">HR Simulation</span>

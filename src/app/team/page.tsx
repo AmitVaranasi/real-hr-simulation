@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   Building2,
   CalendarDays,
-  Check,
   Factory,
   Globe2,
   Heart,
@@ -13,10 +12,9 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { StudentPageHeader } from "@/components/student/shell/StudentShell";
-import { TeamSubnav } from "@/components/student/TeamSubnav";
+import { TeamPageShell, economyLabel } from "@/components/student/TeamChrome";
 import { getStudentTeamContext } from "@/lib/student/team-context";
-import { formatCurrency, formatPercent } from "@/lib/utils";
+import { formatCompactCurrency, formatPercent } from "@/lib/utils";
 
 const COMPANY_VALUES = [
   {
@@ -59,75 +57,10 @@ const COMPANY_VALUES = [
 export default async function TeamCompanyPage() {
   const ctx = await getStudentTeamContext();
   const team = ctx.team;
-  const economy = ctx.openRound?.economy_condition
-    ? ctx.openRound.economy_condition.charAt(0).toUpperCase() +
-      ctx.openRound.economy_condition.slice(1)
-    : "—";
-
-  const statusCards = [
-    {
-      label: "Round",
-      icon: CalendarDays,
-      iconClass: "text-[var(--portal-icon-blue)]",
-      value: ctx.openRound
-        ? `Round ${ctx.openRound.round_number}`
-        : "No Round Open",
-      badge: ctx.openRound ? ctx.openRound.status.toUpperCase() : null,
-    },
-    {
-      label: "Industry",
-      icon: Factory,
-      iconClass: "text-[var(--portal-icon-green)]",
-      value: team?.industry ?? "—",
-    },
-    {
-      label: "Strategy",
-      icon: Target,
-      iconClass: "text-[var(--portal-icon-orange)]",
-      value: team?.strategy ?? "—",
-    },
-    {
-      label: "Economy",
-      icon: Globe2,
-      iconClass: "text-[var(--portal-icon-purple)]",
-      value: economy,
-    },
-  ];
+  const economy = economyLabel(ctx.openRound?.economy_condition);
 
   return (
-    <div className="relative mx-auto w-full max-w-[1200px] pb-20">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <StudentPageHeader
-          title="Team & Company"
-          subtitle="Learn about your simulated company, your team, and key context for this round."
-        />
-        <div className="mb-4 flex flex-wrap gap-2">
-          {statusCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.label}
-                className="min-w-[120px] rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-3 py-2 shadow-sm"
-              >
-                <p className="flex items-center gap-1 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
-                  <Icon className={`h-3 w-3 ${card.iconClass}`} strokeWidth={2} />
-                  {card.label}
-                </p>
-                <p className="mt-0.5 text-[0.8125rem] font-semibold text-[var(--portal-ink)]">
-                  {card.value}
-                  {card.badge ? (
-                    <span className="ml-1.5 rounded bg-emerald-100 px-1.5 py-0.5 text-[0.625rem] font-bold text-emerald-700">
-                      {card.badge}
-                    </span>
-                  ) : null}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <TeamSubnav activeHref="/team" />
+    <TeamPageShell ctx={ctx} activeHref="/team">
 
       {!team ? (
         <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-6 text-sm text-[var(--portal-muted)]">
@@ -198,7 +131,9 @@ export default async function TeamCompanyPage() {
                 {
                   label: "Annual Revenue",
                   value:
-                    team.revenue != null ? formatCurrency(team.revenue) : "—",
+                    team.revenue != null
+                      ? formatCompactCurrency(Number(team.revenue))
+                      : "—",
                   icon: TrendingUp,
                   iconClass: "text-[var(--portal-icon-green)]",
                 },
@@ -246,7 +181,7 @@ export default async function TeamCompanyPage() {
                       <Icon className={`h-3 w-3 ${row.iconClass}`} strokeWidth={2} />
                       {row.label}
                     </dt>
-                    <dd className="mt-1 text-lg font-bold text-[var(--portal-title)]">
+                    <dd className="mt-1 whitespace-nowrap text-lg font-bold tabular-nums text-[var(--portal-title)]">
                       {row.value}
                     </dd>
                   </div>
@@ -339,27 +274,6 @@ export default async function TeamCompanyPage() {
           </section>
         </div>
       )}
-
-      <div className="fixed bottom-0 left-0 right-0 z-10 border-t border-[var(--portal-sidebar-border)] bg-white/95 backdrop-blur lg:left-[260px]">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center rounded-md border border-[var(--portal-accent-blue)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--portal-accent-blue)] hover:bg-[var(--portal-accent-blue-soft)]"
-          >
-            ← Back to Dashboard
-          </Link>
-          <p className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700">
-            <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-            All changes auto-saved
-          </p>
-          <button
-            type="button"
-            className="rounded-md bg-[var(--portal-accent-blue)] px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-          >
-            Save Now
-          </button>
-        </div>
-      </div>
-    </div>
+    </TeamPageShell>
   );
 }

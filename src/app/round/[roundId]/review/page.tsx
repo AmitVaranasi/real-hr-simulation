@@ -400,12 +400,8 @@ export default function ReviewPage() {
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[1520px] pb-28">
-      {/*
-        Figma (1536 canvas): sidebar 244; left content ~626; gap ~27; right ~590.
-        Within main content that is nearly 50/50 (slightly left-heavy).
-      */}
-      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.06fr)_minmax(0,1fr)]">
+    <div className="mx-auto w-full pb-28">
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_var(--portal-right-rail)]">
         <div className="min-w-0 space-y-4">
           <div>
             <h1 className="text-[1.75rem] font-bold text-[var(--portal-title)]">
@@ -448,11 +444,11 @@ export default function ReviewPage() {
               </button>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {DECISION_TABS.map((tab) => {
                 const Icon = TAB_ICONS[tab.key];
                 const color = TAB_COLORS[tab.key];
-                const rows = moduleSummary(decision, tab.key);
+                const rows = moduleSummary(decision, tab.key).slice(0, 3);
                 const spend = moduleSpend(budget, tab.key, decision);
                 return (
                   <article
@@ -529,7 +525,7 @@ export default function ReviewPage() {
           </section>
         </div>
 
-        <aside className="flex flex-col gap-3 xl:sticky xl:top-20 xl:self-start">
+        <aside className="flex flex-col gap-3 lg:sticky lg:top-[calc(var(--portal-topbar-height)+1rem)] lg:self-start">
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
             <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Budget Summary
@@ -669,7 +665,7 @@ export default function ReviewPage() {
           </section>
 
           {warnings.length > 0 ? (
-            <section className="rounded-xl border border-[var(--portal-brand)]/30 bg-[var(--portal-brand-soft)] p-4">
+            <section className="rounded-xl border border-red-200 bg-red-50/80 p-4">
               <h2 className="flex items-center justify-between gap-2 text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
                 <span className="inline-flex items-center gap-1.5">
                   <AlertTriangle className="h-3.5 w-3.5 text-[var(--portal-brand)]" />
@@ -715,7 +711,7 @@ export default function ReviewPage() {
                 View Details
               </Link>
             </div>
-            <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="mt-3 grid grid-cols-2 gap-2">
               {outcomeCards.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -751,7 +747,7 @@ export default function ReviewPage() {
         saving={saving}
         continueLabel="Submit Decisions →"
         continueHint="Locks in your HR decisions for this round"
-        contentMaxClassName="max-w-[1520px]"
+        contentMaxClassName="max-w-none"
         onSaveNow={() => void saveNow()}
         onSaveAndContinue={() => void submitFinal()}
       />

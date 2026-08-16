@@ -23,7 +23,6 @@ export default async function FinancialRatiosPage({
   );
 
   return (
-    <div className="p-4 sm:p-6">
       <FinancialRatiosView
         roundNumber={data.roundNumber}
         asOfLabel={data.asOfLabel}
@@ -34,6 +33,5 @@ export default async function FinancialRatiosPage({
         liveProfitMargin={data.liveProfitMargin}
         liveHeadcount={data.liveHeadcount}
       />
-    </div>
   );
 }

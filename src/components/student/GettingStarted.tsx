@@ -95,7 +95,7 @@ function StatusBadge({
   const label = statusLabel(status, openRoundNumber);
   return (
     <span
-      className={`inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-md px-3 text-[0.625rem] font-bold uppercase tracking-wide ${statusBadgeClass(status)}`}
+      className={`inline-flex h-6 items-center justify-center gap-1 rounded-md px-2 text-[0.625rem] font-bold uppercase tracking-wide ${statusBadgeClass(status)}`}
     >
       {status === "complete" ? (
         <CheckCircle2 className="h-3.5 w-3.5" />
@@ -212,13 +212,13 @@ export function GettingStarted({
   const orangeBtnClass = "h-8 w-full";
 
   return (
-    <div className="space-y-5">
-      <div className="grid items-stretch gap-4 xl:grid-cols-[minmax(220px,280px)_minmax(0,1fr)]">
-        <header className="flex flex-col justify-center">
+    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_var(--portal-right-rail)]">
+      <div className="min-w-0 space-y-4">
+        <header>
           <h1 className="text-2xl font-bold text-[var(--portal-title)] sm:text-[1.875rem] sm:leading-tight">
             Welcome, {firstName} 👋
           </h1>
-          <p className="mt-2 text-sm leading-relaxed text-[var(--portal-muted)]">
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--portal-muted)]">
             Let&apos;s get you ready to lead your organization. Follow the steps below to
             prepare for your first round.
           </p>
@@ -231,9 +231,7 @@ export function GettingStarted({
           strategy={strategy ?? "—"}
           roundLabel={openRoundLabel}
         />
-      </div>
 
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_260px]">
         <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white">
           <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5">
             <div>
@@ -275,16 +273,16 @@ export function GettingStarted({
                 step.actionVariant === "orange" && step.actionDisabled;
 
               return (
-                <li key={step.id} className="px-5 py-4">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <li key={step.id} className="px-5 py-3">
+                  <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-center gap-2.5">
                       <span
-                        className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-base font-bold ${stepNumberClass(step.status)}`}
+                        className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${stepNumberClass(step.status)}`}
                       >
                         {step.id}
                       </span>
                       <span
-                        className={`inline-flex h-10 w-10 shrink-0 items-center justify-center ${
+                        className={`inline-flex h-9 w-9 shrink-0 items-center justify-center ${
                           step.status === "complete"
                             ? "text-emerald-600"
                             : step.status === "waiting"
@@ -294,19 +292,19 @@ export function GettingStarted({
                                 : "text-[var(--portal-primary)]"
                         }`}
                       >
-                        <Icon className="h-7 w-7" strokeWidth={1.75} />
+                        <Icon className="h-6 w-6" strokeWidth={1.75} />
                       </span>
                       <div className="min-w-0 pl-0.5">
                         <h3 className="text-sm font-bold text-[var(--portal-title)]">
                           {step.title}
                         </h3>
-                        <p className="mt-1 text-sm leading-relaxed text-[var(--portal-muted)]">
+                        <p className="mt-0.5 text-sm leading-snug text-[var(--portal-muted)]">
                           {step.description}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex w-full shrink-0 flex-col gap-2 sm:w-[168px]">
+                    <div className="flex w-full shrink-0 flex-col items-center gap-1.5 sm:w-[140px]">
                       <StatusBadge
                         status={step.status}
                         openRoundNumber={openRoundNumber}
@@ -373,9 +371,10 @@ export function GettingStarted({
             </p>
           </div>
         </section>
+      </div>
 
         <aside className="space-y-4">
-          <section className="rounded-xl bg-[var(--portal-navy)] p-5 text-white">
+          <section className="rounded-xl bg-[var(--portal-navy)] p-4 text-white">
             <h2 className="text-xs font-bold uppercase tracking-wider text-white/80">
               What to Expect
             </h2>
@@ -453,7 +452,6 @@ export function GettingStarted({
             </Link>
           </section>
         </aside>
-      </div>
     </div>
   );
 }
