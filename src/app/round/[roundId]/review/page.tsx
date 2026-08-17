@@ -5,22 +5,18 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
   AlertTriangle,
-  BarChart3,
   Briefcase,
   ChevronDown,
   ChevronUp,
   GraduationCap,
   HeartHandshake,
-  LineChart,
   Network,
   Scale,
-  Trophy,
   UserPlus,
-  Users,
   Wallet,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { CompensationBreakdown } from "@/components/decisions/CompensationBreakdown";
-import { DecisionStickyFooter } from "@/components/decisions/DecisionChrome";
 import { DECISION_TABS } from "@/components/portal/portal-nav";
 import { rowToDecision } from "@/lib/db/decisions";
 import { computeBudgetBreakdown } from "@/lib/engine/budget";
@@ -49,25 +45,27 @@ const TAB_ICONS = {
   dei: Scale,
 } as const;
 
+/** Figma #1:77/#1:92/#1:107/#1:122/#1:137/#1:151/#1:167 — icon tint per module */
 const TAB_COLORS = {
-  recruitment: "text-emerald-600 bg-emerald-50",
-  performance: "text-[var(--portal-accent-blue)] bg-blue-50",
-  training: "text-sky-700 bg-sky-50",
-  relations: "text-[var(--portal-brand)] bg-[var(--portal-brand-soft)]",
-  compensation: "text-amber-600 bg-amber-50",
-  "org-design": "text-teal-600 bg-teal-50",
-  dei: "text-[var(--portal-purple)] bg-violet-50",
+  recruitment: "text-[#078A3C]",
+  performance: "text-[#1268FF]",
+  training: "text-[#1268FF]",
+  relations: "text-[#FF4B0B]",
+  compensation: "text-[#FF4B0B]",
+  "org-design": "text-[#078A3C]",
+  dei: "text-[#7B2DD0]",
 } as const;
 
+/** Figma #1:233-#1:264 — cost breakdown swatches */
 const DOT_COLORS = {
-  recruitment: "bg-emerald-500",
-  performance: "bg-[var(--portal-accent-blue)]",
-  training: "bg-sky-600",
-  relations: "bg-[var(--portal-brand)]",
-  compensation: "bg-amber-500",
-  "hr-tech": "bg-indigo-500",
-  "org-design": "bg-teal-500",
-  dei: "bg-[var(--portal-purple)]",
+  recruitment: "bg-[#078A3C]",
+  performance: "bg-[#1268FF]",
+  training: "bg-[#7B2DD0]",
+  relations: "bg-[#FF4B0B]",
+  compensation: "bg-[#FF4B0B]",
+  "hr-tech": "bg-[#1268FF]",
+  "org-design": "bg-[#078A3C]",
+  dei: "bg-[#7B2DD0]",
 } as const;
 
 type SummaryRow = { label: string; value: string };
@@ -185,6 +183,7 @@ export default function ReviewPage() {
   const [economy, setEconomy] = useState<EconomyCondition>("normal");
   const [headcount, setHeadcount] = useState(300);
   const [collapsed, setCollapsed] = useState(false);
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [showAllWarnings, setShowAllWarnings] = useState(false);
   const [decision, setDecision] = useState<ReturnType<typeof rowToDecision> | null>(
     null
@@ -347,152 +346,135 @@ export default function ReviewPage() {
   const hiddenWarningCount = Math.max(0, warnings.length - WARNING_PREVIEW);
 
   const outcomeCards = [
-    {
-      label: "Turnover",
-      value: formatPercent(m.turnover_rate),
-      icon: Users,
-    },
-    {
-      label: "Engagement",
-      value: `${m.engagement_level.toFixed(0)}/100`,
-      icon: HeartHandshake,
-    },
-    {
-      label: "Productivity Index",
-      value: formatPercent(m.productivity * 100),
-      icon: LineChart,
-    },
-    {
-      label: "Revenue",
-      value: formatCurrency(f.revenue),
-      icon: BarChart3,
-    },
-    {
-      label: "Profit",
-      value: formatCurrency(f.profit),
-      icon: Briefcase,
-    },
-    {
-      label: "Stock Price",
-      value: `$${f.stock_price.toFixed(2)}`,
-      icon: Wallet,
-    },
-    {
-      label: "BSC Financial",
-      value: `${bsc.score_financial.toFixed(1)}/25`,
-      icon: BarChart3,
-    },
-    {
-      label: "BSC Employee",
-      value: `${bsc.score_employee.toFixed(1)}/25`,
-      icon: Users,
-    },
-    {
-      label: "BSC Process",
-      value: `${bsc.score_process.toFixed(1)}/25`,
-      icon: Network,
-    },
-    {
-      label: "BSC Learning",
-      value: `${bsc.score_learning.toFixed(1)}/25`,
-      icon: GraduationCap,
-    },
+    { label: "Turnover", value: formatPercent(m.turnover_rate) },
+    { label: "Engagement", value: `${m.engagement_level.toFixed(0)}/100` },
+    { label: "Productivity Index", value: formatPercent(m.productivity * 100) },
+    { label: "Revenue", value: formatCurrency(f.revenue) },
+    { label: "Profit", value: formatCurrency(f.profit) },
+    { label: "Stock Price", value: `$${f.stock_price.toFixed(2)}` },
+    { label: "BSC Financial", value: `${bsc.score_financial.toFixed(1)}/25` },
+    { label: "BSC Employee", value: `${bsc.score_employee.toFixed(1)}/25` },
+    { label: "BSC Process", value: `${bsc.score_process.toFixed(1)}/25` },
+    { label: "BSC Learning", value: `${bsc.score_learning.toFixed(1)}/25` },
   ];
 
   return (
-    <div className="mx-auto w-full pb-28">
-      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_var(--portal-right-rail)]">
+    <div className="mx-auto w-full pb-8">
+      <div className="grid items-start gap-8 xl:grid-cols-[1.06fr_1fr]">
         <div className="min-w-0 space-y-4">
           <div>
-            <h1 className="text-[1.75rem] font-bold text-[var(--portal-title)]">
+            <h1 className="text-3xl font-bold text-[var(--portal-title)]">
               Review &amp; Submit
             </h1>
-            <p className="mt-1 max-w-2xl text-sm text-[var(--portal-muted)]">
+            <p className="mt-1.5 max-w-[461px] text-[11px] leading-relaxed text-[#24365A]">
               This is your final quality-control checkpoint. Review all
               decisions, budget impact, and projected outcomes before your team
               submits for this round.
             </p>
           </div>
 
-          <div className="flex items-start gap-2.5 rounded-xl border border-[var(--portal-brand)]/30 bg-[var(--portal-brand-soft)] px-4 py-3 text-sm text-[var(--portal-title)]">
+          <div className="flex items-start gap-2 rounded-lg border border-[#FFD6BD] bg-[#FFF9F3] px-4 py-2.5">
             <AlertTriangle
-              className="mt-0.5 h-4 w-4 shrink-0 text-[var(--portal-brand)]"
+              className="mt-px h-4 w-4 shrink-0 text-[var(--portal-brand)]"
               strokeWidth={2}
             />
-            <p>You can go back to any HR Decision area to make changes.</p>
+            <p className="text-[10px] leading-relaxed text-[var(--portal-brand)]">
+              You can go back to any HR Decision area to make changes.
+            </p>
           </div>
 
           <section>
             <div className="mb-3 flex items-center justify-between gap-3">
-              <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+              <h2 className="text-sm font-bold text-[var(--portal-title)]">
                 Your HR Decisions
               </h2>
               <button
                 type="button"
                 onClick={() => setCollapsed((v) => !v)}
-                className="inline-flex items-center gap-1 text-[0.6875rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
+                className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--portal-accent-blue)] hover:underline"
               >
                 {collapsed ? (
                   <>
-                    Expand All <ChevronDown className="h-3.5 w-3.5" />
+                    Expand All <ChevronDown className="h-3 w-3" />
                   </>
                 ) : (
                   <>
-                    Collapse All <ChevronUp className="h-3.5 w-3.5" />
+                    Collapse All <ChevronUp className="h-3 w-3" />
                   </>
                 )}
               </button>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {DECISION_TABS.map((tab) => {
                 const Icon = TAB_ICONS[tab.key];
                 const color = TAB_COLORS[tab.key];
-                const rows = moduleSummary(decision, tab.key).slice(0, 3);
+                const allRows = moduleSummary(decision, tab.key);
+                const isExpanded = expandedCards.has(tab.key);
+                const rows = isExpanded ? allRows : allRows.slice(0, 3);
+                const hiddenCount = allRows.length - 3;
                 const spend = moduleSpend(budget, tab.key, decision);
                 return (
                   <article
                     key={tab.key}
-                    className="flex flex-col rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-3.5 shadow-sm"
+                    className="flex flex-col rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-3 shadow-sm"
                   >
-                    <div className="flex items-start gap-2.5">
-                      <div className={`rounded-lg p-2 ${color}`}>
-                        <Icon className="h-4 w-4" strokeWidth={1.75} />
+                    <div className="flex items-start gap-2">
+                      <div className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg bg-[#F7FAFD]">
+                        <Icon
+                          className={`h-[18px] w-[18px] ${color}`}
+                          strokeWidth={1.75}
+                        />
                       </div>
-                      <h3 className="min-w-0 flex-1 text-sm font-bold leading-snug text-[var(--portal-title)]">
+                      <h3 className="min-w-0 flex-1 text-[11px] font-bold leading-tight text-[var(--portal-title)]">
                         {tab.label}
                       </h3>
                     </div>
 
                     {!collapsed ? (
-                      <dl className="mt-3 flex-1 space-y-2">
+                      <dl className="mt-2.5 flex-1 space-y-1.5">
                         {rows.map((row) => (
                           <div key={row.label}>
-                            <dt className="text-[0.625rem] font-medium uppercase tracking-wide text-[var(--portal-muted)]">
+                            <dt className="text-[9px] text-[#34466A]">
                               {row.label}
                             </dt>
-                            <dd className="text-[0.75rem] font-semibold text-[var(--portal-ink)]">
+                            <dd className="text-[11px] font-semibold text-[var(--portal-title)]">
                               {row.value}
                             </dd>
                           </div>
                         ))}
+                        {hiddenCount > 0 && !isExpanded ? (
+                          <div>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setExpandedCards((prev) => {
+                                  const next = new Set(prev);
+                                  next.add(tab.key);
+                                  return next;
+                                })
+                              }
+                              className="text-[9px] text-[#34466A] hover:underline"
+                            >
+                              More ({hiddenCount})
+                            </button>
+                          </div>
+                        ) : null}
                       </dl>
                     ) : (
                       <div className="flex-1" />
                     )}
 
-                    <div className="mt-3 flex items-end justify-between gap-2 border-t border-[var(--portal-sidebar-border)] pt-3">
+                    <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-[var(--portal-sidebar-border)] pt-2.5">
                       <div>
-                        <p className="text-[0.625rem] font-medium uppercase tracking-wide text-[var(--portal-muted)]">
-                          Investment
-                        </p>
-                        <p className="text-sm font-bold text-emerald-700">
+                        <p className="text-[9px] text-[#34466A]">Investment</p>
+                        <p className="text-xs font-bold text-[var(--portal-success)]">
                           {formatCurrency(spend)}
                         </p>
                       </div>
                       <Link
                         href={`/round/${roundId}/decisions?tab=${tab.key}`}
-                        className="rounded-md border border-[var(--portal-accent-blue)] px-2.5 py-1 text-xs font-semibold text-[var(--portal-accent-blue)] hover:bg-[var(--portal-accent-blue-soft)]"
+                        className="inline-flex h-[23px] items-center rounded-md border border-[var(--portal-accent-blue)] px-2.5 text-[9px] font-semibold text-[var(--portal-accent-blue)] hover:bg-[var(--portal-accent-blue-soft)]"
                       >
                         Edit
                       </Link>
@@ -503,31 +485,18 @@ export default function ReviewPage() {
             </div>
           </section>
 
-          <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
-            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
-              <span className="mr-1.5 inline-flex text-[var(--portal-accent-blue)]">
-                <Wallet className="inline h-4 w-4" />
-              </span>
-              Compensation Economics{" "}
-              <span className="font-medium normal-case tracking-normal text-[var(--portal-muted)]">
-                (Estimated Annual Impact)
-              </span>
-            </h2>
-            <div className="mt-4">
-              <CompensationBreakdown
-                decision={decision}
-                budget={budget}
-                headcount={headcount}
-                marketSalary={industryConfig.base_market_salary}
-                revenue={f.revenue}
-              />
-            </div>
-          </section>
+          <CompensationBreakdown
+            decision={decision}
+            budget={budget}
+            headcount={headcount}
+            marketSalary={industryConfig.base_market_salary}
+            revenue={f.revenue}
+          />
         </div>
 
-        <aside className="flex flex-col gap-3 lg:sticky lg:top-[calc(var(--portal-topbar-height)+1rem)] lg:self-start">
+        <aside className="flex min-w-0 flex-col gap-4">
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
-            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-[13px] font-bold text-[var(--portal-title)]">
               Budget Summary
             </h2>
             <div className="mt-3 flex items-center gap-4">
@@ -559,7 +528,7 @@ export default function ReviewPage() {
                   <span className="text-[0.625rem] text-[var(--portal-muted)]">Used</span>
                 </span>
               </div>
-              <dl className="flex-1 space-y-1.5 text-xs">
+              <dl className="flex-1 space-y-1.5 text-[11px]">
                 <div className="flex justify-between gap-2">
                   <dt className="text-[var(--portal-muted)]">Total HR Budget</dt>
                   <dd className="font-semibold text-[var(--portal-title)]">
@@ -601,7 +570,7 @@ export default function ReviewPage() {
                   {formatCurrency(budget.available_budget)}
                 </span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-[#eef1f4]">
+              <div className="h-2 overflow-hidden rounded-full bg-[#D9DEE7]">
                 <div
                   className={`h-full rounded-full transition-all ${
                     budget.remaining < 0
@@ -630,31 +599,33 @@ export default function ReviewPage() {
           </section>
 
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
-            <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <h2 className="text-xs font-bold text-[var(--portal-title)]">
               Cost Breakdown{" "}
-              <span className="font-medium normal-case tracking-normal text-[var(--portal-muted)]">
+              <span className="text-[9px] font-normal text-[#34466A]">
                 (of HR Budget)
               </span>
             </h2>
-            <ul className="mt-3 space-y-2 text-xs">
+            <ul className="mt-3 space-y-1.5 text-[10px]">
               {costRows.map((row) => (
                 <li
                   key={row.key}
                   className="grid grid-cols-[1fr_auto_auto] items-center gap-3"
                 >
-                  <span className="inline-flex min-w-0 items-center gap-2 text-[var(--portal-ink)]">
-                    <span className={`h-2 w-2 shrink-0 rounded-full ${row.color}`} />
+                  <span className="inline-flex min-w-0 items-center gap-2 text-[var(--portal-title)]">
+                    <span
+                      className={`h-2 w-2 shrink-0 rounded-[2px] ${row.color}`}
+                    />
                     <span className="truncate">{row.label}</span>
                   </span>
-                  <span className="w-12 text-right font-medium text-[var(--portal-muted)]">
+                  <span className="w-12 text-right text-[var(--portal-title)]">
                     {row.pct.toFixed(1)}%
                   </span>
-                  <span className="w-[72px] text-right font-semibold text-[var(--portal-title)]">
+                  <span className="w-[72px] text-right text-[var(--portal-title)]">
                     {formatCurrency(row.spend)}
                   </span>
                 </li>
               ))}
-              <li className="grid grid-cols-[1fr_auto_auto] items-center gap-3 border-t border-[var(--portal-sidebar-border)] pt-2 font-semibold">
+              <li className="grid grid-cols-[1fr_auto_auto] items-center gap-3 border-t border-[var(--portal-sidebar-border)] pt-2 text-[11px] font-bold text-[var(--portal-title)]">
                 <span>Total</span>
                 <span className="w-12 text-right">100%</span>
                 <span className="w-[72px] text-right">
@@ -665,17 +636,17 @@ export default function ReviewPage() {
           </section>
 
           {warnings.length > 0 ? (
-            <section className="rounded-xl border border-red-200 bg-red-50/80 p-4">
-              <h2 className="flex items-center justify-between gap-2 text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+            <section className="rounded-xl border border-[#FFD6BD] bg-[#FFF9F3] p-4">
+              <h2 className="flex items-center justify-between gap-2 text-xs font-bold text-[var(--portal-brand)]">
                 <span className="inline-flex items-center gap-1.5">
-                  <AlertTriangle className="h-3.5 w-3.5 text-[var(--portal-brand)]" />
+                  <AlertTriangle className="h-3.5 w-3.5" />
                   Warnings
                 </span>
-                <span className="rounded bg-red-100 px-1.5 py-0.5 text-[0.625rem] font-bold text-red-700">
+                <span className="text-[10px] font-bold">
                   {warnings.length} Issues
                 </span>
               </h2>
-              <ul className="mt-2 space-y-1.5 text-[0.75rem] text-[var(--portal-title)]">
+              <ul className="mt-2 space-y-1.5 text-[10px] leading-snug text-[var(--portal-title)]">
                 {visibleWarnings.map((w, i) => (
                   <li key={`${w.module}-${i}`}>
                     • <strong>{w.module}:</strong> {w.message}
@@ -686,7 +657,7 @@ export default function ReviewPage() {
                 <button
                   type="button"
                   onClick={() => setShowAllWarnings((v) => !v)}
-                  className="mt-2 text-[0.6875rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
+                  className="mt-2 text-[10px] font-bold text-[var(--portal-brand)] hover:underline"
                 >
                   {showAllWarnings
                     ? "Show fewer warnings"
@@ -698,59 +669,73 @@ export default function ReviewPage() {
 
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-[0.8125rem] font-bold uppercase tracking-wide text-[var(--portal-title)]">
+              <h2 className="text-xs font-bold text-[var(--portal-title)]">
                 Expected Outcomes{" "}
-                <span className="font-medium normal-case tracking-normal text-[var(--portal-muted)]">
+                <span className="text-[9px] font-normal text-[#34466A]">
                   (Projected)
                 </span>
               </h2>
               <Link
                 href="/reports/workforce-brief"
-                className="text-[0.6875rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
+                className="text-[10px] font-semibold text-[var(--portal-accent-blue)] hover:underline"
               >
                 View Details
               </Link>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {outcomeCards.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={item.label}
-                    className="rounded-lg border border-[var(--portal-sidebar-border)] bg-[#fafbfc] px-2.5 py-2"
-                  >
-                    <p className="flex items-center gap-1 text-[0.625rem] font-bold uppercase text-[var(--portal-muted)]">
-                      <Icon className="h-3 w-3 shrink-0 text-[var(--portal-accent-blue)]" />
-                      <span className="truncate">{item.label}</span>
-                    </p>
-                    <p className="mt-1 text-sm font-bold text-[var(--portal-title)]">
-                      {item.value}
-                    </p>
-                  </div>
-                );
-              })}
-              <div className="col-span-2 rounded-xl border border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50 px-3 py-2.5">
-                <p className="flex items-center gap-1.5 text-[0.6875rem] font-bold uppercase tracking-wide text-amber-800">
-                  <Trophy className="h-3.5 w-3.5 shrink-0 text-amber-600" strokeWidth={2} />
-                  BSC Total (Projected)
-                </p>
-                <p className="mt-0.5 text-2xl font-bold text-[var(--portal-brand)]">
-                  {bsc.total_score.toFixed(1)} / 100
-                </p>
+            <div className="mt-3 grid grid-cols-4 gap-2">
+              {outcomeCards.map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-lg border border-[#E5EAF2] bg-white px-2.5 py-2"
+                >
+                  <p className="truncate text-[9px] text-[#34466A]">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-[13px] font-bold text-[var(--portal-title)]">
+                    {item.value}
+                  </p>
+                </div>
+              ))}
+              <div className="col-span-2 flex items-center gap-2.5 rounded-xl border border-[#F1D59D] bg-[#FFF9EA] px-3 py-2">
+                <span className="text-2xl leading-none">🏆</span>
+                <div>
+                  <p className="text-[10px] font-bold text-[var(--portal-title)]">
+                    BSC Total (Projected)
+                  </p>
+                  <p className="text-[23px] font-bold leading-tight text-[var(--portal-brand)]">
+                    {bsc.total_score.toFixed(1)} / 100
+                  </p>
+                </div>
               </div>
             </div>
           </section>
+
+          {/* Figma #1:318-#1:322 — save / submit bar */}
+          <div className="flex items-stretch gap-3">
+            <Button
+              variant="outline"
+              disabled={saving}
+              onClick={() => void saveNow()}
+              className="h-11 w-24 shrink-0 rounded-lg border-[var(--portal-accent-blue)] text-[10px] font-semibold text-[var(--portal-accent-blue)] hover:bg-[var(--portal-accent-blue-soft)]"
+            >
+              Save Now
+            </Button>
+            <Button
+              variant="orange"
+              disabled={saving}
+              onClick={() => void submitFinal()}
+              className="h-[46px] flex-1 flex-col gap-0 rounded-lg py-1.5"
+            >
+              <span className="text-sm font-bold leading-tight">
+                Submit Decisions
+              </span>
+              <span className="text-[9px] font-normal leading-tight opacity-90">
+                Locks in your HR decisions for this round
+              </span>
+            </Button>
+          </div>
         </aside>
       </div>
-
-      <DecisionStickyFooter
-        saving={saving}
-        continueLabel="Submit Decisions →"
-        continueHint="Locks in your HR decisions for this round"
-        contentMaxClassName="max-w-none"
-        onSaveNow={() => void saveNow()}
-        onSaveAndContinue={() => void submitFinal()}
-      />
     </div>
   );
 }
