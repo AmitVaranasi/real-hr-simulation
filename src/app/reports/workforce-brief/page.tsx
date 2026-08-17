@@ -114,11 +114,7 @@ export default async function WorkforceBriefIndexPage() {
   } | null;
 
   if (!team) {
-    return (
-      <div className="p-4 sm:p-6">
-        <WorkforceBriefClient data={{}} />
-      </div>
-    );
+    return <WorkforceBriefClient data={{}} />;
   }
 
   const { data: outcomes } = await supabase
@@ -171,7 +167,6 @@ export default async function WorkforceBriefIndexPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6">
       <WorkforceBriefClient
         data={briefData}
         teamId={team.id}
@@ -184,6 +179,5 @@ export default async function WorkforceBriefIndexPage() {
         }}
         outcome={latest}
       />
-    </div>
   );
 }

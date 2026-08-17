@@ -231,7 +231,7 @@ export function CashFlowView({
       subtitle={`For the Period Ending ${asOfLabel}`}
       infoText="The Cash Flow Statement shows how cash moved in and out of the organization during this round. Use this report to understand the cash impact of your workforce investments and business decisions."
     >
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 lg:grid-cols-4">
         <SummaryMetricCard
           label="Operating Cash Flow"
           value={formatMoneySigned(netOperating)}
@@ -319,7 +319,7 @@ export function CashFlowView({
         <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-[var(--portal-primary)]">
           Workforce Cash Investments (Supplemental Information)
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 lg:grid-cols-4">
           {[
             {
               label: "Compensation & Benefits",

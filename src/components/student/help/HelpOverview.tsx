@@ -6,7 +6,6 @@ import {
   ArrowRight,
   BookOpen,
   CalendarDays,
-  CheckCircle2,
   ClipboardList,
   GraduationCap,
   MessageSquare,
@@ -47,7 +46,7 @@ export function HelpOverview() {
         subtitle="Find answers, navigate the simulation, troubleshoot issues, and get support when you need it."
       />
 
-      <div className="mt-5 grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
+      <div className="mt-5 grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_var(--portal-right-rail)]">
         <div className="min-w-0 space-y-6">
           <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-3 shadow-sm sm:p-5">
             <h2 className="text-hc-section font-bold text-[var(--portal-title)]">
@@ -250,23 +249,6 @@ export function HelpOverview() {
               className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-[var(--portal-navy)] px-3 py-2.5 text-hc-body font-semibold text-white hover:bg-[var(--portal-title)]"
             >
               Report a Technical Issue
-            </Link>
-          </div>
-
-          <div className="rounded-xl border border-[var(--portal-sidebar-border)] bg-[#f8fafc] p-4">
-            <p className="flex items-center gap-2 text-hc-card font-bold text-[var(--portal-title)]">
-              <CheckCircle2 className="h-4 w-4 text-[var(--portal-primary)]" />
-              Need Immediate Help?
-            </p>
-            <p className="mt-1 text-hc-small text-[var(--portal-muted)]">
-              Our support team is here for you. Response time: within 1 business
-              day.
-            </p>
-            <Link
-              href="/help/technical-support"
-              className="mt-3 inline-flex text-hc-small font-semibold text-[var(--portal-primary)] hover:underline"
-            >
-              Contact Technical Support →
             </Link>
           </div>
         </aside>

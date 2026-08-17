@@ -725,21 +725,21 @@ function DecisionFormInner({
         : "Highest rigor with full panel evaluation — stronger quality, longer fill times.";
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-4 pb-24">
+    <div className="mx-auto w-full space-y-4 pb-24">
       {!configReady && (
         <p className="text-xs text-[var(--portal-muted)]">Loading simulation parameters…</p>
       )}
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0 flex-1">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0">
           <h1 className="text-[1.75rem] font-bold leading-tight text-[var(--portal-title)]">
             {MODULE_LABELS[MODULES[activeTab]]}
           </h1>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-[var(--portal-brand)]/35 bg-[var(--portal-brand-soft)] px-2.5 py-0.5 text-[0.6875rem] font-semibold text-[var(--portal-brand)]">
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <span className="rounded-full bg-[var(--portal-brand-soft)] px-2.5 py-0.5 text-[0.6875rem] font-semibold text-[var(--portal-brand)]">
               SHRM BASK
             </span>
-            <span className="rounded-full bg-[var(--portal-brand)] px-2.5 py-0.5 text-[0.6875rem] font-semibold text-white">
+            <span className="rounded-full bg-[var(--portal-brand-soft)] px-2.5 py-0.5 text-[0.6875rem] font-semibold text-[var(--portal-brand)]">
               {SHRM_BADGES[MODULES[activeTab]]}
             </span>
           </div>
@@ -755,13 +755,13 @@ function DecisionFormInner({
         />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_var(--portal-right-rail)]">
         <div className="min-w-0 space-y-4">
         <BudgetTracker budget={budget} />
 
         {activeTab === 0 && (
           <div className="space-y-4">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-3 lg:grid-cols-4">
               <section className="flex flex-col rounded-xl border border-emerald-200/80 bg-white p-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
                 <div className="flex items-start gap-2.5">
                   <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
@@ -974,7 +974,7 @@ function DecisionFormInner({
 
         {activeTab === 1 && (
           <div className="space-y-4">
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid gap-3 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,0.85fr)_minmax(0,1.7fr)]">
               <section className="flex flex-col rounded-xl border border-emerald-200/80 bg-white p-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
                 <div className="flex items-start gap-2.5">
                   <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
@@ -1049,9 +1049,8 @@ function DecisionFormInner({
                   conversations across role groups.
                 </p>
               </section>
-            </div>
 
-            <section className="rounded-xl border border-orange-200/70 bg-white p-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+              <section className="rounded-xl border border-orange-200/70 bg-white p-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
               <div className="flex items-start gap-2.5">
                 <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-50 text-[var(--portal-icon-orange)]">
                   <ClipboardCheck className="h-4 w-4" strokeWidth={2.25} />
@@ -1067,7 +1066,7 @@ function DecisionFormInner({
               </div>
 
               <div className="mt-4 overflow-x-auto">
-                <table className="w-full min-w-[640px] border-separate border-spacing-y-2">
+                <table className="w-full min-w-[480px] border-separate border-spacing-y-2">
                   <thead>
                     <tr>
                       <th className="px-2 pb-1 text-left text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
@@ -1146,6 +1145,7 @@ function DecisionFormInner({
                 emphasis and system cost.
               </p>
             </section>
+            </div>
 
             <MetricPreview
               showCalcLink
@@ -1182,7 +1182,7 @@ function DecisionFormInner({
 
         {activeTab === 2 && (
           <div className="space-y-4">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-3 lg:grid-cols-4">
               <section
                 className={`flex flex-col rounded-xl border bg-white p-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)] ${CARD_ACCENT.emerald.border}`}
               >
@@ -1435,7 +1435,7 @@ function DecisionFormInner({
 
         {activeTab === 3 && (
           <div className="space-y-4">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-3 lg:grid-cols-4">
               <section
                 className={`flex flex-col rounded-xl border bg-white p-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)] ${CARD_ACCENT.emerald.border}`}
               >
@@ -1675,9 +1675,9 @@ function DecisionFormInner({
 
         {activeTab === 4 && (
           <div className="space-y-4">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            <div className="grid gap-3 lg:grid-cols-5">
               <section
-                className={`flex flex-col rounded-xl border bg-white p-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)] md:col-span-2 xl:col-span-1 ${CARD_ACCENT.emerald.border}`}
+                className={`flex flex-col rounded-xl border bg-white p-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)] ${CARD_ACCENT.emerald.border}`}
               >
                 <div className="flex items-start gap-2.5">
                   <span
@@ -1937,7 +1937,7 @@ function DecisionFormInner({
 
         {activeTab === 5 && (
           <div className="space-y-4">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            <div className="grid gap-3 lg:grid-cols-5">
               <section
                 className={`flex flex-col rounded-xl border bg-white p-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)] ${CARD_ACCENT.emerald.border}`}
               >
@@ -2198,7 +2198,7 @@ function DecisionFormInner({
 
         {activeTab === 6 && (
           <div className="space-y-4">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            <div className="grid gap-3 lg:grid-cols-5">
               {DEI_CARDS.map((card, idx) => {
                 const accent = CARD_ACCENT[card.accent];
                 const Icon = card.icon;

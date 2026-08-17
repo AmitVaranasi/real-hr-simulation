@@ -6,7 +6,6 @@ import {
   BookOpen,
   Briefcase,
   CalendarDays,
-  Check,
   Factory,
   FileSpreadsheet,
   FileText,
@@ -126,22 +125,18 @@ export function ResourcesFooter({
   backLabel?: string;
 }) {
   return (
-    <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--portal-sidebar-border)] pt-4">
+    <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
       <Link
         href={backHref}
         className="inline-flex items-center gap-2 rounded-lg border border-[var(--portal-primary)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-primary-soft)]"
       >
         ← {backLabel}
       </Link>
-      <p className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700">
-        <Check className="h-3.5 w-3.5" />
-        All changes auto-saved
-      </p>
       <Link
         href="/dashboard"
-        className="rounded-lg bg-[var(--portal-primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--portal-primary-hover)]"
+        className="text-sm font-semibold text-[var(--portal-primary)] hover:underline"
       >
-        Back to Dashboard
+        Back to Dashboard →
       </Link>
     </div>
   );

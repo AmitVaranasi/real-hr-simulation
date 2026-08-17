@@ -1,15 +1,15 @@
 import Link from "next/link";
 import {
   BarChart3,
-  Briefcase,
   ChevronRight,
+  CircleDollarSign,
+  ClipboardCheck,
   GraduationCap,
   HeartHandshake,
   Network,
-  Scale,
   UserPlus,
   Users,
-  Wallet,
+  UsersRound,
   type LucideIcon,
 } from "lucide-react";
 
@@ -25,7 +25,7 @@ const features: Array<{
       "Teams of 4–5 students submit one collective HR decision each round across seven modules.",
   },
   {
-    icon: Wallet,
+    icon: CircleDollarSign,
     title: "$500K discretionary budget",
     description:
       "Allocate spend across recruitment, training, compensation, DEI, and more with live budget tracking.",
@@ -50,12 +50,12 @@ const MODULES: Array<{
   icon: LucideIcon;
 }> = [
   { slug: "recruitment", title: "Recruitment & Selection", icon: UserPlus },
-  { slug: "performance", title: "Performance Management", icon: Briefcase },
+  { slug: "performance", title: "Performance Management", icon: ClipboardCheck },
   { slug: "training", title: "Training & Development", icon: GraduationCap },
   { slug: "relations", title: "Employee Relations", icon: HeartHandshake },
-  { slug: "compensation", title: "Compensation & Benefits", icon: Wallet },
+  { slug: "compensation", title: "Compensation & Benefits", icon: CircleDollarSign },
   { slug: "org-design", title: "Org Design & Change", icon: Network },
-  { slug: "dei", title: "DEI Initiatives", icon: Scale },
+  { slug: "dei", title: "DEI Initiatives", icon: UsersRound },
 ];
 
 export default function Home() {
@@ -153,7 +153,7 @@ export default function Home() {
             className="flex w-full max-w-[487px] items-center gap-4 rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-5 py-5 transition hover:border-[var(--portal-brand)]/40 hover:bg-[var(--portal-brand-soft)]/40 sm:w-[487px]"
           >
             <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-[var(--portal-brand)]">
-              <Scale className="h-8 w-8" strokeWidth={1.75} />
+              <UsersRound className="h-8 w-8" strokeWidth={1.75} />
             </span>
             <span className="flex-1 text-base font-bold text-[var(--portal-title)]">
               {MODULES[6].title}

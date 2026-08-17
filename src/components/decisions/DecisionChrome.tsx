@@ -49,34 +49,38 @@ export function DecisionStatusStrip({
   ];
 
   return (
-    <div className="flex flex-col items-stretch gap-1.5 sm:items-end">
-      <p className="text-[0.625rem] font-bold uppercase tracking-[0.08em] text-[var(--portal-brand)]">
-        HR Decisions {moduleIndex} of {moduleTotal}
-      </p>
-      <div className="flex flex-wrap items-stretch justify-end gap-2">
+    <div className="flex min-w-0 shrink-0 items-start gap-2">
+      <div className="flex flex-wrap justify-end gap-1.5">
         {cards.map((c) => {
           const Icon = c.icon;
           return (
             <div
               key={c.label}
-              className="min-w-[108px] rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-2.5 py-2 shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
+              className="min-w-[88px] rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-2 py-1.5"
             >
-              <p className="flex items-center gap-1 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+              <div className="flex items-center gap-1">
                 <Icon className={`h-3 w-3 ${c.iconClass}`} strokeWidth={2} />
-                {c.label}
-              </p>
-              <p className="mt-0.5 text-[0.8125rem] font-semibold leading-tight text-[var(--portal-ink)]">
+                <span className="text-[0.5625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                  {c.label}
+                </span>
+              </div>
+              <p className="mt-0.5 text-[0.75rem] font-semibold leading-tight text-[var(--portal-ink)]">
                 {c.value}
-                {c.badge ? (
-                  <span className="ml-1.5 inline-block rounded bg-emerald-100 px-1.5 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-emerald-700">
-                    {c.badge}
-                  </span>
-                ) : null}
               </p>
+              {c.badge ? (
+                <span className="mt-0.5 inline-block rounded bg-emerald-100 px-1 py-px text-[0.5625rem] font-bold uppercase tracking-wide text-emerald-700">
+                  {c.badge}
+                </span>
+              ) : null}
             </div>
           );
         })}
       </div>
+      <p className="w-[4.75rem] pt-0.5 text-right text-[0.5625rem] font-bold uppercase leading-snug tracking-[0.08em] text-[var(--portal-title)]">
+        HR Decisions
+        <br />
+        {moduleIndex} of {moduleTotal}
+      </p>
     </div>
   );
 }
@@ -100,7 +104,7 @@ export function DecisionStickyFooter({
   contentMaxClassName?: string;
 }) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-[var(--portal-sidebar-border)] bg-white/95 backdrop-blur lg:left-[260px]">
+    <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-[var(--portal-sidebar-border)] bg-white/95 backdrop-blur lg:left-[var(--portal-sidebar-width)]">
       <div
         className={`mx-auto flex ${contentMaxClassName} flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6`}
       >

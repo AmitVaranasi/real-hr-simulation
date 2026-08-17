@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# design reference assets (kept locally; not needed to build)
+# scoped on purpose — docs/design-png/ and public/ images stay tracked
+/*.docx
+/docs/*.docx
+/docs/*.png
+/docs/*.jpg
+/docs/cooper-v5-screens/
+/docs/layout-audit/

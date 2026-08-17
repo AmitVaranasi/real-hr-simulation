@@ -3,13 +3,13 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
+  ArrowUpRight,
   BarChart3,
   BookOpen,
   CheckCircle2,
   Circle,
   ClipboardList,
   Clock3,
-  ExternalLink,
   Info,
   Lightbulb,
   Lock,
@@ -62,30 +62,41 @@ function statusLabel(status: StepStatus, openRoundNumber: number | null) {
   return "Not Started";
 }
 
-function statusBadgeClass(status: StepStatus) {
-  if (status === "complete") return "bg-emerald-50 text-emerald-700";
-  if (status === "waiting") {
-    return "bg-[var(--portal-brand-soft)] text-[var(--portal-brand)]";
-  }
+/** Figma: plain colored labels, no pill background */
+function statusLabelClass(status: StepStatus) {
+  if (status === "complete") return "text-[#0A8B4E]";
+  if (status === "waiting") return "text-[var(--portal-brand)]";
   if (status === "in_progress" || status === "not_started") {
-    return "bg-[var(--portal-primary-soft)] text-[var(--portal-primary)]";
+    return "text-[var(--portal-primary)]";
+  }
+  return "text-[var(--portal-muted)]";
+}
+
+function statusGlyphClass(status: StepStatus) {
+  if (status === "complete") return "text-[#0A8B4E]";
+  if (status === "waiting") return "text-[var(--portal-brand)]";
+  if (status === "in_progress") return "text-[var(--portal-primary)]";
+  return "text-[#60708F]";
+}
+
+/** 56px soft circles with large numerals — Figma #1:85/#1:96/#1:107/#1:118/#1:129 */
+function stepNumberClass(status: StepStatus) {
+  if (status === "complete") return "bg-[#EFF8EF] text-[#0A8B4E]";
+  if (status === "waiting") return "bg-[#FFF1E8] text-[var(--portal-brand)]";
+  if (status === "in_progress" || status === "not_started") {
+    return "bg-[#EFF5FF] text-[var(--portal-primary)]";
   }
   return "bg-[#f1f3f5] text-[var(--portal-muted)]";
 }
 
-/** Soft filled circles with colored numerals — matches Cooper PNG */
-function stepNumberClass(status: StepStatus) {
-  if (status === "complete") return "bg-emerald-100 text-emerald-700";
-  if (status === "waiting") {
-    return "bg-[var(--portal-brand-soft)] text-[var(--portal-brand)]";
-  }
-  if (status === "in_progress" || status === "not_started") {
-    return "bg-[var(--portal-primary-soft)] text-[var(--portal-primary)]";
-  }
-  return "bg-[#eef0f3] text-[var(--portal-muted)]";
+function statusIconClass(status: StepStatus) {
+  if (status === "complete") return "text-[#0A8B4E]";
+  if (status === "waiting") return "text-[var(--portal-brand)]";
+  if (status === "upcoming") return "text-[var(--portal-muted)]";
+  return "text-[var(--portal-primary)]";
 }
 
-function StatusBadge({
+function StatusLabel({
   status,
   openRoundNumber,
 }: {
@@ -95,14 +106,14 @@ function StatusBadge({
   const label = statusLabel(status, openRoundNumber);
   return (
     <span
-      className={`inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-md px-3 text-[0.625rem] font-bold uppercase tracking-wide ${statusBadgeClass(status)}`}
+      className={`inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide ${statusLabelClass(status)}`}
     >
       {status === "complete" ? (
-        <CheckCircle2 className="h-3.5 w-3.5" />
+        <CheckCircle2 className={`h-3.5 w-3.5 ${statusGlyphClass(status)}`} />
       ) : status === "waiting" ? (
         <Clock3 className="h-3.5 w-3.5" />
       ) : status === "in_progress" ? (
-        <Circle className="h-3 w-3 fill-current" />
+        <ArrowUpRight className="h-3.5 w-3.5" />
       ) : (
         <Circle className="h-3 w-3" />
       )}
@@ -112,7 +123,10 @@ function StatusBadge({
 }
 
 const outlineBlueClass =
-  "border-[var(--portal-primary)]/40 bg-white text-[var(--portal-primary)] hover:bg-[var(--portal-primary-soft)]";
+  "h-[37px] w-[116px] rounded-md border-[var(--portal-primary)]/60 bg-white text-xs font-bold text-[var(--portal-primary)] hover:bg-[var(--portal-primary-soft)]";
+
+const orangeCtaClass =
+  "h-[41px] w-[228px] rounded-lg text-[13px] font-bold shadow-sm";
 
 export function GettingStarted({
   firstName,
@@ -196,8 +210,8 @@ export function GettingStarted({
       actionHref: hasTeam && openRoundId ? `/round/${openRoundId}/decisions` : undefined,
       actionLabel: openRoundId
         ? openRoundNumber
-          ? `Begin Round ${openRoundNumber} →`
-          : "Begin Round →"
+          ? `Begin Round ${openRoundNumber}`
+          : "Begin Round"
         : "Enter Simulation",
       actionVariant: "orange",
       actionDisabled: !hasTeam || !openRoundId,
@@ -208,56 +222,76 @@ export function GettingStarted({
     },
   ];
 
-  const actionBtnClass = `h-8 w-full ${outlineBlueClass}`;
-  const orangeBtnClass = "h-8 w-full";
+  const whatToExpect = [
+    {
+      icon: ClipboardList,
+      title: "Make Decisions",
+      body: "Allocate your discretionary HR budget across seven HR areas each round.",
+    },
+    {
+      icon: BarChart3,
+      title: "See Results",
+      body: "Your decisions influence your workforce, strategy execution, and financial performance.",
+    },
+    {
+      icon: Lightbulb,
+      title: "Learn & Improve",
+      body: "Review feedback and reports, discuss with your team, and improve in the next round.",
+    },
+  ];
 
   return (
-    <div className="space-y-5">
-      <div className="grid items-stretch gap-4 xl:grid-cols-[minmax(220px,280px)_minmax(0,1fr)]">
-        <header className="flex flex-col justify-center">
-          <h1 className="text-2xl font-bold text-[var(--portal-title)] sm:text-[1.875rem] sm:leading-tight">
+    <div className="space-y-4">
+      {/* Figma #1:47-#1:72 — welcome text left, Your Simulation panel right */}
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-stretch">
+        <header className="shrink-0 xl:w-[355px] xl:pt-4">
+          <h1 className="text-2xl font-bold leading-tight text-[var(--portal-title)] sm:text-[2.125rem]">
             Welcome, {firstName} 👋
           </h1>
-          <p className="mt-2 text-sm leading-relaxed text-[var(--portal-muted)]">
-            Let&apos;s get you ready to lead your organization. Follow the steps below to
-            prepare for your first round.
+          <p className="mt-2 text-[15px] leading-relaxed text-[#24365A]">
+            Let&apos;s get you ready to lead your organization.
+          </p>
+          <p className="text-[15px] leading-relaxed text-[#24365A]">
+            Follow the steps below to prepare for your first round.
           </p>
         </header>
-
-        <YourSimulationPanel
-          company={teamName ?? "Not joined"}
-          course={courseLabel || "—"}
-          industry={industry ?? "—"}
-          strategy={strategy ?? "—"}
-          roundLabel={openRoundLabel}
-        />
+        <div className="min-w-0 flex-1">
+          <YourSimulationPanel
+            company={teamName ?? "Not joined"}
+            course={courseLabel || "—"}
+            industry={industry ?? "—"}
+            strategy={strategy ?? "—"}
+            roundLabel={openRoundLabel}
+          />
+        </div>
       </div>
 
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_260px]">
-        <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white">
-          <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5">
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_var(--portal-right-rail)] xl:grid-cols-[minmax(0,1fr)_304px]">
+        <div className="min-w-0">
+          {/* Figma #1:73-#1:83 — section header with legend */}
+          <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 fill-[var(--portal-brand)] text-[var(--portal-brand)]" />
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--portal-brand)]">
+                <Star className="h-7 w-7 fill-[var(--portal-brand)] text-[var(--portal-brand)]" />
+                <h2 className="text-[15px] font-bold uppercase tracking-wider text-[var(--portal-brand)]">
                   Getting Started
                 </h2>
               </div>
-              <p className="mt-1 text-sm text-[var(--portal-muted)]">
+              <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                 Complete these steps to prepare for the simulation.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-[0.6875rem] font-medium text-[var(--portal-muted)]">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-xs font-medium text-[var(--portal-title)]">
               <span className="inline-flex items-center gap-1">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-[#0A8B4E]" />
                 Complete
               </span>
               <span className="inline-flex items-center gap-1">
-                <Circle className="h-3.5 w-3.5 fill-[var(--portal-primary)] text-[var(--portal-primary)]" />
+                <ArrowUpRight className="h-3.5 w-3.5 text-[var(--portal-primary)]" />
                 In Progress
               </span>
               <span className="inline-flex items-center gap-1">
-                <Circle className="h-3.5 w-3.5 text-[var(--portal-muted)]" />
+                <Circle className="h-3 w-3 text-[#60708F]" />
                 Not Started
               </span>
               <span className="inline-flex items-center gap-1">
@@ -267,184 +301,163 @@ export function GettingStarted({
             </div>
           </div>
 
-          <ol className="mt-4 divide-y divide-[var(--portal-sidebar-border)] border-t border-[var(--portal-sidebar-border)]">
+          {/* Figma #1:84-#1:139 — five separate step cards */}
+          <ol className="mt-3 space-y-2">
             {steps.map((step) => {
               const Icon = step.icon;
               const showAction = Boolean(step.actionLabel);
-              const isLockedOrange =
-                step.actionVariant === "orange" && step.actionDisabled;
+              const isOrangeCta = step.actionVariant === "orange";
+              const isLockedOrange = isOrangeCta && step.actionDisabled;
 
               return (
-                <li key={step.id} className="px-5 py-4">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex min-w-0 items-center gap-2.5">
-                      <span
-                        className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-base font-bold ${stepNumberClass(step.status)}`}
-                      >
-                        {step.id}
-                      </span>
-                      <span
-                        className={`inline-flex h-10 w-10 shrink-0 items-center justify-center ${
-                          step.status === "complete"
-                            ? "text-emerald-600"
-                            : step.status === "waiting"
-                              ? "text-[var(--portal-brand)]"
-                              : step.status === "upcoming"
-                                ? "text-[var(--portal-muted)]"
-                                : "text-[var(--portal-primary)]"
-                        }`}
-                      >
-                        <Icon className="h-7 w-7" strokeWidth={1.75} />
-                      </span>
-                      <div className="min-w-0 pl-0.5">
-                        <h3 className="text-sm font-bold text-[var(--portal-title)]">
-                          {step.title}
-                        </h3>
-                        <p className="mt-1 text-sm leading-relaxed text-[var(--portal-muted)]">
-                          {step.description}
-                        </p>
-                      </div>
+                <li
+                  key={step.id}
+                  className="flex flex-col gap-3 rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-4 py-4 sm:flex-row sm:items-center"
+                >
+                  <div className="flex min-w-0 flex-1 items-center gap-3.5">
+                    <span
+                      className={`inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-[26px] font-bold leading-none ${stepNumberClass(step.status)}`}
+                    >
+                      {step.id}
+                    </span>
+                    <span
+                      className={`hidden shrink-0 sm:inline-flex ${statusIconClass(step.status)}`}
+                    >
+                      <Icon className="h-9 w-9" strokeWidth={1.25} />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="text-[15px] font-bold text-[var(--portal-title)]">
+                        {step.title}
+                      </h3>
+                      <p className="mt-1 max-w-[380px] text-[13px] leading-snug text-[var(--portal-title)]">
+                        {step.description}
+                      </p>
                     </div>
+                  </div>
 
-                    <div className="flex w-full shrink-0 flex-col gap-2 sm:w-[168px]">
-                      <StatusBadge
-                        status={step.status}
-                        openRoundNumber={openRoundNumber}
-                      />
-                      {showAction ? (
-                        step.actionHref && !step.actionDisabled ? (
-                          <Link href={step.actionHref} className="block w-full">
-                            <Button
-                              size="sm"
-                              variant={
-                                step.actionVariant === "orange" ? "orange" : "outline"
-                              }
-                              className={
-                                step.actionVariant === "orange"
-                                  ? orangeBtnClass
-                                  : actionBtnClass
-                              }
-                            >
-                              {step.actionLabel}
-                            </Button>
-                          </Link>
-                        ) : (
+                  <div
+                    className={`flex shrink-0 flex-col items-center gap-2 ${
+                      isOrangeCta ? "w-full sm:w-[228px]" : "w-full sm:w-[116px]"
+                    }`}
+                  >
+                    <StatusLabel status={step.status} openRoundNumber={openRoundNumber} />
+                    {showAction ? (
+                      step.actionHref && !step.actionDisabled ? (
+                        <Link href={step.actionHref} className="block w-full">
                           <Button
                             size="sm"
-                            variant={
-                              step.actionVariant === "orange" ? "orange" : "outline"
-                            }
-                            disabled={step.actionDisabled}
+                            variant={isOrangeCta ? "orange" : "outline"}
                             className={
-                              isLockedOrange
-                                ? `${orangeBtnClass} cursor-not-allowed opacity-95`
-                                : actionBtnClass
+                              isOrangeCta ? orangeCtaClass : outlineBlueClass
                             }
                           >
-                            {isLockedOrange ? (
-                              <span className="inline-flex items-center gap-1.5">
-                                <Lock className="h-3.5 w-3.5" />
-                                {step.actionLabel}
-                              </span>
-                            ) : (
-                              step.actionLabel
-                            )}
+                            {step.actionLabel}
                           </Button>
-                        )
-                      ) : null}
-                      {step.actionHint ? (
-                        <p className="text-center text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
-                          {step.actionHint}
-                        </p>
-                      ) : null}
-                    </div>
+                        </Link>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant={isOrangeCta ? "orange" : "outline"}
+                          disabled={step.actionDisabled}
+                          className={
+                            isLockedOrange
+                              ? `${orangeCtaClass} cursor-not-allowed`
+                              : outlineBlueClass
+                          }
+                        >
+                          {isLockedOrange ? (
+                            <span className="inline-flex items-center gap-1.5">
+                              <Lock className="h-3.5 w-3.5" />
+                              {step.actionLabel}
+                            </span>
+                          ) : (
+                            step.actionLabel
+                          )}
+                        </Button>
+                      )
+                    ) : null}
+                    {step.actionHint ? (
+                      <p className="max-w-[225px] text-center text-[11px] leading-snug text-[#34466A]">
+                        {step.actionHint}
+                      </p>
+                    ) : null}
                   </div>
                 </li>
               );
             })}
           </ol>
 
-          <div className="mx-5 mb-5 mt-1 flex items-start gap-3 rounded-lg bg-[var(--portal-primary-soft)] px-4 py-3">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--portal-primary)]" />
-            <p className="text-sm leading-relaxed text-[var(--portal-ink)]">
-              <span className="font-semibold">Important:</span> Your instructor controls
-              when rounds open and close. Complete the steps above to be ready so your
-              team can make the most of each round.
+          {/* Figma #1:140-#1:146 — info banner */}
+          <div className="mt-4 flex items-start gap-3 rounded-xl border border-[#CFE0FF] bg-[#F6FAFF] px-4 py-3.5">
+            <span className="mt-0.5 inline-flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-md bg-[var(--portal-primary)] text-white">
+              <Info className="h-4 w-4" />
+            </span>
+            <p className="text-xs leading-relaxed text-[var(--portal-title)]">
+              <span className="text-sm font-bold">Important:</span> Your instructor
+              controls when rounds open and close. Complete the steps above to be ready
+              so your team can make the most of each round.
             </p>
           </div>
-        </section>
+        </div>
 
+        {/* Figma #1:147-#1:179 — right rail */}
         <aside className="space-y-4">
-          <section className="rounded-xl bg-[var(--portal-navy)] p-5 text-white">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-white/80">
+          <section className="rounded-xl bg-[var(--portal-navy)] p-4 text-white">
+            <h2 className="text-[15px] font-bold uppercase tracking-wider text-white/80">
               What to Expect
             </h2>
-            <ul className="mt-4 space-y-4">
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#2f6fed]/25 text-[#6aa1ff]">
-                  <ClipboardList className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold">Make Decisions</p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-white/70">
-                    Allocate your discretionary HR budget across seven HR areas each
-                    round.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400">
-                  <BarChart3 className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold">See Results</p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-white/70">
-                    Your decisions influence your workforce, strategy execution, and
-                    financial performance.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--portal-brand)]/20 text-[var(--portal-brand)]">
-                  <Lightbulb className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold">Learn &amp; Improve</p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-white/70">
-                    Review feedback and reports, discuss with your team, and improve in
-                    the next round.
-                  </p>
-                </div>
-              </li>
+            <ul className="mt-3">
+              {whatToExpect.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <li
+                    key={item.title}
+                    className={index > 0 ? "mt-3 border-t border-[#294274] pt-3" : ""}
+                  >
+                    <p className="flex items-center gap-2 text-sm font-bold">
+                      <Icon className="h-4 w-4 text-white/70" strokeWidth={1.75} />
+                      {item.title}
+                    </p>
+                    <p className="mt-1 text-xs leading-relaxed text-white/75">
+                      {item.body}
+                    </p>
+                  </li>
+                );
+              })}
             </ul>
           </section>
 
-          <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--portal-title)]">
+          <section className="rounded-xl border border-[#E2E8F2] bg-[#F9FBFF] p-4">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Need Help?
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--portal-muted)]">
+            <p className="mt-1.5 text-xs leading-relaxed text-[var(--portal-title)]">
               Visit the Help Center for guides, videos, and FAQs.
             </p>
-            <Link href="/help" className="mt-3 inline-block">
-              <Button size="sm" variant="outline" className={outlineBlueClass}>
-                <span className="inline-flex items-center gap-1.5">
-                  Go to Help Center
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </span>
+            <Link href="/help" className="mt-3 block">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-[39px] w-full rounded-lg border-[var(--portal-primary)]/60 bg-white text-[13px] font-bold text-[var(--portal-primary)] hover:bg-[var(--portal-primary-soft)]"
+              >
+                Go to Help Center
               </Button>
             </Link>
-          </section>
 
-          <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--portal-title)]">
+            <div className="my-4 border-t border-[#E2E8F2]" />
+
+            <h2 className="text-sm font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Questions?
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--portal-muted)]">
+            <p className="mt-1.5 text-xs leading-relaxed text-[var(--portal-title)]">
               Contact your instructor if you need assistance getting started.
             </p>
-            <Link href="/team/instructor" className="mt-3 inline-block">
-              <Button size="sm" variant="outline" className={outlineBlueClass}>
+            <Link href="/team/instructor" className="mt-3 block">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-[39px] w-full rounded-lg border-[var(--portal-primary)]/60 bg-white text-[13px] font-bold text-[var(--portal-primary)] hover:bg-[var(--portal-primary-soft)]"
+              >
                 <span className="inline-flex items-center gap-1.5">
                   <Mail className="h-3.5 w-3.5" />
                   Message Instructor

@@ -202,6 +202,27 @@ function ProgressBar({
   );
 }
 
+function padRounds(
+  rounds: RoundListItem[],
+  currentRound: number
+): Array<RoundListItem & { placeholder?: boolean }> {
+  const byNumber = new Map(rounds.map((r) => [r.roundNumber, r]));
+  const maxShown = Math.max(5, currentRound, ...rounds.map((r) => r.roundNumber));
+  return Array.from({ length: maxShown }, (_, i) => {
+    const n = i + 1;
+    return (
+      byNumber.get(n) ?? {
+        id: `placeholder-${n}`,
+        roundId: "",
+        roundNumber: n,
+        dateLabel: "—",
+        href: "#",
+        placeholder: true,
+      }
+    );
+  });
+}
+
 export function WorkforceBriefView({
   data = DEFAULT_BRIEF_DATA,
 }: {
@@ -489,107 +510,113 @@ export function WorkforceBriefView({
   ];
 
   return (
-    <div className="space-y-5">
-      <div className="grid items-start gap-5 xl:grid-cols-[260px_minmax(0,1fr)]">
-        {/* Round selector sidebar */}
-        <aside className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
+    <div className="space-y-4">
+      <div className="grid items-start gap-4 lg:grid-cols-[200px_minmax(0,1fr)]">
+        <aside className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-3">
           <h2 className="text-sm font-bold text-[var(--portal-title)]">
             The Workforce Brief
           </h2>
-          <p className="mt-1 text-xs text-[var(--portal-muted)]">
+          <p className="mt-1 text-[0.6875rem] text-[var(--portal-muted)]">
             Select a round to review results
           </p>
-          <ul className="mt-4 space-y-2">
-            {(brief.rounds ?? []).length === 0 ? (
-              <li className="rounded-lg border border-dashed border-[var(--portal-sidebar-border)] px-3 py-3 text-xs text-[var(--portal-muted)]">
-                No finalized rounds yet. Results appear after the instructor
-                closes a round.
-              </li>
-            ) : (
-              (brief.rounds ?? []).map((r) => {
-                const active =
-                  brief.selectedRoundId === r.roundId ||
-                  r.roundNumber === brief.roundNumber;
-                return (
-                  <li key={r.id}>
+          <ul className="mt-3 space-y-2">
+            {padRounds(brief.rounds ?? [], brief.roundNumber).map((r) => {
+              const active =
+                !r.placeholder &&
+                (brief.selectedRoundId === r.roundId ||
+                  r.roundNumber === brief.roundNumber);
+              const inner = (
+                <>
+                  <div>
+                    <p
+                      className={`text-[0.8125rem] font-semibold ${
+                        active
+                          ? "text-[var(--portal-primary)]"
+                          : r.placeholder
+                            ? "text-[var(--portal-muted)]"
+                            : "text-[var(--portal-title)]"
+                      }`}
+                    >
+                      The Workforce Brief –
+                    </p>
+                    <p
+                      className={`text-[0.8125rem] font-semibold ${
+                        active
+                          ? "text-[var(--portal-primary)]"
+                          : r.placeholder
+                            ? "text-[var(--portal-muted)]"
+                            : "text-[var(--portal-title)]"
+                      }`}
+                    >
+                      Round {r.roundNumber} Results
+                    </p>
+                    <p className="mt-0.5 text-[0.625rem] text-[var(--portal-muted)]">
+                      {r.dateLabel}
+                    </p>
+                  </div>
+                  <ChevronRight
+                    className={`mt-1 h-4 w-4 shrink-0 ${
+                      active
+                        ? "text-[var(--portal-primary)]"
+                        : "text-[var(--portal-muted)]"
+                    }`}
+                  />
+                </>
+              );
+              return (
+                <li key={r.id}>
+                  {r.placeholder ? (
+                    <div className="flex items-start justify-between gap-2 rounded-lg border border-dashed border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-3 py-2">
+                      {inner}
+                    </div>
+                  ) : (
                     <Link
                       href={r.href}
-                      className={`flex items-start justify-between gap-2 rounded-lg border px-3 py-2.5 transition-colors ${
+                      className={`flex items-start justify-between gap-2 rounded-lg border px-3 py-2 transition-colors ${
                         active
                           ? "border-[var(--portal-primary)] bg-[var(--portal-primary-soft)]"
                           : "border-[var(--portal-sidebar-border)] bg-[#f8fafc] hover:border-[var(--portal-primary)]/40"
                       }`}
                     >
-                      <div>
-                        <p
-                          className={`text-sm font-semibold ${
-                            active
-                              ? "text-[var(--portal-primary)]"
-                              : "text-[var(--portal-title)]"
-                          }`}
-                        >
-                          The Workforce Brief –
-                        </p>
-                        <p
-                          className={`text-sm font-semibold ${
-                            active
-                              ? "text-[var(--portal-primary)]"
-                              : "text-[var(--portal-title)]"
-                          }`}
-                        >
-                          Round {r.roundNumber} Results
-                        </p>
-                        <p className="mt-1 text-[0.6875rem] text-[var(--portal-muted)]">
-                          {r.dateLabel}
-                        </p>
-                      </div>
-                      <ChevronRight
-                        className={`mt-1 h-4 w-4 shrink-0 ${
-                          active
-                            ? "text-[var(--portal-primary)]"
-                            : "text-[var(--portal-muted)]"
-                        }`}
-                      />
+                      {inner}
                     </Link>
-                  </li>
-                );
-              })
-            )}
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </aside>
 
-        {/* Main report content */}
-        <div className="min-w-0 space-y-5">
+        <div className="min-w-0 space-y-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <h1 className="text-2xl font-bold text-[var(--portal-title)] sm:text-[1.75rem]">
+            <h1 className="text-[1.375rem] font-bold leading-tight text-[var(--portal-title)]">
               The Workforce Brief – Round {brief.roundNumber} Results
             </h1>
             <button
               type="button"
               onClick={() => brief.onDownloadPdf?.()}
-              className="inline-flex items-center gap-2 rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--portal-title)] hover:bg-[#f8fafc]"
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-3 py-1.5 text-sm font-semibold text-[var(--portal-title)] hover:bg-[#f8fafc]"
             >
               <Download className="h-4 w-4" />
               Download PDF Report
             </button>
           </div>
 
-          {/* HR Balance Scorecard */}
-          <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--portal-title)]">
+          <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
+            <h2 className="text-lg font-bold text-[var(--portal-title)]">
               HR Balance Scorecard
             </h2>
-            <div className="mt-4 grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)]">
+            <div className="mt-3 grid gap-4 md:grid-cols-[200px_minmax(0,1fr)]">
               <div>
-                <p className="text-5xl font-bold tracking-tight text-[var(--portal-title)] sm:text-6xl">
+                <p className="text-[2.75rem] font-bold leading-none tracking-tight text-[var(--portal-primary)]">
                   {brief.totalScore.toFixed(1)}%
                 </p>
-                <p className="mt-3 max-w-[220px] text-sm leading-relaxed text-[var(--portal-muted)]">
+                <p className="mt-2 max-w-[200px] text-xs leading-relaxed text-[var(--portal-muted)]">
                   Overall effectiveness of your team&apos;s HR decisions this
                   round.
                 </p>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-2 gap-2">
                 <ProgressBar
                   label="Financial"
                   score={brief.scoreFinancial}
@@ -618,30 +645,29 @@ export function WorkforceBriefView({
             </div>
           </section>
 
-          {/* Strategic KPIs */}
           <section>
-            <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-[var(--portal-title)]">
+            <h2 className="mb-2 text-[0.75rem] font-bold uppercase tracking-wider text-[var(--portal-primary)]">
               Strategic Performance Metrics KPIs
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-6 gap-2">
               {strategicKpis.map((kpi) => {
                 const Icon = kpi.icon;
                 return (
                   <div
                     key={kpi.label}
-                    className="flex items-center gap-4 rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-4 py-4 shadow-sm"
+                    className="flex min-w-0 items-center gap-2 rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-2 py-2.5"
                   >
                     <span
-                      className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${kpi.iconClass}`}
+                      className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${kpi.iconClass}`}
                     >
-                      <Icon className="h-5 w-5" strokeWidth={2} />
+                      <Icon className="h-3.5 w-3.5" strokeWidth={2} />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold text-[var(--portal-muted)]">
+                      <p className="truncate text-[0.5625rem] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
                         {kpi.label}
                       </p>
                       <p
-                        className={`mt-0.5 truncate text-xl font-bold ${
+                        className={`mt-0.5 whitespace-nowrap text-sm font-bold leading-tight tabular-nums ${
                           kpi.negative
                             ? "text-red-600"
                             : "text-[var(--portal-title)]"
@@ -656,39 +682,38 @@ export function WorkforceBriefView({
             </div>
           </section>
 
-          {/* Perspective summaries */}
           <section>
-            <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-[var(--portal-title)]">
+            <h2 className="mb-2 text-[0.75rem] font-bold uppercase tracking-wider text-[var(--portal-title)]">
               Feedback: Perspective Summaries
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-4 gap-2">
               {perspectives.map((p) => {
                 const Icon = p.icon;
                 return (
                   <article
                     key={p.label}
-                    className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm"
+                    className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-3"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <h3 className="text-sm font-bold text-[var(--portal-title)]">
+                        <h3 className="text-[0.8125rem] font-bold text-[var(--portal-title)]">
                           {p.label}
                         </h3>
-                        <p className="mt-1 text-base font-bold text-[var(--portal-title)]">
+                        <p className="mt-0.5 text-sm font-bold text-[var(--portal-title)]">
                           {p.score.toFixed(1)} / {p.max}
                         </p>
                       </div>
                       <span
-                        className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${p.iconBg} ${p.color}`}
+                        className={`inline-flex h-8 w-8 items-center justify-center rounded-lg ${p.iconBg} ${p.color}`}
                       >
-                        <Icon className="h-4 w-4" />
+                        <Icon className="h-3.5 w-3.5" />
                       </span>
                     </div>
-                    <p className="mt-3 text-xs leading-relaxed text-[var(--portal-muted)]">
+                    <p className="mt-2 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
                       {p.body}
                     </p>
                     <p
-                      className={`mt-3 text-xs font-semibold leading-relaxed ${toneClass(p.tipTone)}`}
+                      className={`mt-2 text-[0.6875rem] font-semibold leading-snug ${toneClass(p.tipTone)}`}
                     >
                       {p.tip}
                     </p>
@@ -698,30 +723,29 @@ export function WorkforceBriefView({
             </div>
           </section>
 
-          {/* Workforce performance metrics table */}
           <section>
-            <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-[var(--portal-title)]">
+            <h2 className="mb-2 text-[0.75rem] font-bold uppercase tracking-wider text-[var(--portal-title)]">
               Workforce Performance Metrics
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-7">
+            <div className="grid grid-cols-7 gap-2">
               {metricGroups.map((g) => (
                 <div
                   key={g.title}
-                  className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm"
+                  className="min-w-0 overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white"
                 >
                   <div
-                    className={`${g.header} px-3 py-2.5 text-center text-[0.625rem] font-bold uppercase tracking-wide text-white`}
+                    className={`${g.header} px-1.5 py-2 text-center text-[0.5625rem] font-bold uppercase leading-tight tracking-wide text-white`}
                   >
                     {g.title}
                   </div>
-                  <ul className="space-y-2.5 p-3 text-[0.6875rem]">
+                  <ul className="space-y-1.5 p-2 text-[0.625rem]">
                     {g.rows.map((row) => (
                       <li
                         key={row.label}
-                        className="flex items-start justify-between gap-2"
+                        className="flex items-start justify-between gap-1"
                       >
-                        <span className="text-[var(--portal-muted)]">
-                          • {row.label}
+                        <span className="min-w-0 leading-snug text-[var(--portal-muted)]">
+                          {row.label}
                         </span>
                         <span className="shrink-0 font-bold text-[var(--portal-title)]">
                           {row.value}
@@ -734,33 +758,32 @@ export function WorkforceBriefView({
             </div>
           </section>
 
-          {/* Metric feedback cards */}
           <section>
-            <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-[var(--portal-title)]">
+            <h2 className="mb-2 text-[0.75rem] font-bold uppercase tracking-wider text-[var(--portal-title)]">
               Feedback: Workforce Performance Metrics
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-7">
+            <div className="grid grid-cols-7 gap-2">
               {feedbackMetrics.map((m) => (
                 <article
                   key={m.label}
-                  className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-3 shadow-sm"
+                  className="min-w-0 rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-2"
                 >
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start gap-1.5">
                     <span
-                      className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white ${toneBg(m.tone)}`}
+                      className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[0.625rem] font-bold text-white ${toneBg(m.tone)}`}
                     >
                       {m.icon}
                     </span>
                     <div className="min-w-0">
-                      <p className={`text-[0.6875rem] font-bold ${toneClass(m.tone)}`}>
+                      <p className={`text-[0.625rem] font-bold leading-tight ${toneClass(m.tone)}`}>
                         {m.label}
                       </p>
-                      <p className={`text-sm font-bold ${toneClass(m.tone)}`}>
+                      <p className={`text-[0.75rem] font-bold leading-tight ${toneClass(m.tone)}`}>
                         {m.value}
                       </p>
                     </div>
                   </div>
-                  <p className="mt-3 text-[0.6875rem] leading-snug text-[var(--portal-muted)]">
+                  <p className="mt-1.5 text-[0.5625rem] leading-snug text-[var(--portal-muted)]">
                     {m.text}
                   </p>
                 </article>
@@ -768,62 +791,57 @@ export function WorkforceBriefView({
             </div>
           </section>
 
-          {/* Coach + Reflection */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <section className="rounded-xl border border-[var(--portal-primary)]/25 bg-[var(--portal-primary-soft)] p-5 shadow-sm">
+          <div className="grid grid-cols-2 gap-3">
+            <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-3">
               <div className="flex items-center gap-2">
-                <Bot className="h-6 w-6 text-[var(--portal-primary)]" />
-                <h3 className="text-base font-bold text-[var(--portal-primary)]">
+                <Bot className="h-5 w-5 text-[var(--portal-primary)]" />
+                <h3 className="text-sm font-bold text-[var(--portal-title)]">
                   HR Coach (Coming Soon)
                 </h3>
               </div>
-              <p className="mt-2 text-xs text-[var(--portal-muted)]">
-                Future versions will connect to an AI coach for personalized
-                guidance.
-              </p>
-              <p className="mt-4 text-xs font-bold text-[var(--portal-title)]">
+              <p className="mt-2 text-[0.6875rem] font-semibold text-[var(--portal-title)]">
                 Ask the HR Coach
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <button
                   type="button"
-                  className="rounded-lg border border-[var(--portal-primary)]/30 bg-white px-3 py-2 text-xs font-medium text-[var(--portal-primary)] hover:bg-white/80"
+                  className="rounded-full border border-[var(--portal-primary)]/30 bg-[var(--portal-primary-soft)] px-3 py-1.5 text-[0.6875rem] font-medium text-[var(--portal-primary)]"
                 >
                   Why did my score change?
                 </button>
                 <button
                   type="button"
-                  className="rounded-lg border border-[var(--portal-primary)]/30 bg-white px-3 py-2 text-xs font-medium text-[var(--portal-primary)] hover:bg-white/80"
+                  className="rounded-full border border-[var(--portal-primary)]/30 bg-[var(--portal-primary-soft)] px-3 py-1.5 text-[0.6875rem] font-medium text-[var(--portal-primary)]"
                 >
                   What should I consider next round?
                 </button>
               </div>
             </section>
 
-            <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
+            <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-3">
               <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-[var(--portal-navy)]" />
+                <Users className="h-4 w-4 text-[var(--portal-navy)]" />
                 <div>
-                  <h3 className="text-base font-bold text-[var(--portal-title)]">
+                  <h3 className="text-sm font-bold text-[var(--portal-title)]">
                     Team Reflection
                   </h3>
-                  <p className="text-xs text-[var(--portal-muted)]">
+                  <p className="text-[0.625rem] text-[var(--portal-muted)]">
                     100–2000 characters. Explain your HR decisions and what you
                     learned.
                   </p>
                 </div>
               </div>
-              <form onSubmit={handleReflectionSubmit} className="mt-3 space-y-2">
+              <form onSubmit={handleReflectionSubmit} className="mt-2 space-y-2">
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={reflectionText}
                   onChange={(e) => setReflectionText(e.target.value)}
                   placeholder="Our team focused on..."
                   maxLength={2000}
-                  className="w-full rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-3 text-sm text-[var(--portal-ink)] placeholder:text-[var(--portal-muted)] focus:border-[var(--portal-primary)] focus:outline-none"
+                  className="w-full rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-2 text-sm text-[var(--portal-ink)] placeholder:text-[var(--portal-muted)] focus:border-[var(--portal-primary)] focus:outline-none"
                 />
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[0.6875rem] text-[var(--portal-muted)]">
+                  <span className="text-[0.625rem] text-[var(--portal-muted)]">
                     {reflectionText.length} / 2000
                     {submittedMessage ? (
                       <span className="ml-2 font-semibold text-emerald-700">
@@ -838,7 +856,7 @@ export function WorkforceBriefView({
                       reflectionText.length < 100 ||
                       !brief.onSaveReflection
                     }
-                    className="rounded-lg bg-[var(--portal-primary)] px-4 py-2 text-xs font-bold text-white hover:bg-[var(--portal-primary-hover)] disabled:opacity-50"
+                    className="rounded-lg bg-[var(--portal-primary)] px-3 py-1.5 text-[0.6875rem] font-bold text-white hover:bg-[var(--portal-primary-hover)] disabled:opacity-50"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Reflection"}
                   </button>
@@ -851,3 +869,4 @@ export function WorkforceBriefView({
     </div>
   );
 }
+

@@ -16,6 +16,7 @@ export type StudentTeamContext = {
     profit_margin: number | null;
     join_code: string;
     session_id: string;
+    created_at?: string;
     sessions: {
       id: string;
       name: string;
@@ -23,6 +24,8 @@ export type StudentTeamContext = {
       semester: string | null;
       announcement: string | null;
       instructor_id: string;
+      rounds_total: number | null;
+      created_at: string | null;
     };
   } | null;
   openRound: {
@@ -34,7 +37,7 @@ export type StudentTeamContext = {
   instructor: {
     display_name: string;
   } | null;
-  members: Array<{ display_name: string; email?: string | null }>;
+  members: Array<{ display_name: string; joined_at: string | null }>;
 };
 
 export async function getStudentTeamContext(): Promise<StudentTeamContext> {
@@ -53,7 +56,7 @@ export async function getStudentTeamContext(): Promise<StudentTeamContext> {
   const { data: membership } = await supabase
     .from("team_members")
     .select(
-      "team_id, teams(*, sessions(id, name, course_code, semester, announcement, instructor_id))"
+      "team_id, teams(*, sessions(id, name, course_code, semester, announcement, instructor_id, rounds_total, created_at))"
     )
     .eq("user_id", user.id)
     .maybeSingle();
@@ -82,13 +85,16 @@ export async function getStudentTeamContext(): Promise<StudentTeamContext> {
 
     const { data: memberRows } = await supabase
       .from("team_members")
-      .select("user_id, profiles(display_name)")
+      .select("user_id, joined_at, profiles(display_name)")
       .eq("team_id", team.id);
 
     members =
       memberRows?.map((m) => {
         const p = m.profiles as unknown as { display_name: string } | null;
-        return { display_name: p?.display_name ?? "Teammate" };
+        return {
+          display_name: p?.display_name ?? "Teammate",
+          joined_at: (m.joined_at as string | null) ?? null,
+        };
       }) ?? [];
   }
 

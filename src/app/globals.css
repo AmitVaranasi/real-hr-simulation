@@ -6,35 +6,39 @@
   color-scheme: light;
 
   /*
-   * Cooper approved PNG palette (Dashboard + Resources)
-   * Orange = brand / active nav / primary CTA
-   * Navy = titles / sidebar / identity
-   * Blue = secondary actions / links / progress
+   * Cooper Figma kit tokens (docs/cooper-v5-screens/figma-kit/tokens)
+   * Orange = logo / active nav / primary CTAs
+   * Navy = profile header / headings
+   * Blue = outline buttons / links
    */
-  --portal-brand: #ff5a1f;
+  --portal-brand: #ff560f;
   --portal-brand-hover: #e84e14;
-  --portal-brand-soft: #fff1e8;
-  --portal-navy: #0b1739;
-  --portal-navy-soft: #132248;
-  --portal-title: #0b1739;
-  --portal-primary: #1d6ef5;
+  --portal-brand-soft: #ffe8dc;
+  --portal-navy: #051141;
+  --portal-navy-soft: #0b1b4d;
+  --portal-title: #0b1b4d;
+  --portal-primary: #1b6fea;
   --portal-primary-hover: #1558d6;
   --portal-primary-soft: #eaf2ff;
-  --portal-accent-blue: #1d6ef5;
+  --portal-accent-blue: #1b6fea;
   --portal-accent-blue-soft: #eaf2ff;
-  --portal-sidebar: #0b1739;
-  --portal-sidebar-border: #e2e6ec;
+  --portal-sidebar: #051141;
+  --portal-sidebar-border: #e3e6ec;
   --portal-ink: #1f2937;
-  --portal-muted: #6b7280;
+  --portal-muted: #6b7288;
   --portal-card: #ffffff;
-  --portal-page: #f4f6f9;
-  --portal-success: #16a34a;
+  --portal-page: #f4f5f7;
+  --portal-success: #2f8a4e;
   --portal-warning: #f59e0b;
-  --portal-purple: #7c3aed;
-  --portal-icon-green: #16a34a;
-  --portal-icon-orange: #ff5a1f;
-  --portal-icon-blue: #1d6ef5;
-  --portal-icon-purple: #7c3aed;
+  --portal-purple: #7b5cff;
+  --portal-icon-green: #2fa86a;
+  --portal-icon-orange: #ff560f;
+  --portal-icon-blue: #1b6fea;
+  --portal-icon-purple: #7b5cff;
+  --portal-sidebar-width: 200px;
+  --portal-topbar-height: 48px;
+  --portal-right-rail: 232px;
+  --portal-report-tabs-height: 44px;
 }
 
 @theme inline {
