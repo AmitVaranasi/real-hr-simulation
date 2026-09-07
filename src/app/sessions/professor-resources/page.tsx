@@ -1,43 +1,17 @@
+import { ResourcesOverview } from "@/components/instructor/ResourcesHub";
 import {
-  ProfessorCardGrid,
-  ProfessorPageHeader,
-} from "@/components/instructor/ProfessorShell";
+  courseRail,
+  loadActiveCourse,
+} from "@/lib/instructor/load-course-context";
 
-export default function ProfessorResourcesHubPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ProfessorResourcesHubPage() {
+  const course = await loadActiveCourse();
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
-      <ProfessorPageHeader
-        title="Professor Resources"
-        subtitle="Guides, teaching packs, reference materials, and downloads."
-        breadcrumbs={[
-          { label: "Dashboard", href: "/sessions" },
-          { label: "Resources" },
-        ]}
-      />
-      <ProfessorCardGrid
-        items={[
-          {
-            title: "Professor Guide",
-            body: "Course setup, pacing, and facilitation guidance.",
-            href: "/sessions/professor-resources/guide",
-          },
-          {
-            title: "Teaching Resources",
-            body: "Slides, worksheets, and classroom activities.",
-            href: "/sessions/professor-resources/teaching",
-          },
-          {
-            title: "Simulation Reference",
-            body: "Engine and scoring reference for instructors.",
-            href: "/sessions/professor-resources/reference",
-          },
-          {
-            title: "Downloads",
-            body: "Downloadable course files and templates.",
-            href: "/sessions/professor-resources/downloads",
-          },
-        ]}
-      />
-    </div>
+    <ResourcesOverview
+      rail={courseRail(course)}
+      sessionId={course?.sessionId ?? null}
+    />
   );
 }

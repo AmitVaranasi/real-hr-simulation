@@ -1,51 +1,34 @@
+import { HelpCenterHub } from "@/components/instructor/HelpCenterHub";
+import { plural } from "@/components/instructor/ProfessorChrome";
 import {
-  ProfessorCardGrid,
-  ProfessorPageHeader,
-  ProfessorStubPanel,
-} from "@/components/instructor/ProfessorShell";
+  courseRail,
+  loadActiveCourse,
+  roundLabel,
+} from "@/lib/instructor/load-course-context";
 
-export default function ProfessorHelpPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ProfessorHelpPage() {
+  const course = await loadActiveCourse();
+  const title = course
+    ? [course.courseCode, course.name].filter(Boolean).join(" ")
+    : "—";
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
-      <ProfessorPageHeader
-        title="Help Center"
-        subtitle="Support paths for course operations, Simulation Lab, and classroom facilitation."
-        breadcrumbs={[
-          { label: "Dashboard", href: "/sessions" },
-          { label: "Help Center" },
-        ]}
-      />
-      <ProfessorStubPanel title="Getting oriented">
-        Use Course Management for enrollment and rounds, Simulation Lab for engine
-        configuration, and Teaching &amp; Debrief for classroom facilitation
-        shells.
-      </ProfessorStubPanel>
-      <div className="mt-4">
-        <ProfessorCardGrid
-          items={[
-            {
-              title: "Simulation Lab Configuration",
-              body: "Edit engine assumptions without code changes.",
-              href: "/sessions/config",
-            },
-            {
-              title: "Testing Center",
-              body: "Validate scenarios before applying to live courses.",
-              href: "/sessions/testing",
-            },
-            {
-              title: "Professor Guide",
-              body: "Course setup and facilitation guidance shell.",
-              href: "/sessions/professor-resources/guide",
-            },
-            {
-              title: "Course Management",
-              body: "Sessions, teams, announcements, and rounds.",
-              href: "/sessions/manage",
-            },
-          ]}
-        />
-      </div>
-    </div>
+    <HelpCenterHub
+      rail={courseRail(course)}
+      sessionId={course?.sessionId ?? null}
+      courseTitle={course ? `${title}${course.semester ? ` – ${course.semester}` : ""}` : "—"}
+      engineStatus="Operational"
+      roundStatus={
+        course?.openRound
+          ? `${roundLabel(course.openRound)} Open`
+          : course?.latestClosed
+            ? `${roundLabel(course.latestClosed)} Closed`
+            : "—"
+      }
+      teamsLabel={
+        course?.teamsCreated ? plural(course.teamsCreated, "team") : "—"
+      }
+    />
   );
 }
