@@ -1,24 +1,17 @@
+import { DebriefView } from "@/components/instructor/TeachingHub";
 import {
-  ProfessorPageHeader,
-  ProfessorStubPanel,
-} from "@/components/instructor/ProfessorShell";
+  courseRail,
+  loadActiveCourse,
+} from "@/lib/instructor/load-course-context";
 
-export default function DebriefPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DebriefPage() {
+  const course = await loadActiveCourse();
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
-      <ProfessorPageHeader
-        title="Discussion & Debrief"
-        subtitle="Facilitation outline for in-class debrief sessions."
-        breadcrumbs={[
-          { label: "Dashboard", href: "/sessions" },
-          { label: "Teaching & Debrief", href: "/sessions/teaching" },
-          { label: "Discussion & Debrief" },
-        ]}
-      />
-      <ProfessorStubPanel title="Facilitation shell">
-        Agenda blocks, discussion questions, and board prompts will be added as
-        Cooper finalizes Teaching &amp; Debrief materials.
-      </ProfessorStubPanel>
-    </div>
+    <DebriefView
+      rail={courseRail(course)}
+      sessionId={course?.sessionId ?? null}
+    />
   );
 }

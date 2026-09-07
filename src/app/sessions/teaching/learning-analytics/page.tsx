@@ -1,24 +1,17 @@
+import { LearningAnalyticsView } from "@/components/instructor/TeachingHub";
 import {
-  ProfessorPageHeader,
-  ProfessorStubPanel,
-} from "@/components/instructor/ProfessorShell";
+  courseRail,
+  loadActiveCourse,
+} from "@/lib/instructor/load-course-context";
 
-export default function LearningAnalyticsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function LearningAnalyticsPage() {
+  const course = await loadActiveCourse();
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
-      <ProfessorPageHeader
-        title="Learning Analytics"
-        subtitle="Engagement and learning signal shells for the course."
-        breadcrumbs={[
-          { label: "Dashboard", href: "/sessions" },
-          { label: "Teaching & Debrief", href: "/sessions/teaching" },
-          { label: "Learning Analytics" },
-        ]}
-      />
-      <ProfessorStubPanel title="Analytics shell">
-        Learning analytics visualizations are stubbed pending Cooper&apos;s
-        preferred metrics and privacy constraints.
-      </ProfessorStubPanel>
-    </div>
+    <LearningAnalyticsView
+      rail={courseRail(course)}
+      sessionId={course?.sessionId ?? null}
+    />
   );
 }
