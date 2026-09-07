@@ -1,5 +1,13 @@
-import { ReportsClient } from "@/components/instructor/ReportsClient";
-import Link from "next/link";
+import { IndustryResultsHub } from "@/components/instructor/IndustryResultsHub";
+import { DISCRETIONARY_BUDGET } from "@/lib/engine/defaults";
+import { loadClassPerformanceBundle } from "@/lib/instructor/load-class-performance";
+import {
+  courseRail,
+  loadActiveCourse,
+} from "@/lib/instructor/load-course-context";
+import { formatCurrency } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
 
 export default async function SessionReportsPage({
   params,
@@ -7,22 +15,23 @@ export default async function SessionReportsPage({
   params: Promise<{ sessionId: string }>;
 }) {
   const { sessionId } = await params;
+  const [course, bundle] = await Promise.all([
+    loadActiveCourse(sessionId),
+    loadClassPerformanceBundle(sessionId),
+  ]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <Link
-        href={`/sessions/${sessionId}`}
-        className="text-sm text-[var(--portal-primary)] hover:underline"
-      >
-        ← Session
-      </Link>
-      <h1 className="mt-4 text-2xl font-bold text-[var(--portal-title)]">Class reports</h1>
-      <p className="text-[var(--portal-muted)]">
-        Compare teams, track participation, and export data.
-      </p>
-      <div className="mt-8">
-        <ReportsClient sessionId={sessionId} />
-      </div>
-    </div>
+    <IndustryResultsHub
+      sessionId={sessionId}
+      rail={courseRail(course)}
+      teams={bundle.teams}
+      rounds={bundle.rounds}
+      scores={bundle.scores}
+      spends={bundle.spends}
+      completedRounds={course?.roundsCompleted ?? 0}
+      practiceRounds={course?.practiceRounds ?? 0}
+      competitiveRounds={course?.competitiveRounds ?? 0}
+      budgetLabel={formatCurrency(DISCRETIONARY_BUDGET)}
+    />
   );
 }

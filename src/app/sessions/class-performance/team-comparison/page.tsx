@@ -1,42 +1,75 @@
+import { TeamComparisonHub } from "@/components/instructor/TeamComparisonHub";
 import {
-  ProfessorCardGrid,
-  ProfessorPageHeader,
-  ProfessorStubPanel,
-} from "@/components/instructor/ProfessorShell";
+  courseRail,
+  loadActiveCourse,
+  requireInstructor,
+  roundLabel,
+} from "@/lib/instructor/load-course-context";
 
-export default function ClassPerformanceTeamComparisonPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ClassPerformanceTeamComparisonPage() {
+  const course = await loadActiveCourse();
+  const { supabase } = await requireInstructor();
+
+  let rows: Array<{
+    teamId: string;
+    name: string;
+    overall: number | null;
+    financial: number | null;
+    employee: number | null;
+    process: number | null;
+    learning: number | null;
+  }> = [];
+
+  if (course && course.teamIds.length > 0) {
+    const { data: teams } = await supabase
+      .from("teams")
+      .select("id, name")
+      .in("id", course.teamIds);
+    const byId = new Map(
+      (teams ?? []).map((t) => [t.id as string, t.name as string])
+    );
+    rows = course.teamIds.map((id) => ({
+      teamId: id,
+      name: byId.get(id) ?? "Team",
+      overall: null,
+      financial: null,
+      employee: null,
+      process: null,
+      learning: null,
+    }));
+
+    if (course.latestClosed) {
+      const { data: outcomes } = await supabase
+        .from("outcomes")
+        .select(
+          "team_id, total_score, score_financial, score_employee, score_process, score_learning"
+        )
+        .eq("round_id", course.latestClosed.id);
+      const scores = new Map(
+        (outcomes ?? []).map((o) => [o.team_id as string, o])
+      );
+      rows = rows.map((row) => {
+        const o = scores.get(row.teamId);
+        return {
+          ...row,
+          overall: o?.total_score != null ? Number(o.total_score) : null,
+          financial: o?.score_financial != null ? Number(o.score_financial) : null,
+          employee: o?.score_employee != null ? Number(o.score_employee) : null,
+          process: o?.score_process != null ? Number(o.score_process) : null,
+          learning: o?.score_learning != null ? Number(o.score_learning) : null,
+        };
+      });
+    }
+  }
+
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
-      <ProfessorPageHeader
-        title="Team Comparison"
-        subtitle="Compare team HR decisions and outcomes across the class."
-        breadcrumbs={[
-          { label: "Dashboard", href: "/sessions" },
-          { label: "Class Performance" },
-          { label: "Team Comparison" },
-        ]}
-      />
-      <ProfessorStubPanel title="Architecture shell">
-        Team comparison charts and decision differentials will populate here once
-        Cooper finalizes Class Performance analytics views. Use Industry Results
-        and Leaderboard for live data today.
-      </ProfessorStubPanel>
-      <div className="mt-4">
-        <ProfessorCardGrid
-          items={[
-            {
-              title: "Industry Results",
-              body: "Open reports for your active session.",
-              href: "/sessions",
-            },
-            {
-              title: "Decision Analysis",
-              body: "Module-level decision patterns across teams.",
-              href: "/sessions/class-performance/decision-analysis",
-            },
-          ]}
-        />
-      </div>
-    </div>
+    <TeamComparisonHub
+      sessionId={course?.sessionId ?? null}
+      roundLabel={roundLabel(course?.latestClosed ?? course?.openRound)}
+      rows={rows}
+      rail={courseRail(course)}
+    />
   );
 }

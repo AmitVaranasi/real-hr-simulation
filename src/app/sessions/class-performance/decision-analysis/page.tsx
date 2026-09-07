@@ -1,24 +1,26 @@
+import { DecisionAnalysisHub } from "@/components/instructor/DecisionAnalysisHub";
+import { loadClassPerformanceBundle } from "@/lib/instructor/load-class-performance";
 import {
-  ProfessorPageHeader,
-  ProfessorStubPanel,
-} from "@/components/instructor/ProfessorShell";
+  courseRail,
+  loadActiveCourse,
+} from "@/lib/instructor/load-course-context";
 
-export default function DecisionAnalysisPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DecisionAnalysisPage() {
+  const course = await loadActiveCourse();
+  const bundle = course
+    ? await loadClassPerformanceBundle(course.sessionId)
+    : { teams: [], rounds: [], scores: [], spends: [] };
+
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
-      <ProfessorPageHeader
-        title="Decision Analysis"
-        subtitle="Module investment patterns and tradeoff analysis across teams."
-        breadcrumbs={[
-          { label: "Dashboard", href: "/sessions" },
-          { label: "Class Performance" },
-          { label: "Decision Analysis" },
-        ]}
-      />
-      <ProfessorStubPanel title="Shell ready for Cooper content">
-        Decision Analysis will surface module-level spend and outcome linkages.
-        Existing Formula Inspect and Industry Results remain the live data paths.
-      </ProfessorStubPanel>
-    </div>
+    <DecisionAnalysisHub
+      sessionId={course?.sessionId ?? ""}
+      rail={courseRail(course)}
+      teams={bundle.teams}
+      rounds={bundle.rounds}
+      scores={bundle.scores}
+      spends={bundle.spends}
+    />
   );
 }
