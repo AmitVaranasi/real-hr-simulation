@@ -168,7 +168,7 @@ export function FormulaInspector({
         <table className="mt-2 w-full min-w-[480px] text-sm">
           <thead className="text-left text-[var(--portal-muted)]">
             <tr>
-              <th className="py-1">Metric</th>
+              <th className="py-1 whitespace-nowrap">Metric</th>
               <th>Raw</th>
               <th>Normalized</th>
               <th>Final</th>

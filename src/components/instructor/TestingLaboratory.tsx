@@ -41,7 +41,7 @@ const WORKFLOW_STEPS = [
   "Release leaderboard / review reports",
 ];
 
-export function TestingLaboratory() {
+export function TestingLaboratory({ embedded = false }: { embedded?: boolean } = {}) {
   const [industry, setIndustry] = useState<Industry>("Manufacturing");
   const [strategy, setStrategy] = useState<Strategy>("Focus");
   const [economy, setEconomy] = useState<EconomyCondition>("normal");
@@ -110,8 +110,9 @@ export function TestingLaboratory() {
   }
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-5xl px-4 py-10">
+    <div className={embedded ? "w-full min-w-0" : "mx-auto w-full min-w-0 max-w-5xl px-4 py-10"}>
       <div className="flex flex-wrap items-start justify-between gap-4">
+        {embedded ? null : (
         <div>
           <h1 className="text-2xl font-bold text-[var(--portal-title)]">Testing Center</h1>
           <p className="mt-2 max-w-2xl text-[var(--portal-muted)]">
@@ -119,6 +120,7 @@ export function TestingLaboratory() {
             checks, and engine diagnostics before expert evaluation.
           </p>
         </div>
+        )}
         <div className="flex flex-wrap gap-2">
           <Link
             href="/sessions/config"
