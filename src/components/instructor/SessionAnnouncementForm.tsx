@@ -8,9 +8,13 @@ import { formInputClassName } from "@/components/ui/form-controls";
 export function SessionAnnouncementForm({
   sessionId,
   initialAnnouncement,
+  onPosted,
+  onCancel,
 }: {
   sessionId: string;
   initialAnnouncement: string | null;
+  onPosted?: () => void;
+  onCancel?: () => void;
 }) {
   const router = useRouter();
   const [text, setText] = useState(initialAnnouncement ?? "");
@@ -45,8 +49,9 @@ export function SessionAnnouncementForm({
         }
         return;
       }
-      setMessage("Announcement saved — students see it on their dashboard.");
+      setMessage("Announcement posted — students see it on their dashboard.");
       router.refresh();
+      onPosted?.();
     } catch {
       setMessage(
         "Could not reach the server. Confirm the app is running at http://127.0.0.1:3000 and try again."
@@ -72,8 +77,17 @@ export function SessionAnnouncementForm({
       </label>
       <div className="flex flex-wrap items-center gap-3">
         <Button type="submit" size="sm" disabled={loading}>
-          {loading ? "Saving…" : "Save announcement"}
+          {loading ? "Posting…" : "Post to students"}
         </Button>
+        {onCancel ? (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-sm font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-ink)]"
+          >
+            Cancel
+          </button>
+        ) : null}
         {message && <p className="text-sm text-[var(--portal-muted)]">{message}</p>}
       </div>
     </form>
