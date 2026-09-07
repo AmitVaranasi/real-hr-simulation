@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 
 export function ProfessorPageHeader({
@@ -5,16 +6,18 @@ export function ProfessorPageHeader({
   subtitle,
   breadcrumbs,
   actions,
+  info,
 }: {
   title: string;
   subtitle?: string;
   breadcrumbs?: Array<{ label: string; href?: string }>;
-  actions?: React.ReactNode;
+  actions?: ReactNode;
+  info?: string;
 }) {
   return (
     <div className="mb-6">
       {breadcrumbs && breadcrumbs.length > 0 ? (
-        <nav className="mb-2 flex flex-wrap items-center gap-1.5 text-xs text-[var(--portal-muted)]">
+        <nav className="mb-2 flex min-w-0 items-center gap-1.5 overflow-x-clip text-xs text-[var(--portal-muted)]">
           {breadcrumbs.map((crumb, i) => (
             <span key={`${crumb.label}-${i}`} className="inline-flex items-center gap-1.5">
               {i > 0 ? <span>›</span> : null}
@@ -36,8 +39,16 @@ export function ProfessorPageHeader({
       ) : null}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--portal-title)] sm:text-3xl">
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-[var(--portal-title)] sm:text-[1.75rem] sm:leading-tight">
             {title}
+            {info ? (
+              <span
+                title={info}
+                className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[var(--portal-title)] text-[0.5625rem] font-bold leading-none"
+              >
+                i
+              </span>
+            ) : null}
           </h1>
           {subtitle ? (
             <p className="mt-1 max-w-3xl text-sm text-[var(--portal-muted)]">
@@ -56,7 +67,7 @@ export function ProfessorStubPanel({
   children,
 }: {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <section className="rounded-xl border border-dashed border-[var(--portal-sidebar-border)] bg-white p-5 text-sm text-[var(--portal-muted)] shadow-sm">

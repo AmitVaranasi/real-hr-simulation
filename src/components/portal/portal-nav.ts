@@ -384,13 +384,11 @@ export function professorNavItems(opts: {
             p.startsWith(`${ops}/rounds`))),
       children: [
         {
-          href: sessionId ? `${ops}/course` : "/sessions/manage",
+          href: "/sessions/manage",
           label: "Course Overview",
           icon: LayoutDashboard,
           match: (p) =>
-            p === "/sessions/manage" ||
-            p.endsWith("/course") ||
-            (!!sessionId && p === ops),
+            p === "/sessions/manage" || p.startsWith("/sessions/manage?"),
         },
         {
           href: sessionId ? `${ops}/teams` : "/sessions/manage",
@@ -413,7 +411,7 @@ export function professorNavItems(opts: {
       ],
     },
     {
-      href: sessionId ? `${ops}/reports` : "/sessions",
+      href: "/sessions/class-performance",
       label: "Class Performance",
       icon: LineChart,
       match: (p) =>
@@ -422,7 +420,15 @@ export function professorNavItems(opts: {
         p.startsWith("/sessions/class-performance"),
       children: [
         {
-          href: sessionId ? `${ops}/reports` : "/sessions",
+          href: "/sessions/class-performance",
+          label: "Overview",
+          icon: LayoutDashboard,
+          match: (p) =>
+            p === "/sessions/class-performance" ||
+            p === "/sessions/class-performance/",
+        },
+        {
+          href: sessionId ? `${ops}/reports` : "/sessions/class-performance",
           label: "Industry Results",
           icon: LineChart,
           match: (p) => p.includes("/reports"),
@@ -501,13 +507,15 @@ export function professorNavItems(opts: {
           href: "/sessions/professor-resources/teaching",
           label: "Teaching Resources",
           icon: GraduationCap,
-          match: (p) => p.includes("/teaching"),
+          match: (p) => p.startsWith("/sessions/professor-resources/teaching"),
         },
         {
           href: "/sessions/professor-resources/reference",
           label: "Simulation Reference",
           icon: Library,
-          match: (p) => p.includes("/reference"),
+          match: (p) =>
+            p === "/sessions/professor-resources/reference" ||
+            p.startsWith("/sessions/professor-resources/reference/"),
         },
         {
           href: "/sessions/professor-resources/downloads",
@@ -518,11 +526,12 @@ export function professorNavItems(opts: {
       ],
     },
     {
-      href: "/sessions/config",
+      href: "/sessions/lab",
       label: "Simulation Lab",
       icon: FlaskConical,
       defaultExpanded: true,
       match: (p) =>
+        p.startsWith("/sessions/lab") ||
         p.startsWith("/sessions/config") ||
         p.startsWith("/sessions/testing") ||
         p.includes("/inspect"),
@@ -534,7 +543,7 @@ export function professorNavItems(opts: {
           match: (p) => p.includes("/inspect"),
         },
         {
-          href: "/sessions/config",
+          href: "/sessions/config/overview",
           label: "Configuration",
           icon: Settings,
           match: (p) => p.startsWith("/sessions/config"),

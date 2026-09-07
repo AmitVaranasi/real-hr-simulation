@@ -194,6 +194,7 @@ export function PortalSidebar({
   homeHref = "/dashboard",
   showStudentChrome = false,
   darkNav = false,
+  professorChrome = false,
   simulation,
   courseSummary,
   collapsed = false,
@@ -207,11 +208,15 @@ export function PortalSidebar({
   showStudentChrome?: boolean;
   /** Full navy sidebar (professor PNG) */
   darkNav?: boolean;
+  /** Navy profile + white nav + orange active (Figma professor chrome) */
+  professorChrome?: boolean;
   simulation?: StudentSimulationSummary | null;
   courseSummary?: {
     courseName: string;
     term: string;
     roundsSummary: string;
+    teams?: number;
+    status?: string;
   } | null;
   collapsed?: boolean;
   onNavigate?: () => void;
@@ -280,7 +285,7 @@ export function PortalSidebar({
       {displayName ? (
         <div
           className={`shrink-0 px-4 py-4 ${
-            darkNav || showStudentChrome
+            darkNav || showStudentChrome || professorChrome
               ? "bg-[var(--portal-navy)]"
               : "border-b border-[var(--portal-sidebar-border)]"
           }`}
@@ -292,7 +297,7 @@ export function PortalSidebar({
             <div className="min-w-0">
               <p
                 className={`truncate text-sm font-semibold ${
-                  darkNav || showStudentChrome
+                  darkNav || showStudentChrome || professorChrome
                     ? "text-white"
                     : "text-[var(--portal-ink)]"
                 }`}
@@ -301,7 +306,7 @@ export function PortalSidebar({
               </p>
               <p
                 className={`text-xs ${
-                  darkNav || showStudentChrome
+                  darkNav || showStudentChrome || professorChrome
                     ? "text-sky-200/80"
                     : "text-[var(--portal-muted)]"
                 }`}
@@ -333,7 +338,7 @@ export function PortalSidebar({
               pathname={pathname}
               onNavigate={onNavigate}
               dark={darkNav}
-              accent={showStudentChrome ? "orange" : "blue"}
+              accent={showStudentChrome || professorChrome ? "orange" : "blue"}
               completedTabKeys={
                 item.label === "HR Decisions" ? completedTabKeys : undefined
               }
@@ -486,13 +491,14 @@ export function PortalSidebar({
           </div>
         </div>
       ) : courseSummary ? (
-        <div
-          className={`shrink-0 px-4 py-3 ${
-            darkNav
-              ? "m-3 rounded-lg border border-white/10 bg-[#102a4d]"
-              : "border-t border-[var(--portal-sidebar-border)] bg-[#f3f5f8]"
-          }`}
-        >
+        <div className="shrink-0 p-3">
+          <div
+            className={`rounded-xl border px-3.5 py-3 ${
+              darkNav
+                ? "border-white/10 bg-[#102a4d]"
+                : "border-[#c5d4ee] bg-[#e8eef8]"
+            }`}
+          >
           <p
             className={`text-[0.625rem] font-bold uppercase tracking-[0.08em] ${
               darkNav ? "text-slate-400" : "text-[var(--portal-muted)]"
@@ -507,23 +513,42 @@ export function PortalSidebar({
           >
             {courseSummary.courseName}
           </p>
-          <p className={`text-xs ${darkNav ? "text-slate-300" : "text-[var(--portal-muted)]"}`}>
-            {courseSummary.term}
-          </p>
-          <p
-            className={`mt-1 text-xs ${
-              darkNav ? "text-slate-200" : "text-[var(--portal-ink)]"
-            }`}
-          >
-            {courseSummary.roundsSummary}
-          </p>
+          <dl className={`mt-2 space-y-1 text-xs ${darkNav ? "text-slate-300" : "text-[var(--portal-muted)]"}`}>
+            <div className="flex justify-between gap-2">
+              <dt>Session</dt>
+              <dd className={darkNav ? "text-white" : "text-[var(--portal-ink)]"}>
+                {courseSummary.term}
+              </dd>
+            </div>
+            <div className="flex justify-between gap-2">
+              <dt>Structure</dt>
+              <dd className={darkNav ? "text-white" : "text-[var(--portal-ink)]"}>
+                {courseSummary.roundsSummary}
+              </dd>
+            </div>
+            {courseSummary.teams != null ? (
+              <div className="flex justify-between gap-2">
+                <dt>Teams</dt>
+                <dd className={darkNav ? "text-white" : "text-[var(--portal-ink)]"}>
+                  {courseSummary.teams}
+                </dd>
+              </div>
+            ) : null}
+            {courseSummary.status ? (
+              <div className="flex justify-between gap-2">
+                <dt>Status</dt>
+                <dd className="capitalize">{courseSummary.status}</dd>
+              </div>
+            ) : null}
+          </dl>
           <Link
             href="/sessions/manage"
             onClick={onNavigate}
             className="mt-3 inline-block text-[0.75rem] font-semibold text-[var(--portal-accent-blue)] hover:underline"
           >
-            View Course Settings →
+            View Course Settings
           </Link>
+          </div>
         </div>
       ) : (
         <div
