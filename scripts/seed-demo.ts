@@ -104,10 +104,30 @@ const PERSONAS: Record<string, Record<string, number>> = {
   },
 };
 
+/**
+ * Hiring plans and pay bands per persona, written to the V2 JSON columns.
+ * The V1 scalars (recruitment_budget_per_hire, salary_vs_market_pct) are
+ * marked DEPRECATED in migration-v2 and are ignored by the engine.
+ */
+const ROLE_PLANS: Record<
+  string,
+  { hires: Array<{ role_id: string; count: number }>; band: number; bonusTier: number }
+> = {
+  costCutter: { hires: [{ role_id: "entry", count: 4 }, { role_id: "professional", count: 2 }], band: 0, bonusTier: 5 },
+  peopleFirst: { hires: [{ role_id: "entry", count: 3 }, { role_id: "professional", count: 5 }, { role_id: "manager", count: 2 }], band: 0, bonusTier: 5 },
+  innovator: { hires: [{ role_id: "professional", count: 6 }, { role_id: "technical", count: 5 }, { role_id: "manager", count: 1 }], band: 0, bonusTier: 5 },
+  balanced: { hires: [{ role_id: "entry", count: 3 }, { role_id: "professional", count: 4 }, { role_id: "technical", count: 2 }], band: 0, bonusTier: 5 },
+  underInvestor: { hires: [{ role_id: "entry", count: 2 }], band: 0, bonusTier: 5 },
+  bigSpender: { hires: [{ role_id: "entry", count: 4 }, { role_id: "professional", count: 6 }, { role_id: "technical", count: 4 }, { role_id: "manager", count: 3 }, { role_id: "executive", count: 1 }], band: 0, bonusTier: 10 },
+};
+
+const ALL_ROLES = ["entry", "professional", "technical", "manager", "executive"];
+
 /** Nudges a persona per round so trends move instead of repeating. */
 function decisionFor(persona: string, roundIndex: number) {
   const base = PERSONAS[persona];
   const drift = 1 + roundIndex * 0.06;
+  const plan = ROLE_PLANS[persona] ?? ROLE_PLANS.balanced;
   return {
     ...base,
     training_budget_per_ee: Math.round(base.training_budget_per_ee * drift),
@@ -116,6 +136,30 @@ function decisionFor(persona: string, roundIndex: number) {
       100,
       Math.round(base.pct_employees_trained * drift)
     ),
+    // V2 columns — these are what the engine actually reads.
+    positions_to_fill_json: plan.hires.map((h) => ({
+      ...h,
+      count: Math.max(1, Math.round(h.count * drift)),
+    })),
+    role_compensation_json: ALL_ROLES.map((role_id) => ({
+      role_id,
+      salary_band: plan.band,
+    })),
+    role_performance_json: ALL_ROLES.map((role_id) => {
+      const lift = plan.band >= 10 ? 2 : plan.band <= -10 ? -1 : 0;
+      return {
+        role_id,
+        productivity: 5 + lift,
+        teamwork: 5 + lift,
+        leadership: (role_id === "manager" || role_id === "executive" ? 7 : 4) + lift,
+        communication: 5 + lift,
+      };
+    }),
+    benefits_pct: Math.min(
+      20,
+      Math.max(6, Math.round((base.benefits_per_ee / 55000) * 100))
+    ),
+    bonus_tier: plan.bonusTier,
   };
 }
 
