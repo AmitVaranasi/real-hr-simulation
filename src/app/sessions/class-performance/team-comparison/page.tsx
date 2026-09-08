@@ -20,6 +20,7 @@ export default async function ClassPerformanceTeamComparisonPage() {
     employee: number | null;
     process: number | null;
     learning: number | null;
+    previousOverall: number | null;
   }> = [];
 
   if (course && course.teamIds.length > 0) {
@@ -38,7 +39,33 @@ export default async function ClassPerformanceTeamComparisonPage() {
       employee: null,
       process: null,
       learning: null,
+      previousOverall: null,
     }));
+
+    // Iteration 5: Trend needs prior-round data; use the processed round before
+    // the latest one, and leave Trend blank when there isn't one.
+    const closed = course.rounds
+      .filter((r) => r.status === "closed")
+      .sort((a, b) => a.round_number - b.round_number);
+    const previousClosed =
+      closed.length > 1 ? closed[closed.length - 2] : null;
+
+    if (previousClosed) {
+      const { data: prior } = await supabase
+        .from("outcomes")
+        .select("team_id, total_score")
+        .eq("round_id", previousClosed.id);
+      const priorScores = new Map(
+        (prior ?? []).map((o) => [o.team_id as string, o.total_score])
+      );
+      rows = rows.map((row) => ({
+        ...row,
+        previousOverall:
+          priorScores.get(row.teamId) != null
+            ? Number(priorScores.get(row.teamId))
+            : null,
+      }));
+    }
 
     if (course.latestClosed) {
       const { data: outcomes } = await supabase

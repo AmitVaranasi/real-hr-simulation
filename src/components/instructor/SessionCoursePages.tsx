@@ -244,6 +244,7 @@ export async function SessionRoundsPage({
     economy_condition: "boom" | "normal" | "recession";
     opened_at?: string | null;
     closed_at?: string | null;
+    decision_deadline?: string | null;
   }>;
 
   const supabase = await createClient();
@@ -345,6 +346,7 @@ export async function SessionRoundsPage({
             economy_condition: r.economy_condition,
             opened_at: r.opened_at ?? null,
             closed_at: r.closed_at ?? null,
+            decision_deadline: r.decision_deadline ?? null,
             submittedCount: submittedTeams.get(r.id)?.size ?? 0,
           }))}
       />

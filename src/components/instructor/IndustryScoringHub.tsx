@@ -15,6 +15,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -39,6 +40,40 @@ import {
   type PerformanceTeam,
   type ScoreRow,
 } from "@/lib/instructor/class-performance-data";
+import {
+  attainableFor,
+  resolveIndustryBenchmark,
+  toDisplayScale,
+  type BenchmarkPerspective,
+} from "@/lib/engine/industry-benchmarks";
+
+/**
+ * Iteration 5: "Use consistent visual treatment for above-benchmark,
+ * near-benchmark, and below-benchmark performance." Near = within one point.
+ */
+function benchHint(delta: number | null) {
+  if (delta == null) return "vs. Industry Benchmark —";
+  const sign = delta > 0 ? "+" : delta < 0 ? "−" : "";
+  return `vs. Industry Benchmark ${sign}${Math.abs(delta).toFixed(1)}`;
+}
+
+function BenchmarkDelta({ value }: { value: number | null }) {
+  if (value == null) {
+    return <span className="text-[var(--portal-muted)]">—</span>;
+  }
+  const near = Math.abs(value) < 1;
+  const tone = near
+    ? "text-[var(--portal-muted)]"
+    : value > 0
+      ? "text-emerald-700"
+      : "text-red-700";
+  return (
+    <span className={`font-semibold tabular-nums ${tone}`}>
+      {value > 0 ? "+" : value < 0 ? "−" : ""}
+      {Math.abs(value).toFixed(1)}
+    </span>
+  );
+}
 
 type RoundOpt = { id: string; label: string; status: string };
 
@@ -98,12 +133,57 @@ export function IndustryScoringHub({
     ),
   };
 
+  /**
+   * Benchmarks are stored as percent of attainable (strategy-independent).
+   * A perspective's raw maximum is the team's Balanced Scorecard weight, so
+   * the class-level reference is the benchmark percent applied to the average
+   * attainable across the teams in view. Overall is always out of 100.
+   */
+  const classBenchmark = useMemo(() => {
+    const out: Record<BenchmarkPerspective, number | null> = {
+      overall: null,
+      financial: null,
+      employee: null,
+      process: null,
+      learning: null,
+    };
+    const perspectives = Object.keys(out) as BenchmarkPerspective[];
+    for (const perspective of perspectives) {
+      const points = visible
+        .map((t) => {
+          const bench = resolveIndustryBenchmark(t.industry).values[perspective];
+          const attainable = attainableFor(perspective, t.strategy);
+          return toDisplayScale(bench, attainable);
+        })
+        .filter((v): v is number => v != null);
+      out[perspective] = points.length ? avg(points) : null;
+    }
+    return out;
+  }, [visible]);
+
+  const benchmarkSource = useMemo(() => {
+    const sources = new Set(
+      visible.map((t) => resolveIndustryBenchmark(t.industry).source)
+    );
+    if (sources.has("system")) return "system" as const;
+    if (sources.has("fixed")) return "fixed" as const;
+    return "none" as const;
+  }, [visible]);
+
+  const diff = (
+    value: number | null,
+    perspective: BenchmarkPerspective
+  ): number | null => {
+    const bench = classBenchmark[perspective];
+    return value == null || bench == null ? null : value - bench;
+  };
+
   const chart = [
-    { name: "Overall", class: classAvg.overall, industry: null },
-    { name: "Financial", class: classAvg.financial, industry: null },
-    { name: "Employee", class: classAvg.employee, industry: null },
-    { name: "Internal Process", class: classAvg.process, industry: null },
-    { name: "Learning & Growth", class: classAvg.learning, industry: null },
+    { name: "Overall", class: classAvg.overall, industry: classBenchmark.overall },
+    { name: "Financial", class: classAvg.financial, industry: classBenchmark.financial },
+    { name: "Employee", class: classAvg.employee, industry: classBenchmark.employee },
+    { name: "Internal Process", class: classAvg.process, industry: classBenchmark.process },
+    { name: "Learning & Growth", class: classAvg.learning, industry: classBenchmark.learning },
   ];
 
   const ranked = [...visible]
@@ -112,6 +192,14 @@ export function IndustryScoringHub({
       score: roundScores.find((s) => s.teamId === team.id),
     }))
     .sort((a, b) => (b.score?.overall ?? -1) - (a.score?.overall ?? -1));
+
+  /** A team is measured against its OWN industry, not the class mix. */
+  const teamVsIndustry = (team: PerformanceTeam, overall: number | null) => {
+    if (overall == null) return null;
+    const bench = resolveIndustryBenchmark(team.industry).values.overall;
+    const target = toDisplayScale(bench, attainableFor("overall", team.strategy));
+    return target == null ? null : overall - target;
+  };
 
   const inspectHref = `/sessions/${sessionId}/inspect`;
 
@@ -228,7 +316,7 @@ export function IndustryScoringHub({
           {
             label: "Class Overall Score",
             value: fmtScore(classAvg.overall),
-            hint: "vs. Industry Benchmark —",
+            hint: benchHint(diff(classAvg.overall, "overall")),
             icon: <Users className="h-4 w-4" />,
             iconWrap:
               "bg-[var(--portal-accent-blue-soft)] text-[var(--portal-accent-blue)]",
@@ -236,28 +324,28 @@ export function IndustryScoringHub({
           {
             label: "Financial",
             value: fmtScore(classAvg.financial),
-            hint: "vs. Industry Benchmark —",
+            hint: benchHint(diff(classAvg.financial, "financial")),
             icon: <BookOpen className="h-4 w-4" />,
             iconWrap: "bg-orange-50 text-[var(--portal-brand)]",
           },
           {
             label: "Employee",
             value: fmtScore(classAvg.employee),
-            hint: "vs. Industry Benchmark —",
+            hint: benchHint(diff(classAvg.employee, "employee")),
             icon: <Users className="h-4 w-4" />,
             iconWrap: "bg-emerald-50 text-emerald-700",
           },
           {
             label: "Internal Process",
             value: fmtScore(classAvg.process),
-            hint: "vs. Industry Benchmark —",
+            hint: benchHint(diff(classAvg.process, "process")),
             icon: <Settings className="h-4 w-4" />,
             iconWrap: "bg-violet-50 text-violet-700",
           },
           {
             label: "Learning & Growth",
             value: fmtScore(classAvg.learning),
-            hint: "vs. Industry Benchmark —",
+            hint: benchHint(diff(classAvg.learning, "learning")),
             icon: <GraduationCap className="h-4 w-4" />,
             iconWrap: "bg-sky-50 text-sky-700",
           },
@@ -270,8 +358,11 @@ export function IndustryScoringHub({
             Class Performance vs. Industry Benchmark
           </h2>
           <p className="mt-1 text-[0.6875rem] text-[var(--portal-muted)]">
-            Industry benchmark values are not stored. Bars show class averages
-            from processed outcomes.
+            {benchmarkSource === "none"
+              ? "Industry benchmark values have not been supplied yet. Bars show class averages from processed outcomes."
+              : benchmarkSource === "system"
+                ? "Benchmark generated from simulation performance across this industry."
+                : "Benchmark values supplied by the simulation designers."}
           </p>
           <div className="mt-4 h-52">
             <ResponsiveContainer width="100%" height="100%">
@@ -280,7 +371,13 @@ export function IndustryScoringHub({
                 <XAxis dataKey="name" tick={{ fontSize: 10 }} interval={0} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
                 <Tooltip />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Bar dataKey="class" fill="#2F6FED" name="Class Average" />
+                <Bar
+                  dataKey="industry"
+                  fill="#94a3b8"
+                  name="Industry Benchmark"
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -299,21 +396,27 @@ export function IndustryScoringHub({
               </tr>
             </thead>
             <tbody>
-              {[
-                ["Overall", classAvg.overall],
-                ["Financial", classAvg.financial],
-                ["Employee", classAvg.employee],
-                ["Internal Process", classAvg.process],
-                ["Learning & Growth", classAvg.learning],
-              ].map(([label, value]) => (
+              {(
+                [
+                  ["Overall", classAvg.overall, "overall"],
+                  ["Financial", classAvg.financial, "financial"],
+                  ["Employee", classAvg.employee, "employee"],
+                  ["Internal Process", classAvg.process, "process"],
+                  ["Learning & Growth", classAvg.learning, "learning"],
+                ] as Array<[string, number | null, BenchmarkPerspective]>
+              ).map(([label, value, perspective]) => (
                 <tr
-                  key={String(label)}
+                  key={label}
                   className="border-t border-[var(--portal-sidebar-border)]"
                 >
                   <td className="py-2">{label}</td>
-                  <td className="py-2 tabular-nums">{fmtScore(value as number | null)}</td>
-                  <td className="py-2">—</td>
-                  <td className="py-2">—</td>
+                  <td className="py-2 tabular-nums">{fmtScore(value)}</td>
+                  <td className="py-2 tabular-nums">
+                    {fmtScore(classBenchmark[perspective])}
+                  </td>
+                  <td className="py-2">
+                    <BenchmarkDelta value={diff(value, perspective)} />
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -373,7 +476,9 @@ export function IndustryScoringHub({
                   <td className="px-4 py-3 tabular-nums">
                     {fmtScore(row.score?.overall)}
                   </td>
-                  <td className="px-4 py-3">—</td>
+                  <td className="px-4 py-3">
+                    <BenchmarkDelta value={teamVsIndustry(row.team, row.score?.overall ?? null)} />
+                  </td>
                   {viewBy === "bsc" || viewBy === "financial" ? (
                     <td className="px-4 py-3 tabular-nums">
                       {fmtScore(row.score?.financial)}

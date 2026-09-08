@@ -10,6 +10,8 @@ export type CourseRound = {
   economy_condition?: string | null;
   opened_at?: string | null;
   closed_at?: string | null;
+  /** Iteration 5 §7: professor-set decision deadline. Null = not established. */
+  decision_deadline?: string | null;
 };
 
 export type ActiveCourse = {
@@ -76,14 +78,28 @@ export async function loadActiveCourse(
 ): Promise<ActiveCourse | null> {
   const { supabase, user } = await requireInstructor();
 
-  const { data: sessions } = await supabase
-    .from("sessions")
-    .select(
-      "id, name, status, course_code, semester, announcement, practice_rounds, rounds_total, teams(id), rounds(id, round_number, round_type, status, economy_condition, opened_at, closed_at)"
-    )
-    .eq("instructor_id", user.id)
-    .order("created_at", { ascending: false });
-  const list = sessions ?? [];
+  const sessionColumns = (roundFields: string) =>
+    `id, name, status, course_code, semester, announcement, practice_rounds, rounds_total, teams(id), rounds(${roundFields})`;
+  const ROUND_FIELDS =
+    "id, round_number, round_type, status, economy_condition, opened_at, closed_at";
+
+  type SessionRecord = Record<string, unknown>;
+  const fetchSessions = async (roundFields: string) =>
+    supabase
+      .from("sessions")
+      .select(sessionColumns(roundFields))
+      .eq("instructor_id", user.id)
+      .order("created_at", { ascending: false });
+
+  const { data: initialSessions, error: sessionsError } = await fetchSessions(
+    `${ROUND_FIELDS}, decision_deadline`
+  );
+  // migration-v9-round-deadline.sql has not been applied yet: the portal still
+  // works, deadlines just read as "not established".
+  const sessions = sessionsError
+    ? (await fetchSessions(ROUND_FIELDS)).data
+    : initialSessions;
+  const list = (sessions ?? []) as unknown as SessionRecord[];
   const selected =
     list.find((s) => s.id === preferredSessionId) ??
     list.find((s) => s.status === "active") ??

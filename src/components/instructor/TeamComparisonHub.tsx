@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   CircleDollarSign,
@@ -34,6 +35,8 @@ export type ComparisonRow = {
   employee: number | null;
   process: number | null;
   learning: number | null;
+  /** Overall score in the previous processed round, for Trend. */
+  previousOverall?: number | null;
 };
 
 function avg(values: Array<number | null>) {
@@ -57,15 +60,39 @@ export function TeamComparisonHub({
   rows: ComparisonRow[];
   rail: CourseRailState;
 }) {
+  /**
+   * Iteration 5: an insight must be traceable — "4 teams are behind" has to
+   * land on those four teams, not on an unfiltered list the professor then
+   * has to search. Round Insights links here with ?standing= and ?perspective=.
+   */
+  const searchParams = useSearchParams();
   const [teamFilter, setTeamFilter] = useState("all");
-  const [perspective, setPerspective] = useState("all");
+  const [perspective, setPerspective] = useState(
+    searchParams.get("perspective") ?? "all"
+  );
+  const [standing, setStanding] = useState(searchParams.get("standing") ?? "all");
   const [page, setPage] = useState(0);
   const pageSize = 5;
-  const filtered = useMemo(
-    () =>
-      teamFilter === "all" ? rows : rows.filter((r) => r.teamId === teamFilter),
-    [rows, teamFilter]
-  );
+  const classMean = useMemo(() => {
+    const nums = rows
+      .map((r) => r.overall)
+      .filter((v): v is number => v != null);
+    return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : null;
+  }, [rows]);
+  const filtered = useMemo(() => {
+    let out =
+      teamFilter === "all" ? rows : rows.filter((r) => r.teamId === teamFilter);
+    if (standing !== "all" && classMean != null) {
+      out = out.filter((r) =>
+        r.overall == null
+          ? false
+          : standing === "excelling"
+            ? r.overall > classMean
+            : r.overall < classMean
+      );
+    }
+    return out;
+  }, [classMean, rows, standing, teamFilter]);
   const ranked = [...filtered].sort((a, b) => (b.overall ?? -1) - (a.overall ?? -1));
   const classAvg = {
     overall: avg(rows.map((r) => r.overall)),
@@ -169,10 +196,40 @@ export function TeamComparisonHub({
           <option value="process">Internal Process</option>
           <option value="learning">Learning & Growth</option>
         </FilterCard>
-        <FilterCard label="View By" value="score" onChange={() => undefined} hint="Percent Score">
-          <option value="score">View By</option>
+        <FilterCard
+          label="Standing"
+          value={standing}
+          onChange={(v) => {
+            setStanding(v);
+            setPage(0);
+          }}
+          hint="vs. Class Average"
+        >
+          <option value="all">All Teams</option>
+          <option value="excelling">Above class average</option>
+          <option value="behind">Below class average</option>
         </FilterCard>
       </div>
+
+      {standing !== "all" ? (
+        <p className="flex flex-wrap items-center gap-2 rounded-lg bg-[var(--portal-accent-blue-soft)] px-3 py-2 text-[0.8125rem] text-[var(--portal-ink)]">
+          <span>
+            Showing {filtered.length} team{filtered.length === 1 ? "" : "s"}{" "}
+            {standing === "excelling" ? "above" : "below"} the class average
+            {classMean != null ? ` of ${classMean.toFixed(1)}` : ""}.
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              setStanding("all");
+              setPage(0);
+            }}
+            className="font-semibold text-[var(--portal-accent-blue)] hover:underline"
+          >
+            Show all teams
+          </button>
+        </p>
+      ) : null}
 
       <div className="grid gap-2 lg:grid-cols-[1.15fr_repeat(4,minmax(0,1fr))]">
         <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-4 py-3 shadow-sm">
@@ -324,7 +381,15 @@ export function TeamComparisonHub({
                       ) : (
                         <td className="px-2.5 py-3 text-[var(--portal-muted)]">—</td>
                       )}
-                      <td className="px-2.5 py-3 tabular-nums">—</td>
+                      <td className="px-2.5 py-3">
+                        <DeltaPill
+                          value={
+                            row.overall == null || row.previousOverall == null
+                              ? null
+                              : row.overall - row.previousOverall
+                          }
+                        />
+                      </td>
                       <td className="px-2.5 py-3">
                         <DeltaPill
                           value={

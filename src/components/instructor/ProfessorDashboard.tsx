@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BarChart3,
   Bell,
@@ -22,6 +22,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatCompactCurrency, formatCurrency } from "@/lib/utils";
+import { deadlineState } from "@/lib/instructor/deadline";
+import {
+  nextActions as buildNextActions,
+  roundLifecycle,
+} from "@/lib/instructor/next-actions";
+import { rememberSelectedTeam } from "@/lib/instructor/selected-team";
 
 export type RoundSummary = {
   id: string;
@@ -29,6 +35,8 @@ export type RoundSummary = {
   round_type: string;
   status: string;
   economy_condition?: string | null;
+  /** Iteration 5 §7: set in Round Management; null = not established. */
+  decision_deadline?: string | null;
 };
 
 export type TeamLite = {
@@ -79,6 +87,44 @@ export type SessionSummary = {
   teams: TeamLite[];
   completedRounds: number;
 };
+
+/**
+ * Iteration 5 §7: "Time remaining should calculate dynamically. When the
+ * deadline passes, do not continue displaying a positive countdown ... If no
+ * deadline has been established, provide a neutral state rather than a
+ * fabricated date."
+ */
+function DeadlineStrip({ round }: { round: RoundSummary | null }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(timer);
+  }, []);
+  const due = deadlineState(round?.decision_deadline, now);
+  return (
+    <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[var(--portal-accent-blue-soft)] px-4 py-2.5 text-[0.75rem]">
+      <p className="font-bold uppercase tracking-wide text-[var(--portal-title)]">
+        Decisions Due:{" "}
+        <span className="font-normal normal-case text-[var(--portal-ink)]">
+          {due.kind === "unset" ? "No deadline set" : due.label}
+        </span>
+      </p>
+      <p
+        className={`font-semibold ${
+          due.kind === "passed"
+            ? "text-[var(--portal-brand)]"
+            : "text-[var(--portal-accent-blue)]"
+        }`}
+      >
+        {due.kind === "unset"
+          ? "Set a deadline in Round Management"
+          : due.kind === "passed"
+            ? "Deadline passed"
+            : `Time Remaining: ${due.remaining}`}
+      </p>
+    </div>
+  );
+}
 
 function StatusPill({
   state,
@@ -143,12 +189,25 @@ function roundSubline(open: boolean, started: number, submitted: number, total: 
 export function ProfessorDashboard({
   sessions,
   professorName,
+  initialTeamId,
 }: {
   sessions: SessionSummary[];
   professorName: string;
+  /**
+   * Iteration 5 §15: the team the professor last taught from, resolved on the
+   * server so the selection survives navigation between teaching pages.
+   */
+  initialTeamId?: string | null;
 }) {
   const active = sessions.find((s) => s.status === "active") ?? sessions[0];
-  const [teamId, setTeamId] = useState(active?.teams[0]?.id ?? "");
+  const [teamId, setTeamId] = useState(
+    initialTeamId ?? active?.teams[0]?.id ?? ""
+  );
+
+  function selectTeam(id: string) {
+    setTeamId(id);
+    rememberSelectedTeam(id);
+  }
 
   const selectedTeam = useMemo(
     () => active?.teams.find((t) => t.id === teamId) ?? active?.teams[0] ?? null,
@@ -222,55 +281,22 @@ export function ProfessorDashboard({
     },
   ];
 
-  const nextActions = [];
-  if (!open) {
-    nextActions.push({
-      title: "Open Round",
-      body: "Open the next practice or competitive decision window.",
-      href: `/sessions/${active.id}/rounds`,
-      label: "Go to Round Management →",
-      primary: true,
-    });
-  } else if (!allSubmitted) {
-    nextActions.push({
-      title: "Monitor Submissions",
-      body: `${submitted} of ${active.progress.total} teams have submitted.`,
-      href: `/sessions/${active.id}/rounds`,
-      label: "Review Submissions →",
-      primary: true,
-    });
-    nextActions.push({
-      title: "Close Round",
-      body: "Close the decision window when you are ready to process.",
-      href: `/sessions/${active.id}/rounds`,
-      label: "Close Round",
-      primary: false,
-    });
-  } else {
-    nextActions.push({
-      title: "Compute Results",
-      body: "Process this round to lock decisions and generate outcomes.",
-      href: `/sessions/${active.id}/rounds`,
-      label: "Process Round →",
-      primary: true,
-    });
-  }
-  if (latestClosed) {
-    nextActions.push({
-      title: "View Round Insights",
-      body: "Turn processed results into teaching points.",
-      href: "/sessions/teaching/round-insights",
-      label: "Open Round Insights",
-      primary: false,
-    });
-    nextActions.push({
-      title: "Begin Debrief",
-      body: "Open the discussion outline for this class.",
-      href: "/sessions/teaching/debrief",
-      label: "Begin Debrief",
-      primary: false,
-    });
-  }
+  // Iteration 5 §11: contextual, prioritised by round state, never all at once.
+  const nextActions = buildNextActions({
+    sessionId: active.id,
+    lifecycle: roundLifecycle({
+      hasOpenRound: open,
+      hasClosedRound: Boolean(latestClosed),
+      teamsSubmitted: submitted,
+      teamsTotal: active.progress.total,
+    }),
+    teamsSubmitted: submitted,
+    teamsTotal: active.progress.total,
+    selectedTeamId: selectedTeam?.id ?? null,
+    selectedTeamName: selectedTeam?.name ?? null,
+    openRoundId: active.openRound?.id ?? null,
+    latestClosedRoundId: latestClosed?.id ?? null,
+  });
 
   const progressPct =
     active.rounds_total + active.practice_rounds > 0
@@ -514,17 +540,7 @@ export function ProfessorDashboard({
               );
             })}
           </div>
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[var(--portal-accent-blue-soft)] px-4 py-2.5 text-[0.75rem]">
-            <p className="font-bold uppercase tracking-wide text-[var(--portal-title)]">
-              Decisions Due:{" "}
-              <span className="font-normal normal-case text-[var(--portal-ink)]">
-                —
-              </span>
-            </p>
-            <p className="font-semibold text-[var(--portal-accent-blue)]">
-              Time Remaining: —
-            </p>
-          </div>
+          <DeadlineStrip round={active.openRound} />
         </section>
 
         <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
@@ -622,7 +638,7 @@ export function ProfessorDashboard({
             Next Actions
           </h2>
           <ul className="mt-3 space-y-3">
-            {nextActions.slice(0, 3).map((action) => (
+            {nextActions.map((action) => (
               <li
                 key={action.title}
                 className="rounded-lg border border-[var(--portal-sidebar-border)] p-3"
@@ -662,7 +678,7 @@ export function ProfessorDashboard({
                 <select
                   className="mt-2 w-full rounded-md border border-[var(--portal-sidebar-border)] bg-white px-2 py-1.5 text-sm"
                   value={selectedTeam?.id ?? ""}
-                  onChange={(e) => setTeamId(e.target.value)}
+                  onChange={(e) => selectTeam(e.target.value)}
                 >
                   {active.teams.map((t) => (
                     <option key={t.id} value={t.id}>

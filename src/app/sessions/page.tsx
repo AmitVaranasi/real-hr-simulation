@@ -3,6 +3,8 @@ import { DISCRETIONARY_BUDGET } from "@/lib/engine/defaults";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
+import { selectedTeamId } from "@/lib/instructor/selected-team";
+
 export const dynamic = "force-dynamic";
 
 function uniqueOrMixed(values: Array<string | null | undefined>) {
@@ -46,12 +48,14 @@ export default async function SessionsPage() {
         round_type: string;
         status: string;
         economy_condition?: string | null;
+        decision_deadline?: string | null;
       }>).map((r) => ({
         id: r.id,
         round_number: r.round_number,
         round_type: r.round_type,
         status: r.status,
         economy_condition: r.economy_condition ?? null,
+        decision_deadline: r.decision_deadline ?? null,
       }));
       const teams = (s.teams ?? []) as Array<{
         id: string;
@@ -165,10 +169,16 @@ export default async function SessionsPage() {
     })
   );
 
+  // Iteration 5 §15: honour the team the professor last taught from.
+  const remembered = await selectedTeamId(
+    summaries.flatMap((s) => s.teams.map((t) => t.id))
+  );
+
   return (
     <ProfessorDashboard
       sessions={summaries}
       professorName={profile?.display_name ?? "Professor"}
+      initialTeamId={remembered}
     />
   );
 }

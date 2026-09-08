@@ -96,6 +96,8 @@ CREATE TABLE public.rounds (
   leaderboard_released BOOLEAN NOT NULL DEFAULT FALSE,
   opened_at TIMESTAMPTZ,
   closed_at TIMESTAMPTZ,
+  -- Professor-set student decision deadline; NULL = not established.
+  decision_deadline TIMESTAMPTZ,
   UNIQUE(session_id, round_number)
 );
 

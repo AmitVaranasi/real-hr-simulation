@@ -20,6 +20,11 @@ import {
   ProfessorTabBar,
 } from "@/components/instructor/ProfessorChrome";
 import { DISCRETIONARY_BUDGET } from "@/lib/engine/defaults";
+import {
+  deadlineState,
+  fromDateTimeLocal,
+  toDateTimeLocal,
+} from "@/lib/instructor/deadline";
 import { formatCurrency } from "@/lib/utils";
 import type { EconomyCondition } from "@/lib/engine/types";
 
@@ -31,6 +36,8 @@ export type RoundRow = {
   economy_condition: EconomyCondition;
   opened_at?: string | null;
   closed_at?: string | null;
+  /** Iteration 5 §7: professor-set decision deadline. Null = not established. */
+  decision_deadline?: string | null;
   submittedCount?: number;
 };
 
@@ -204,6 +211,18 @@ export function RoundControls({
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status, economy_condition: economy }),
+    });
+    setLoadingId(null);
+    window.location.reload();
+  }
+
+  /** Iteration 5 §7: "Deadline should populate from Round Management." */
+  async function saveDeadline(roundId: string, value: string) {
+    setLoadingId(roundId);
+    await fetch(`/api/sessions/${sessionId}/rounds/${roundId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ decision_deadline: fromDateTimeLocal(value) }),
     });
     setLoadingId(null);
     window.location.reload();
@@ -392,6 +411,7 @@ export function RoundControls({
               ) : null}
               {visible.map((round) => {
                 const window = windowCopy(round);
+                const due = deadlineState(round.decision_deadline);
                 return (
                   <tr
                     key={round.id}
@@ -434,6 +454,35 @@ export function RoundControls({
                       <p className={`mt-0.5 text-[0.6875rem] ${window.secondaryClass}`}>
                         {window.secondary}
                       </p>
+                      <p className="mt-2 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+                        Decisions due
+                      </p>
+                      {round.status === "closed" ? (
+                        <p className="text-[0.6875rem] text-[var(--portal-ink)]">
+                          {due.kind === "unset" ? "No deadline set" : due.label}
+                        </p>
+                      ) : (
+                        <input
+                          type="datetime-local"
+                          className="mt-0.5 w-full rounded-md border border-[var(--portal-sidebar-border)] px-2 py-1 text-[0.6875rem] text-[var(--portal-ink)]"
+                          defaultValue={toDateTimeLocal(round.decision_deadline)}
+                          disabled={loadingId === round.id}
+                          onChange={(e) =>
+                            void saveDeadline(round.id, e.target.value)
+                          }
+                        />
+                      )}
+                      {due.kind !== "unset" ? (
+                        <p
+                          className={`mt-0.5 text-[0.6875rem] ${
+                            due.kind === "passed"
+                              ? "text-[var(--portal-brand)]"
+                              : "text-emerald-700"
+                          }`}
+                        >
+                          {due.remaining}
+                        </p>
+                      ) : null}
                     </td>
                     <td className="px-4 py-3 tabular-nums font-medium text-[var(--portal-ink)]">
                       {teamCount || "—"}

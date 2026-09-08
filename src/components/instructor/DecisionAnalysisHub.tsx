@@ -97,7 +97,17 @@ export function DecisionAnalysisHub({
   scores: ScoreRow[];
   spends: SpendRow[];
 }) {
-  const [roundId, setRoundId] = useState(rounds[rounds.length - 1]?.id ?? "");
+  // Iteration 5: open on the latest PROCESSED round. Defaulting to the newest
+  // round lands on the open one, which has no outcomes, so every analysis
+  // panel renders blank until the professor changes the selector.
+  const [roundId, setRoundId] = useState(() => {
+    const processed = rounds.filter((r) => r.status === "closed");
+    return (
+      processed[processed.length - 1]?.id ??
+      rounds[rounds.length - 1]?.id ??
+      ""
+    );
+  });
   const [teamFilter, setTeamFilter] = useState("all");
   const [areaFilter, setAreaFilter] = useState("all");
   const [tab, setTab] = useState("spending");

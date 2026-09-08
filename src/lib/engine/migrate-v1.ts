@@ -105,10 +105,26 @@ export function parseJsonColumn<T>(value: unknown, fallback: T): T {
   return value as T;
 }
 
+/**
+ * The V2 JSON columns are declared `DEFAULT '[]'::jsonb` (migration-v2.sql), so
+ * every row — V1 rows included — has a non-null value there. Presence alone
+ * therefore cannot tell the two schemas apart: a genuine V1 row would take the
+ * V2 path and decode as "no hires, no pay decisions". A row is V2 only when one
+ * of those columns actually carries data.
+ */
+function hasV2Payload(value: unknown): boolean {
+  const parsed = parseJsonColumn<unknown>(value, null);
+  if (parsed == null) return false;
+  if (Array.isArray(parsed)) return parsed.length > 0;
+  if (typeof parsed === "object") return Object.keys(parsed).length > 0;
+  return false;
+}
+
 export function rowToDecision(row: Record<string, unknown>): Decision {
   const hasV2 =
-    row.positions_to_fill_json != null ||
-    row.role_compensation_json != null;
+    hasV2Payload(row.positions_to_fill_json) ||
+    hasV2Payload(row.role_compensation_json) ||
+    hasV2Payload(row.role_performance_json);
 
   if (!hasV2) {
     return migrateV1RowToDecision(row);

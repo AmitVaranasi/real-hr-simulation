@@ -31,6 +31,7 @@ import {
   type CourseRailState,
 } from "@/components/instructor/ProfessorChrome";
 import { ProfessorPageHeader } from "@/components/instructor/ProfessorShell";
+import { deadlineState } from "@/lib/instructor/deadline";
 
 const TEACHING_TABS = [
   { id: "hub", label: "Overview", href: "/sessions/teaching" },
@@ -103,14 +104,14 @@ const TEAM_PATTERNS = [
     body: "High performance across multiple perspectives.",
     icon: ArrowUp,
     wrap: "bg-emerald-50 text-emerald-600",
-    href: "/sessions/class-performance/team-comparison",
+    href: "/sessions/class-performance/team-comparison?standing=excelling",
   },
   {
     headline: "teams are behind",
     body: "Low scores in Learning & Growth.",
     icon: ArrowDown,
     wrap: "bg-amber-50 text-amber-600",
-    href: "/sessions/class-performance/team-comparison",
+    href: "/sessions/class-performance/team-comparison?standing=behind",
   },
   {
     headline: "Budget variance",
@@ -284,6 +285,11 @@ export function RoundInsightsView({
   submitted,
   classAvg,
   open,
+  topArea,
+  watchArea,
+  excelling,
+  behind,
+  deadline,
 }: {
   rail: CourseRailState;
   sessionId: string | null;
@@ -292,7 +298,43 @@ export function RoundInsightsView({
   submitted: string;
   classAvg: string;
   open: boolean;
+  /** Iteration 5: generated from simulation results, not authored. */
+  topArea?: string | null;
+  watchArea?: string | null;
+  excelling?: number | null;
+  behind?: number | null;
+  /** Iteration 5 §7: from Round Management; null = no deadline established. */
+  deadline?: string | null;
 }) {
+  const due = deadlineState(deadline);
+  const insightValues: Record<string, string> = {
+    "Top Performing Area": topArea ?? "—",
+    "Area to Watch": watchArea ?? "—",
+  };
+  const patternCounts: Record<string, number | null> = {
+    "teams are excelling": excelling ?? null,
+    "teams are behind": behind ?? null,
+  };
+  /**
+   * Iteration 5: "We should never create an instructional insight that the
+   * professor cannot trace back to simulation data." Each card links to the
+   * view that shows the evidence behind it. Cards with no computed value link
+   * nowhere rather than to a page that cannot explain them.
+   */
+  const PERSPECTIVE_PARAM: Record<string, string> = {
+    Financial: "financial",
+    Employee: "employee",
+    "Internal Process": "process",
+    "Learning & Growth": "learning",
+  };
+  const evidenceHref = (label: string): string | null => {
+    const value = insightValues[label];
+    if (!value || value === "—") return null;
+    const param = PERSPECTIVE_PARAM[value];
+    return param
+      ? `/sessions/class-performance/team-comparison?perspective=${param}`
+      : null;
+  };
   return (
     <TeachingChrome
       title="Teaching & Debrief"
@@ -310,7 +352,11 @@ export function RoundInsightsView({
         { label: "Teams", value: teams ? String(teams) : "—", hint: "In Session" },
         { label: "Submissions", value: submitted, hint: "Submitted" },
         { label: "Class Avg BSC", value: classAvg, hint: "Overall Average" },
-        { label: "Time Remaining", value: "—", hint: "Until Due" },
+        {
+          label: "Time Remaining",
+          value: due.kind === "unset" ? "—" : due.remaining,
+          hint: due.kind === "unset" ? "No deadline set" : "Until Due",
+        },
       ]}
     >
       <div className="grid gap-3 lg:grid-cols-5">
@@ -321,21 +367,39 @@ export function RoundInsightsView({
           <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-5 lg:grid-cols-4">
             {INSIGHT_CARDS.map((card) => {
               const Icon = card.icon;
-              return (
-                <div
-                  key={card.label}
-                  className="flex flex-col items-center border-[var(--portal-sidebar-border)] px-1 text-center lg:border-l lg:first:border-l-0"
-                >
+              const href = evidenceHref(card.label);
+              const inner = (
+                <>
                   <Icon className={`h-7 w-7 ${card.tone}`} strokeWidth={1.75} />
                   <p className="mt-2.5 text-[0.8125rem] font-semibold text-[var(--portal-title)]">
                     {card.label}
                   </p>
                   <p className="mt-1 text-sm font-bold text-[var(--portal-title)]">
-                    {card.value}
+                    {insightValues[card.label] ?? card.value}
                   </p>
                   <p className="mt-1.5 text-[0.75rem] leading-snug text-[var(--portal-muted)]">
                     {card.body}
                   </p>
+                  {href ? (
+                    <span className="mt-1.5 text-[0.6875rem] font-semibold text-[var(--portal-accent-blue)]">
+                      See the evidence
+                    </span>
+                  ) : null}
+                </>
+              );
+              const shell =
+                "flex flex-col items-center border-[var(--portal-sidebar-border)] px-1 text-center lg:border-l lg:first:border-l-0";
+              return href ? (
+                <Link
+                  key={card.label}
+                  href={href}
+                  className={`${shell} rounded-lg hover:bg-[#f8fafc]`}
+                >
+                  {inner}
+                </Link>
+              ) : (
+                <div key={card.label} className={shell}>
+                  {inner}
                 </div>
               );
             })}
@@ -369,7 +433,11 @@ export function RoundInsightsView({
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm font-bold text-[var(--portal-title)]">
-                        {"noCount" in pattern ? pattern.headline : `— ${pattern.headline}`}
+                        {"noCount" in pattern
+                          ? pattern.headline
+                          : `${
+                              patternCounts[pattern.headline] ?? "—"
+                            } ${pattern.headline}`}
                       </span>
                       <span className="mt-0.5 block text-[0.75rem] leading-snug text-[var(--portal-muted)]">
                         {pattern.body}
@@ -521,12 +589,22 @@ export function TeamInsightsView({
   topPerformer,
   rows,
   perspectives,
+  mostImproved,
+  needingSupport,
+  participation,
+  onTime,
 }: {
   rail: CourseRailState;
   sessionId: string | null;
   teams: number;
   classAvg: string;
   topPerformer: string;
+  mostImproved?: string;
+  needingSupport?: string;
+  /** Share of teams that submitted decisions for the round in view. */
+  participation?: string | null;
+  /** Share of submissions that landed on or before the decision deadline. */
+  onTime?: string | null;
   rows: Array<{
     name: string;
     score: string;
@@ -553,8 +631,16 @@ export function TeamInsightsView({
         },
         { label: "Class Avg Score", value: classAvg, hint: "Overall Average" },
         { label: "Top Performer", value: topPerformer, hint: "Overall Score" },
-        { label: "Most Improved", value: "—", hint: "vs Last Round" },
-        { label: "Teams Needing Support", value: "—", hint: "Score < 50" },
+        {
+          label: "Most Improved",
+          value: mostImproved ?? "—",
+          hint: "vs Last Round",
+        },
+        {
+          label: "Teams Needing Support",
+          value: needingSupport ?? "—",
+          hint: "Score < 50",
+        },
       ]}
     >
       <div className="grid gap-3 lg:grid-cols-2">
@@ -751,18 +837,33 @@ export function TeamInsightsView({
           </div>
         </section>
 
-        {/* Engagement & Participation — no engagement events are stored yet. */}
+        {/*
+          Engagement & Participation. Iteration 5: "We should not create a
+          score simply because the platform can count clicks, comments, or
+          logins. The score needs a defensible behavioral basis." Submission
+          behaviour is recorded and defensible, so it is shown; Team Discussion
+          Activity and Collaboration Score have no recorded basis and stay
+          blank rather than being invented.
+        */}
         <article className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
           <h2 className="font-bold text-[var(--portal-title)]">
             Engagement &amp; Participation
           </h2>
           <ul className="mt-3 divide-y divide-[var(--portal-sidebar-border)]">
             {[
-              { label: "Avg. Decision Participation", Icon: UserRound },
-              { label: "On-Time Submissions", Icon: Clock },
-              { label: "Team Discussion Activity", Icon: MessageSquare },
-              { label: "Collaboration Score", Icon: Users },
-            ].map(({ label, Icon }) => (
+              {
+                label: "Avg. Decision Participation",
+                Icon: UserRound,
+                value: participation ?? null,
+              },
+              {
+                label: "On-Time Submissions",
+                Icon: Clock,
+                value: onTime ?? null,
+              },
+              { label: "Team Discussion Activity", Icon: MessageSquare, value: null },
+              { label: "Collaboration Score", Icon: Users, value: null },
+            ].map(({ label, Icon, value }) => (
               <li
                 key={label}
                 className="flex items-center justify-between gap-3 py-3"
@@ -774,8 +875,14 @@ export function TeamInsightsView({
                   />
                   <span className="truncate">{label}</span>
                 </span>
-                <span className="shrink-0 font-semibold text-[var(--portal-muted)]">
-                  —
+                <span
+                  className={`shrink-0 font-semibold ${
+                    value
+                      ? "text-[var(--portal-ink)]"
+                      : "text-[var(--portal-muted)]"
+                  }`}
+                >
+                  {value ?? "—"}
                 </span>
               </li>
             ))}
@@ -863,10 +970,27 @@ const ACTIVITY_IDEAS = [
 export function DebriefView({
   rail,
   sessionId,
+  deadline,
+  reflections,
+  reflectionCount,
+  teamCount,
+  participation,
 }: {
   rail: CourseRailState;
   sessionId: string | null;
+  /** Iteration 5 §7: from Round Management; null = no deadline established. */
+  deadline?: string | null;
+  reflections?: Array<{
+    teamName: string;
+    content: string;
+    submittedAt: string | null;
+  }>;
+  reflectionCount?: number | null;
+  teamCount?: number | null;
+  participation?: string | null;
 }) {
+  const due = deadlineState(deadline);
+  const recent = reflections ?? [];
   return (
     <TeachingChrome
       title="Discussion & Debrief"
@@ -877,10 +1001,27 @@ export function DebriefView({
       sessionId={sessionId}
       tiles={[
         { label: "Discussion Prompts", value: String(DISCUSSION_PROMPTS.length), hint: "Active Prompts" },
-        { label: "Student Participation", value: "—", hint: "Avg. Participation" },
-        { label: "Reflection Submissions", value: "—", hint: "Submitted" },
+        {
+          label: "Student Participation",
+          value: participation ?? "—",
+          hint: "Avg. Participation",
+        },
+        {
+          label: "Reflection Submissions",
+          value:
+            reflectionCount == null
+              ? "—"
+              : teamCount
+                ? `${reflectionCount} of ${teamCount}`
+                : String(reflectionCount),
+          hint: "Submitted",
+        },
         { label: "Insights Generated", value: "—", hint: "Key Insights" },
-        { label: "Time Remaining", value: "—", hint: "Until Due" },
+        {
+          label: "Time Remaining",
+          value: due.kind === "unset" ? "—" : due.remaining,
+          hint: due.kind === "unset" ? "No deadline set" : "Until Due",
+        },
       ]}
     >
       <div className="grid gap-3 lg:grid-cols-[1.35fr_1fr]">
@@ -960,13 +1101,40 @@ export function DebriefView({
               View All
             </span>
           </div>
-          {/* Student reflections are not stored as a first-class record yet. */}
-          <p className="mt-8 text-center text-sm text-[var(--portal-muted)]">
-            —
-            <span className="mt-1 block text-[0.8125rem]">
-              No student reflections are recorded yet.
-            </span>
-          </p>
+          {recent.length === 0 ? (
+            <p className="mt-8 text-center text-sm text-[var(--portal-muted)]">
+              —
+              <span className="mt-1 block text-[0.8125rem]">
+                No reflections have been submitted for this round yet.
+              </span>
+            </p>
+          ) : (
+            <ul className="mt-4 space-y-3">
+              {recent.map((r) => (
+                <li
+                  key={`${r.teamName}-${r.submittedAt ?? ""}`}
+                  className="rounded-lg border border-[var(--portal-sidebar-border)] p-3"
+                >
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="text-[0.8125rem] font-bold text-[var(--portal-title)]">
+                      {r.teamName}
+                    </p>
+                    <p className="text-[0.6875rem] text-[var(--portal-muted)]">
+                      {r.submittedAt
+                        ? new Date(r.submittedAt).toLocaleDateString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                          })
+                        : "—"}
+                    </p>
+                  </div>
+                  <p className="mt-1 line-clamp-3 text-[0.8125rem] leading-snug text-[var(--portal-ink)]">
+                    {r.content}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
           <Link
             href="/sessions/teaching/team-insights"
             className="mt-8 inline-block text-sm font-semibold text-[var(--portal-accent-blue)] hover:underline"
