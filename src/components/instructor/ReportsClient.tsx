@@ -232,15 +232,15 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
           <table className="w-full text-sm">
             <thead className="bg-[var(--portal-page)]">
               <tr>
-                <th className="px-3 py-2 text-left">Team</th>
+                <th className="px-3 py-2 text-left whitespace-nowrap">Team</th>
                 {data.rounds.map((r) => (
                   <th key={r.id} className="px-3 py-2">
                     R{r.round_number}
                   </th>
                 ))}
-                <th className="px-3 py-2">Avg (competitive)</th>
-                <th className="px-3 py-2">Override</th>
-                <th className="px-3 py-2">Inspect</th>
+                <th className="px-3 py-2 whitespace-nowrap">Avg (competitive)</th>
+                <th className="px-3 py-2 whitespace-nowrap">Override</th>
+                <th className="px-3 py-2 whitespace-nowrap">Inspect</th>
               </tr>
             </thead>
             <tbody>
@@ -335,10 +335,10 @@ export function ReportsClient({ sessionId }: { sessionId: string }) {
         <table className="mt-6 w-full text-sm">
           <thead className="bg-[var(--portal-page)]">
             <tr>
-              <th className="px-3 py-2 text-left">Team</th>
-              <th className="px-3 py-2">Round</th>
-              <th className="px-3 py-2">Decision submitted</th>
-              <th className="px-3 py-2">Reflection</th>
+              <th className="px-3 py-2 text-left whitespace-nowrap">Team</th>
+              <th className="px-3 py-2 whitespace-nowrap">Round</th>
+              <th className="px-3 py-2 whitespace-nowrap">Decision submitted</th>
+              <th className="px-3 py-2 whitespace-nowrap">Reflection</th>
             </tr>
           </thead>
           <tbody>

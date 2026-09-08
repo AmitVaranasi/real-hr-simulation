@@ -14,7 +14,7 @@ export async function PATCH(
   if (error) return error;
 
   const body = await request.json();
-  const { status, economy_condition } = body;
+  const { status, economy_condition, decision_deadline } = body;
 
   const { data: session } = await supabase
     .from("sessions")
@@ -37,6 +37,11 @@ export async function PATCH(
   }
   if (economy_condition) {
     updates.economy_condition = economy_condition;
+  }
+  // Iteration 5 §7: the deadline is set here, in Round Management. `null`
+  // clears it back to the neutral "no deadline established" state.
+  if (decision_deadline !== undefined) {
+    updates.decision_deadline = decision_deadline;
   }
 
   const { data: round, error: roundError } = await supabase

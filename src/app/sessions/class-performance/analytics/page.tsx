@@ -1,41 +1,25 @@
+import { ReportsAnalyticsHub } from "@/components/instructor/ReportsAnalyticsHub";
+import { loadClassPerformanceBundle } from "@/lib/instructor/load-class-performance";
 import {
-  ProfessorCardGrid,
-  ProfessorPageHeader,
-  ProfessorStubPanel,
-} from "@/components/instructor/ProfessorShell";
+  courseRail,
+  loadActiveCourse,
+} from "@/lib/instructor/load-course-context";
 
-export default function ClassAnalyticsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ClassAnalyticsPage() {
+  const course = await loadActiveCourse();
+  const bundle = course
+    ? await loadClassPerformanceBundle(course.sessionId)
+    : { teams: [], rounds: [], scores: [], spends: [] };
+
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
-      <ProfessorPageHeader
-        title="Reports & Analytics"
-        subtitle="Class-level analytics shells aligned to the professor information architecture."
-        breadcrumbs={[
-          { label: "Dashboard", href: "/sessions" },
-          { label: "Class Performance" },
-          { label: "Reports & Analytics" },
-        ]}
-      />
-      <ProfessorStubPanel title="Analytics overview">
-        Additional analytics dashboards will land here. Live exports remain under
-        each session&apos;s Industry Results page.
-      </ProfessorStubPanel>
-      <div className="mt-4">
-        <ProfessorCardGrid
-          items={[
-            {
-              title: "Team Comparison",
-              body: "Side-by-side team performance shell.",
-              href: "/sessions/class-performance/team-comparison",
-            },
-            {
-              title: "Decision Analysis",
-              body: "Module decision patterns shell.",
-              href: "/sessions/class-performance/decision-analysis",
-            },
-          ]}
-        />
-      </div>
-    </div>
+    <ReportsAnalyticsHub
+      sessionId={course?.sessionId ?? ""}
+      rail={courseRail(course)}
+      teams={bundle.teams}
+      rounds={bundle.rounds}
+      scores={bundle.scores}
+    />
   );
 }

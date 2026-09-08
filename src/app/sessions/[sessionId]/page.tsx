@@ -142,7 +142,11 @@ export default async function SessionDetailPage({
         <h2 className="text-lg font-semibold text-[var(--portal-title)]">
           Round processing
         </h2>
-        <RoundControls sessionId={sessionId} rounds={rounds} />
+        <RoundControls
+          sessionId={sessionId}
+          teamCount={teams.length}
+          rounds={rounds}
+        />
       </section>
 
       <section className="mt-10 rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5">

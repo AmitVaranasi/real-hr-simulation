@@ -1,19 +1,21 @@
+import { IndustryScoringHub } from "@/components/instructor/IndustryScoringHub";
 import { LeaderboardRelease } from "@/components/instructor/LeaderboardRelease";
-import { LeaderboardTable } from "@/components/leaderboard/LeaderboardTable";
-import { buildLeaderboard } from "@/lib/leaderboard";
+import { loadClassPerformanceBundle } from "@/lib/instructor/load-class-performance";
+import {
+  courseRail,
+  loadActiveCourse,
+} from "@/lib/instructor/load-course-context";
 import { createClient } from "@/lib/supabase/server";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 
 export default async function InstructorLeaderboardPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ sessionId: string }>;
-  searchParams: Promise<{ round?: string }>;
 }) {
   const { sessionId } = await params;
-  const { round: roundId } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -22,12 +24,16 @@ export default async function InstructorLeaderboardPage({
 
   const { data: session } = await supabase
     .from("sessions")
-    .select("*, rounds(*), teams(id, name, industry, strategy)")
+    .select("id, instructor_id, rounds(id, round_number, status, leaderboard_released)")
     .eq("id", sessionId)
     .eq("instructor_id", user.id)
     .single();
-
   if (!session) notFound();
+
+  const [course, bundle] = await Promise.all([
+    loadActiveCourse(sessionId),
+    loadClassPerformanceBundle(sessionId),
+  ]);
 
   const rounds = (session.rounds ?? []) as Array<{
     id: string;
@@ -36,44 +42,25 @@ export default async function InstructorLeaderboardPage({
     leaderboard_released: boolean;
   }>;
 
-  const closedRound =
-    rounds.find((r) => r.id === roundId && r.status === "closed") ??
-    rounds.filter((r) => r.status === "closed").pop();
-
-  let entries: ReturnType<typeof buildLeaderboard> = [];
-  if (closedRound) {
-    const { data: outcomes } = await supabase
-      .from("outcomes")
-      .select("team_id, total_score, instructor_override, revenue, stock_price")
-      .eq("round_id", closedRound.id);
-    entries = buildLeaderboard(session.teams ?? [], outcomes ?? []);
-  }
-
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
-      <Link
-        href={`/sessions/${sessionId}`}
-        className="text-sm text-[var(--portal-primary)] hover:underline"
-      >
-        ← Session
-      </Link>
-      <h1 className="mt-4 text-2xl font-bold">Leaderboard control</h1>
-
-      <section className="mt-8">
-        <h2 className="font-semibold">Release to students</h2>
-        <div className="mt-4">
+    <IndustryScoringHub
+      sessionId={sessionId}
+      rail={courseRail(course)}
+      teams={bundle.teams}
+      rounds={bundle.rounds}
+      scores={bundle.scores}
+    >
+      <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
+        <h2 className="text-sm font-bold text-[var(--portal-title)]">
+          Release to students
+        </h2>
+        <p className="mt-1 text-sm text-[var(--portal-muted)]">
+          Student leaderboard visibility is separate from this scoring view.
+        </p>
+        <div className="mt-3">
           <LeaderboardRelease sessionId={sessionId} rounds={rounds} />
         </div>
       </section>
-
-      {closedRound && entries.length > 0 && (
-        <section className="mt-10">
-          <h2 className="mb-4 font-semibold">
-            Preview — Round {closedRound.round_number}
-          </h2>
-          <LeaderboardTable entries={entries} />
-        </section>
-      )}
-    </div>
+    </IndustryScoringHub>
   );
 }

@@ -1,6 +1,12 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import {
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
 import { usePathname } from "next/navigation";
 import {
   PortalSidebar,
@@ -56,6 +62,8 @@ function PortalShellInner({
     courseName: string;
     term: string;
     roundsSummary: string;
+    teams?: number;
+    status?: string;
   } | null>(null);
 
   useEffect(() => {
@@ -129,7 +137,9 @@ function PortalShellInner({
 
         const { data: sessions } = await supabase
           .from("sessions")
-          .select("id, name, course_code, semester, status")
+          .select(
+            "id, name, course_code, semester, status, practice_rounds, rounds_total, teams(id)"
+          )
           .eq("instructor_id", user.id)
           .order("created_at", { ascending: false });
 
@@ -149,12 +159,17 @@ function PortalShellInner({
               .filter(Boolean)
               .join(" · ")
           );
+          const practice = Number(active.practice_rounds ?? 0);
+          const competitive = Number(active.rounds_total ?? 0);
+          const teamCount = Array.isArray(active.teams) ? active.teams.length : 0;
           setCourseSummary({
-            courseName: active.name,
-            term: [active.course_code, active.semester]
+            courseName: [active.course_code, active.name]
               .filter(Boolean)
-              .join(" · ") || "Active course",
-            roundsSummary: "Course operations · Simulation Lab",
+              .join(" ") || active.name,
+            term: active.semester || "Active course",
+            roundsSummary: `${practice} Practice + ${competitive} Competitive`,
+            teams: teamCount,
+            status: active.status,
           });
         } else {
           setContextTitle("Professor Portal");
@@ -203,7 +218,16 @@ function PortalShellInner({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--portal-page)]">
+    <div
+      className="min-h-screen bg-[var(--portal-page)]"
+      style={
+        role === "instructor"
+          ? ({
+              "--portal-sidebar-width": "var(--portal-professor-sidebar-width)",
+            } as CSSProperties)
+          : undefined
+      }
+    >
       <PortalTopBar
         displayName={displayName}
         roleLabel={roleBadge(role)}
@@ -242,7 +266,8 @@ function PortalShellInner({
             roleLabel={roleBadge(role)}
             homeHref={homeHref}
             showStudentChrome={role === "student"}
-            darkNav={role === "instructor" || role === "admin"}
+            professorChrome={role === "instructor"}
+            darkNav={role === "admin"}
             simulation={role === "student" ? simulation : null}
             courseSummary={role === "instructor" ? courseSummary : null}
           />
@@ -270,7 +295,8 @@ function PortalShellInner({
               roleLabel={roleBadge(role)}
               homeHref={homeHref}
               showStudentChrome={role === "student"}
-              darkNav={role === "instructor" || role === "admin"}
+              professorChrome={role === "instructor"}
+              darkNav={role === "admin"}
               simulation={role === "student" ? simulation : null}
               courseSummary={role === "instructor" ? courseSummary : null}
               onNavigate={() => setMobileOpen(false)}

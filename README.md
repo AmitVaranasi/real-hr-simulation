@@ -35,6 +35,8 @@ npm run dev
    - `supabase/migration-v5-admin.sql` (admin role + config/session read policies)
    - `supabase/migration-v6-full-admin.sql` (audit log, config revisions, disable flags, formula notes)
    - `supabase/migration-v7-student-leave-team.sql` (students can leave/switch teams)
+   - `supabase/migration-v8-org-dei.sql` (org design + DEI decision columns)
+   - `supabase/migration-v9-round-deadline.sql` (professor-set decision deadline on rounds)
 4. Enable **Email** auth in Supabase → Authentication
 5. Add `{APP_URL}/auth/callback` to Auth redirect URLs (password reset)
 6. Optional: set `ADMIN_EMAILS=you@school.edu` in `.env.local` to bootstrap admins
