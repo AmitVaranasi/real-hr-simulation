@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { leaveEligibility, type LeaveEligibility } from "@/lib/student/leave-team";
 import { redirect } from "next/navigation";
 
 export type StudentTeamContext = {
@@ -38,6 +39,11 @@ export type StudentTeamContext = {
     display_name: string;
   } | null;
   members: Array<{ display_name: string; joined_at: string | null }>;
+  /**
+   * Whether this student may leave, resolved server-side so the members page
+   * renders the real verdict instead of a button that 409s.
+   */
+  leave: LeaveEligibility;
 };
 
 export async function getStudentTeamContext(): Promise<StudentTeamContext> {
@@ -66,6 +72,7 @@ export async function getStudentTeamContext(): Promise<StudentTeamContext> {
   let openRound: StudentTeamContext["openRound"] = null;
   let instructor: StudentTeamContext["instructor"] = null;
   let members: StudentTeamContext["members"] = [];
+  let submittedDecisionCount = 0;
 
   if (team) {
     const { data: round } = await supabase
@@ -96,6 +103,13 @@ export async function getStudentTeamContext(): Promise<StudentTeamContext> {
           joined_at: (m.joined_at as string | null) ?? null,
         };
       }) ?? [];
+
+    const { count } = await supabase
+      .from("decisions")
+      .select("id", { count: "exact", head: true })
+      .eq("team_id", team.id)
+      .eq("is_submitted", true);
+    submittedDecisionCount = count ?? 0;
   }
 
   return {
@@ -105,5 +119,9 @@ export async function getStudentTeamContext(): Promise<StudentTeamContext> {
     openRound,
     instructor,
     members,
+    leave: leaveEligibility({
+      hasTeam: Boolean(team),
+      submittedDecisionCount,
+    }),
   };
 }
