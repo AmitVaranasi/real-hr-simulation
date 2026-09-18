@@ -17,6 +17,8 @@ import { ResetStudentPasswordForm } from "@/components/instructor/ResetStudentPa
 import { RoundControls } from "@/components/instructor/RoundControls";
 import { ProfessorPageHeader } from "@/components/instructor/ProfessorShell";
 import { TeamsEnrollmentHub } from "@/components/instructor/TeamsEnrollmentHub";
+import type { RosterTeam } from "@/components/instructor/RosterMovePanel";
+import { listSessionActivity } from "@/lib/activity/session-activity";
 import { createClient } from "@/lib/supabase/server";
 import type { Industry, Strategy } from "@/lib/engine/types";
 import Link from "next/link";
@@ -159,25 +161,43 @@ export async function SessionTeamsPage({
 
   const supabase = await createClient();
   const membersByTeam = new Map<string, string[]>();
+  const rosterMembersByTeam = new Map<
+    string,
+    { id: string; name: string }[]
+  >();
   if (teams.length > 0) {
     const { data: members } = await supabase
       .from("team_members")
-      .select("team_id, profiles(display_name)")
+      .select("team_id, profiles(id, display_name)")
       .in(
         "team_id",
         teams.map((t) => t.id)
       );
     for (const row of members ?? []) {
       const teamId = row.team_id as string;
-      const profile = row.profiles as { display_name?: string } | { display_name?: string }[] | null;
-      const name = Array.isArray(profile)
-        ? profile[0]?.display_name
-        : profile?.display_name;
+      const profile = row.profiles as
+        | { id?: string; display_name?: string }
+        | { id?: string; display_name?: string }[]
+        | null;
+      const p = Array.isArray(profile) ? profile[0] : profile;
+      const name = p?.display_name;
       const list = membersByTeam.get(teamId) ?? [];
       if (name) list.push(name);
       membersByTeam.set(teamId, list);
+
+      const rosterList = rosterMembersByTeam.get(teamId) ?? [];
+      if (p?.id && name) rosterList.push({ id: p.id, name });
+      rosterMembersByTeam.set(teamId, rosterList);
     }
   }
+
+  const rosterTeams: RosterTeam[] = teams.map((t) => ({
+    id: t.id,
+    name: t.name,
+    members: rosterMembersByTeam.get(t.id) ?? [],
+  }));
+
+  const activity = await listSessionActivity(sessionId);
 
   const practiceOpen = ((session.rounds ?? []) as Array<{ status: string; round_type: string }>).some(
     (r) => r.status === "open" && r.round_type === "practice"
@@ -203,6 +223,8 @@ export async function SessionTeamsPage({
         ...t,
         members: membersByTeam.get(t.id) ?? [],
       }))}
+      rosterTeams={rosterTeams}
+      activity={activity}
     />
   );
 }

@@ -27,6 +27,8 @@ import {
 } from "@/components/instructor/ProfessorChrome";
 import { ProfessorPageHeader } from "@/components/instructor/ProfessorShell";
 import { formSelectClassName } from "@/components/ui/form-controls";
+import { RosterMovePanel, type RosterTeam } from "@/components/instructor/RosterMovePanel";
+import { SessionActivityFeed, type ActivityItem } from "@/components/instructor/SessionActivityFeed";
 import type { Industry, Strategy } from "@/lib/engine/types";
 
 export type TeamRow = {
@@ -44,12 +46,16 @@ export function TeamsEnrollmentHub({
   competitiveRounds,
   practiceRounds,
   rail,
+  rosterTeams,
+  activity,
 }: {
   sessionId: string;
   teams: TeamRow[];
   competitiveRounds: number;
   practiceRounds: number;
   rail: CourseRailState;
+  rosterTeams: RosterTeam[];
+  activity: ActivityItem[];
 }) {
   const [tab, setTab] = useState<"teams" | "enrollment">("teams");
   const [showCreate, setShowCreate] = useState(false);
@@ -439,6 +445,30 @@ export function TeamsEnrollmentHub({
         </section>
         </>
       )}
+
+      {/* future-fixes.md: instructor-initiated roster moves + the activity
+          feed that surfaces a leave/move to the instructor. Shown on both
+          tabs since it is not enrollment- or team-list-specific. */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
+          <h2 className="text-base font-bold text-[var(--portal-title)]">
+            Move a Student
+          </h2>
+          <p className="mb-3 text-sm text-[var(--portal-muted)]">
+            Works even after a team has submitted decisions.
+          </p>
+          <RosterMovePanel sessionId={sessionId} teams={rosterTeams} />
+        </section>
+        <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4 shadow-sm">
+          <h2 className="text-base font-bold text-[var(--portal-title)]">
+            Recent Activity
+          </h2>
+          <p className="mb-3 text-sm text-[var(--portal-muted)]">
+            Leaves and roster moves for this session.
+          </p>
+          <SessionActivityFeed items={activity} />
+        </section>
+      </div>
 
       <ProfessorHelpBanner
         title="Need help managing teams?"
