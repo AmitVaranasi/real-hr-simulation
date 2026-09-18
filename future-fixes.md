@@ -4,35 +4,21 @@ Ideas and enhancements to consider for a later release.
 
 ---
 
-## Notify teammates when someone leaves
-
-**Scenario:** A student leaves a team mid-setup. The remaining members see the
-roster shrink on `/team/members` but are never told, and the instructor only
-finds out by reading the audit log.
-
-**Current behavior:**
-- Leaving is silent. `admin_audit_log` records a `team.leave` entry; nothing
-  surfaces it to the team or the instructor.
-
-**Possible solution:** a session-scoped activity feed the instructor already
-watches, rather than email — the simulation has no messaging backend yet.
-
----
-
-## Instructor-initiated removal of a student
-
-**Scenario:** A student needs moving after their team has submitted, which the
-self-serve leave flow deliberately refuses (see `docs/leave-team-policy.md`).
-
-**Current behavior:** the instructor edits `team_members` in Supabase directly.
-
-**Possible solution:** a roster panel on the session page that can move a
-student between teams, with the same audit entry the self-serve path writes.
-
----
-
 ## Shipped
 
 - **Allow students to leave a team and join another** — `POST /api/teams/leave`
   plus the Leave Team card on `/team/members`. Rules and the reasoning behind
   them are in `docs/leave-team-policy.md`.
+- **Notify teammates when someone leaves** — a session-scoped activity feed
+  (`session_activity` table, `supabase/migration-v10-session-activity.sql`)
+  rather than email. Both `POST /api/teams/leave` and the new roster-move
+  route write a row; the "Recent Activity" panel on Session > Teams reads
+  the last 20, newest first.
+- **Instructor-initiated removal of a student** — `POST
+  /api/sessions/[sessionId]/roster` moves a student between teams in one
+  session, including after either team has submitted decisions (the case
+  the self-serve leave flow refuses). Writes the same audit shape as
+  `team.leave` (`team.roster_move` in `admin_audit_log`), plus a
+  `session_activity` row. Instructors drive it from the "Move a Student"
+  panel on Session > Teams. `src/lib/instructor/roster-move.ts` holds the
+  pure eligibility check, mirroring `src/lib/student/leave-team.ts`.
