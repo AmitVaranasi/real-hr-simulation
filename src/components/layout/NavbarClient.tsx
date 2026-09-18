@@ -50,18 +50,17 @@ function roleLabel(role: Profile["role"] | undefined) {
 export function NavbarClient() {
   const router = useRouter();
   const pathname = usePathname();
+  const configured = isSupabaseConfigured();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Seeded from `configured` so the unconfigured case is already settled on
+  // first render instead of being corrected by the effect below.
+  const [loading, setLoading] = useState(configured);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const configured = isSupabaseConfigured();
 
   useEffect(() => {
-    if (!configured) {
-      setLoading(false);
-      return;
-    }
+    if (!configured) return;
 
     const supabase = createClient();
 
