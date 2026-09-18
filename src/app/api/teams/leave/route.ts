@@ -1,5 +1,6 @@
 import { requireAuth } from "@/lib/api/auth";
 import { writeAdminAudit } from "@/lib/admin/audit";
+import { writeSessionActivity } from "@/lib/activity/session-activity";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   leaveBlockedStatus,
@@ -88,6 +89,15 @@ export async function POST() {
     targetType: "team",
     targetId: team!.id,
     meta: { team_name: team!.name, session_id: team!.session_id },
+  });
+
+  await writeSessionActivity({
+    sessionId: team!.session_id,
+    eventType: "team.leave",
+    actorId: user!.id,
+    subjectId: user!.id,
+    fromTeamId: team!.id,
+    message: `${profile?.display_name ?? "A student"} left ${team!.name}.`,
   });
 
   return NextResponse.json({ left: true, team_id: team!.id });
