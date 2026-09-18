@@ -115,25 +115,25 @@ class FakeQueryBuilder implements PromiseLike<QueuedResult> {
     private readonly table: string
   ) {}
 
-  select(..._args: unknown[]) {
+  select() {
     return this;
   }
-  eq(..._args: unknown[]) {
+  eq() {
     return this;
   }
-  order(..._args: unknown[]) {
+  order() {
     return this;
   }
-  insert(..._args: unknown[]) {
+  insert() {
     return this;
   }
-  update(..._args: unknown[]) {
+  update() {
     return this;
   }
-  upsert(..._args: unknown[]) {
+  upsert() {
     return this;
   }
-  delete(..._args: unknown[]) {
+  delete() {
     return this;
   }
 
@@ -174,11 +174,11 @@ export class FakeSupabaseClient {
       error: unknown;
     },
     admin: {
-      listUsers: async (_opts?: { page?: number; perPage?: number }) => ({
+      listUsers: async () => ({
         data: { users: [] as unknown[] },
         error: null as unknown,
       }),
-      updateUserById: async (_id: string, _attrs: unknown) => ({
+      updateUserById: async () => ({
         data: {},
         error: null as unknown,
       }),
