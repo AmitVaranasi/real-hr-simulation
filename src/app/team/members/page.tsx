@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BarChart3, Check, Info, Lightbulb, Mail, MessageSquare } from "lucide-react";
+import { LeaveTeamCard } from "@/components/student/LeaveTeamCard";
 import { TeamPageShell, formatJoinedDate, nameInitials } from "@/components/student/TeamChrome";
 import { getStudentTeamContext } from "@/lib/student/team-context";
 
@@ -186,6 +187,11 @@ export default async function TeamMembersPage() {
                 ))}
               </ul>
             </section>
+
+            <LeaveTeamCard
+              teamName={ctx.team.name}
+              eligibility={ctx.leave}
+            />
           </aside>
         </div>
       )}
