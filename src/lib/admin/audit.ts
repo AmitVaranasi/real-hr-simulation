@@ -12,7 +12,8 @@ export type AuditAction =
   | "config.restore"
   | "config.snapshot"
   | "formula.note_update"
-  | "team.leave";
+  | "team.leave"
+  | "team.roster_move";
 
 export async function writeAdminAudit(opts: {
   actorId: string | null;
