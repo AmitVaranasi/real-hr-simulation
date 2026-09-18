@@ -8,6 +8,8 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 - [ ] Run `supabase/migration-v7-student-leave-team.sql` (DELETE policy on
       `team_members`; the leave endpoint uses the service role, but the policy
       keeps client-side reads/writes consistent)
+- [ ] Run `supabase/migration-v10-session-activity.sql` (adds
+      `session_activity`, the notify-on-leave/roster-move feed)
 - [ ] Supabase Auth redirect URLs include `{APP_URL}/auth/callback`
 - [ ] `.env.local` has URL, anon key, service role key, `NEXT_PUBLIC_APP_URL`
 - [ ] `npm run test` passes (engine golden tests)
@@ -47,6 +49,17 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 - [ ] After a submission the card explains why leaving is blocked (no button)
 - [ ] Joining a second team in the same session points at Team > Members
 - [ ] `team.leave` appears in `/admin/audit`
+- [ ] Leaving posts a "left" entry to Session > Teams > Recent Activity
+
+## Instructor roster management
+
+- [ ] Session > Teams shows a "Move a Student" panel with every enrolled
+      student and their current team
+- [ ] Moving a student updates both teams' member lists immediately
+- [ ] Move works even when the source or destination team already submitted
+      decisions
+- [ ] `team.roster_move` appears in `/admin/audit`
+- [ ] The move posts an entry to Session > Teams > Recent Activity
 
 ## Full round demo path
 
@@ -64,6 +77,5 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 
 - No full AI coach
 - No formula expression editor (parameters only)
-- Teammates are not notified when someone leaves
-- Instructors cannot move a student after their team has submitted
+- Activity feed is instructor-visible only; students don't yet see it
 - No separate system-admin role / formula version repository
