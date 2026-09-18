@@ -54,9 +54,14 @@ function NavBranch({
   const [open, setOpen] = useState(shouldExpand);
 
   // Expand only when the current route requires it; collapse otherwise (PNG).
-  useEffect(() => {
+  // Adopted during render so a route change does not paint the group in its
+  // previous state first — and so a manual toggle survives re-renders that
+  // leave shouldExpand unchanged.
+  const [routeExpanded, setRouteExpanded] = useState(shouldExpand);
+  if (shouldExpand !== routeExpanded) {
+    setRouteExpanded(shouldExpand);
     setOpen(shouldExpand);
-  }, [shouldExpand]);
+  }
 
   const Icon = item.icon;
   const parentActive = selfActive || Boolean(childActive);
