@@ -20,17 +20,19 @@ export function AdminVersionsClient() {
   const [message, setMessage] = useState<string | null>(null);
   const [note, setNote] = useState("");
 
+  // No state touched before the first await. The mount effect below calls
+  // this, and both callers that re-enter it (snapshot, restore) already set
+  // busy/message/error themselves before awaiting.
   const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await fetch("/api/admin/versions", { cache: "no-store" });
       const data = await res.json();
-      if (!res.ok && data.error) {
-        setError(data.error);
-      } else if (data.error && !(data.revisions?.length)) {
-        setError(data.error);
-      }
+      const loadError =
+        (!res.ok && data.error) ||
+        (data.error && !data.revisions?.length)
+          ? data.error
+          : null;
+      if (loadError) setError(loadError);
       setRevisions(data.revisions ?? []);
     } catch {
       setError("Failed to load versions");
@@ -40,7 +42,9 @@ export function AdminVersionsClient() {
   }, []);
 
   useEffect(() => {
-    void load();
+    void (async () => {
+      await load();
+    })();
   }, [load]);
 
   async function snapshot() {
