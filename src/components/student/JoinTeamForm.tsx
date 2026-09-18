@@ -25,47 +25,64 @@ export function JoinTeamForm({
 }) {
   const router = useRouter();
   const [code, setCode] = useState(initialCode);
-  const [team, setTeam] = useState<TeamPreview | null>(null);
-  const [previewError, setPreviewError] = useState<string | null>(null);
+  /**
+   * Preview result tagged with the code it describes. Reading it back through
+   * a code match means a stale response can never be shown against a newer
+   * code — previously the team from a half-typed code stayed on screen until
+   * the next fetch resolved.
+   */
+  const [preview, setPreview] = useState<{
+    code: string;
+    team: TeamPreview | null;
+    error: string | null;
+  } | null>(null);
   const [joinError, setJoinError] = useState<string | null>(null);
-  const [previewLoading, setPreviewLoading] = useState(false);
   const [joinLoading, setJoinLoading] = useState(false);
 
   const normalized = normalizeCode(code);
+  const tooShort = normalized.length < 4;
 
-  useEffect(() => {
+  // Adopt a changed initialCode during render rather than in an effect, so the
+  // input never paints one frame with the previous code.
+  const [seenInitialCode, setSeenInitialCode] = useState(initialCode);
+  if (initialCode !== seenInitialCode) {
+    setSeenInitialCode(initialCode);
     setCode(initialCode);
-  }, [initialCode]);
+  }
+
+  const current = preview?.code === normalized ? preview : null;
+  const team = current?.team ?? null;
+  const previewError = current?.error ?? null;
+  const previewLoading = !tooShort && current === null;
 
   useEffect(() => {
-    if (!normalized || normalized.length < 4) {
-      setTeam(null);
-      setPreviewError(null);
-      return;
-    }
+    if (tooShort) return;
 
     const controller = new AbortController();
     const timer = setTimeout(async () => {
-      setPreviewLoading(true);
-      setPreviewError(null);
       try {
         const res = await fetch(
           `/api/teams/preview?code=${encodeURIComponent(normalized)}`,
           { signal: controller.signal }
         );
         if (!res.ok) {
-          setTeam(null);
-          setPreviewError("No team found for this code. Check with your instructor.");
+          setPreview({
+            code: normalized,
+            team: null,
+            error: "No team found for this code. Check with your instructor.",
+          });
           return;
         }
         const data = await res.json();
-        setTeam(data.team);
+        setPreview({ code: normalized, team: data.team, error: null });
       } catch {
         if (!controller.signal.aborted) {
-          setPreviewError("Could not look up this code. Try again.");
+          setPreview({
+            code: normalized,
+            team: null,
+            error: "Could not look up this code. Try again.",
+          });
         }
-      } finally {
-        setPreviewLoading(false);
       }
     }, 400);
 
@@ -73,7 +90,7 @@ export function JoinTeamForm({
       clearTimeout(timer);
       controller.abort();
     };
-  }, [normalized]);
+  }, [normalized, tooShort]);
 
   async function handleJoin(e: React.FormEvent) {
     e.preventDefault();
