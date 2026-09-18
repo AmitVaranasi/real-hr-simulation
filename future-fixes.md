@@ -4,24 +4,35 @@ Ideas and enhancements to consider for a later release.
 
 ---
 
-## Allow students to leave a team and join another
+## Notify teammates when someone leaves
 
-**Scenario:** A student joined the wrong team (typo in join code, wrong group) and wants to exit the current team and join a different one in the same or another session.
+**Scenario:** A student leaves a team mid-setup. The remaining members see the
+roster shrink on `/team/members` but are never told, and the instructor only
+finds out by reading the audit log.
 
 **Current behavior:**
-- Once a student joins a team, there is no UI or API to leave the team.
-- The join API blocks joining another team in the **same session** if the student is already on a team in that session.
-- Students must ask the instructor to remove them manually (if that is even supported in Supabase/admin).
+- Leaving is silent. `admin_audit_log` records a `team.leave` entry; nothing
+  surfaces it to the team or the instructor.
 
-**Possible solution:**
-1. **Student “Leave team”** on the dashboard (with confirmation).
-2. **API** `POST /api/teams/leave` (or `DELETE` membership) that:
-   - Removes the row from `team_members` for the current user.
-   - Optionally clears or archives in-progress decisions for that team (policy decision).
-3. **Re-join flow:** After leaving, redirect to `/join` so they can enter a new code (existing join flow).
-4. **Rules to define with instructor:**
-   - Can they leave after a round has started or only before the first submission?
-   - Can they join a different team in the same session after leaving?
-   - Should the instructor be notified or must approval be required?
+**Possible solution:** a session-scoped activity feed the instructor already
+watches, rather than email — the simulation has no messaging backend yet.
 
-**Related data:** `team_members`, `decisions`, `reflections`, `outcomes` (tie-break on whether leaving deletes history or keeps it for audit).
+---
+
+## Instructor-initiated removal of a student
+
+**Scenario:** A student needs moving after their team has submitted, which the
+self-serve leave flow deliberately refuses (see `docs/leave-team-policy.md`).
+
+**Current behavior:** the instructor edits `team_members` in Supabase directly.
+
+**Possible solution:** a roster panel on the session page that can move a
+student between teams, with the same audit entry the self-serve path writes.
+
+---
+
+## Shipped
+
+- **Allow students to leave a team and join another** — `POST /api/teams/leave`
+  plus the Leave Team card on `/team/members`. Rules and the reasoning behind
+  them are in `docs/leave-team-policy.md`.
