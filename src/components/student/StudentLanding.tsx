@@ -147,10 +147,20 @@ export function StudentLanding({
     }
   }, []);
 
-  useEffect(() => {
+  // Same precedence as CurrentRoundCard: a fresh server render beats the
+  // 5s poll, adopted during render so the stale pair never paints.
+  const [seenInitial, setSeenInitial] = useState({
+    round: initialOpenRound,
+    decision: initialDecision,
+  });
+  if (
+    initialOpenRound !== seenInitial.round ||
+    initialDecision !== seenInitial.decision
+  ) {
+    setSeenInitial({ round: initialOpenRound, decision: initialDecision });
     setOpenRound(initialOpenRound);
     setDecision(initialDecision);
-  }, [initialOpenRound, initialDecision]);
+  }
 
   useEffect(() => {
     const interval = setInterval(() => void fetchStatus(), 5000);
