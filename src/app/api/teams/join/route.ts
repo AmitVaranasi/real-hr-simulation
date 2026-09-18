@@ -50,8 +50,14 @@ export async function POST(request: Request) {
     return t?.session_id === team.session_id;
   });
   if (sameSession) {
+    // Switching within a session is a leave-then-join, not a join. Point at
+    // the control that does it rather than leaving the student stuck.
     return NextResponse.json(
-      { error: "You are already on a team in this session" },
+      {
+        error:
+          "You are already on a team in this session. Leave that team from Team \u203a Members first, then enter this code.",
+        reason: "same-session",
+      },
       { status: 400 }
     );
   }
