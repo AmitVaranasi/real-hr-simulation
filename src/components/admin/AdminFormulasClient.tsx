@@ -36,9 +36,9 @@ export function AdminFormulasClient() {
   const [notesEdit, setNotesEdit] = useState("");
   const [saving, setSaving] = useState(false);
 
+  // Nothing set before the first await: the mount effect relies on loading
+  // already being true, and save() clears error itself before awaiting.
   const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
       const res = await fetch("/api/admin/formulas", { cache: "no-store" });
       const data = await res.json();
@@ -58,7 +58,9 @@ export function AdminFormulasClient() {
   }, [selectedId]);
 
   useEffect(() => {
-    void load();
+    void (async () => {
+      await load();
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- initial load only
   }, []);
 
@@ -67,11 +69,16 @@ export function AdminFormulasClient() {
     [formulas, selectedId]
   );
 
-  useEffect(() => {
-    if (!selected) return;
+  // Load the editors when the selected formula changes, during render rather
+  // than in an effect. Keyed on id, not object identity: a refetch produces a
+  // new object for the same formula, and resetting on that would silently
+  // discard whatever the admin had typed.
+  const [editingId, setEditingId] = useState<string | null>(null);
+  if (selected && selected.id !== editingId) {
+    setEditingId(selected.id);
     setExprEdit(selected.expression_override ?? selected.expression);
     setNotesEdit(selected.admin_notes ?? "");
-  }, [selected]);
+  }
 
   const filtered = formulas.filter(
     (f) => category === "All" || f.category === category
