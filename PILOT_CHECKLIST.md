@@ -5,6 +5,9 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 ## Prerequisites
 
 - [ ] Run `supabase/migration-v4.sql` (adds `sessions.announcement`)
+- [ ] Run `supabase/migration-v7-student-leave-team.sql` (DELETE policy on
+      `team_members`; the leave endpoint uses the service role, but the policy
+      keeps client-side reads/writes consistent)
 - [ ] Supabase Auth redirect URLs include `{APP_URL}/auth/callback`
 - [ ] `.env.local` has URL, anon key, service role key, `NEXT_PUBLIC_APP_URL`
 - [ ] `npm run test` passes (engine golden tests)
@@ -36,6 +39,15 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 - [ ] Inspect page shows carry-forward section
 - [ ] Review page separates Warnings vs Recommendations; shows compensation economics
 
+## Leave / rejoin a team
+
+- [ ] `/team/members` shows a Leave Team card before any submission
+- [ ] Leaving asks for confirmation, then lands on `/join`
+- [ ] The freed student can join a different team in the same session
+- [ ] After a submission the card explains why leaving is blocked (no button)
+- [ ] Joining a second team in the same session points at Team > Members
+- [ ] `team.leave` appears in `/admin/audit`
+
 ## Full round demo path
 
 1. Create session (1 practice + 2 competitive)
@@ -52,5 +64,6 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 
 - No full AI coach
 - No formula expression editor (parameters only)
-- Students cannot leave/rejoin teams yet
+- Teammates are not notified when someone leaves
+- Instructors cannot move a student after their team has submitted
 - No separate system-admin role / formula version repository
