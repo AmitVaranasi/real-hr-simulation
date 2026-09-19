@@ -395,8 +395,6 @@ function DecisionFormInner({
 }: DecisionFormProps) {
   const { ready: configReady } = useSimulationConfig();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState(0);
-
   const TAB_KEYS = [
     "recruitment",
     "performance",
@@ -408,13 +406,25 @@ function DecisionFormInner({
   ] as const;
 
   // Deep-link from Capsim-style sidebar: ?tab=recruitment|performance|...
-  // Adopted during render: as an effect it showed the previous module for a
-  // frame, which on this form meant a flash of another module's inputs.
+  // Adopted during render rather than in an effect, which showed the previous
+  // module for a frame — a visible flash of another module's inputs.
   const tabParam = searchParams.get("tab");
+
+  /** -1 when the param is absent or not a module key. */
+  function tabIndexFor(param: string | null): number {
+    return TAB_KEYS.indexOf(param as (typeof TAB_KEYS)[number]);
+  }
+
+  // Seeded from the URL, not 0: the mount case is a real deep link (the
+  // sidebar links straight to ?tab=compensation), and the adopt-on-change
+  // branch below never fires on first render.
+  const initialTab = tabIndexFor(tabParam);
+  const [activeTab, setActiveTab] = useState(initialTab >= 0 ? initialTab : 0);
+
   const [seenTabParam, setSeenTabParam] = useState(tabParam);
   if (tabParam !== seenTabParam) {
     setSeenTabParam(tabParam);
-    const idx = TAB_KEYS.indexOf(tabParam as (typeof TAB_KEYS)[number]);
+    const idx = tabIndexFor(tabParam);
     if (idx >= 0) setActiveTab(idx);
   }
 
