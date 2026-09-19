@@ -37,11 +37,14 @@ describe("formatRoundDate", () => {
     expect(formatRoundDate("")).toBe("—");
   });
 
-  it("returns Invalid Date string for invalid date string (bug: should return dash)", () => {
-    // NOTE: suspected bug — new Date("not-a-date") creates an Invalid Date object
-    // without throwing, so the catch block never executes. toLocaleDateString() then
-    // formats the invalid date as the string "Invalid Date" instead of "—".
-    expect(formatRoundDate("not-a-date")).toBe("Invalid Date");
+  it("returns dash for an invalid date string", () => {
+    // Previously a bug: new Date("not-a-date") creates an Invalid Date
+    // object without throwing, so a plain toLocaleDateString() call
+    // rendered the literal string "Invalid Date" instead of "—". The
+    // shared formatDate() helper (src/lib/i18n/format.ts) now checks
+    // Number.isNaN(date.getTime()) explicitly, fixing this for every
+    // caller, not just this one.
+    expect(formatRoundDate("not-a-date")).toBe("—");
   });
 
   it("handles valid date formats with Z suffix", () => {
@@ -75,11 +78,10 @@ describe("formatAsOfDate", () => {
     expect(formatAsOfDate("")).toBe("July 31, 2026");
   });
 
-  it("returns Invalid Date string for invalid date string (bug: should return default)", () => {
-    // NOTE: suspected bug — new Date("invalid-date") creates an Invalid Date object
-    // without throwing, so the catch block never executes. toLocaleDateString() then
-    // formats the invalid date as the string "Invalid Date" instead of "July 31, 2026".
-    expect(formatAsOfDate("invalid-date")).toBe("Invalid Date");
+  it("returns the default date for an invalid date string", () => {
+    // Previously a bug (see the matching note in the formatRoundDate
+    // suite above) — now correctly falls back to the default.
+    expect(formatAsOfDate("invalid-date")).toBe("July 31, 2026");
   });
 
   it("uses full month name in output", () => {

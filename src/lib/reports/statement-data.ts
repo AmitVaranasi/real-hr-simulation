@@ -1,4 +1,6 @@
 import type { FinancialRoundItem } from "@/components/reports/FinancialReportChrome";
+import { formatDate } from "@/lib/i18n/format";
+import type { Locale } from "@/lib/i18n/config";
 
 /** Figma demo Round 1 numbers used as the statement template. */
 export const FIGMA_BS = {
@@ -85,30 +87,35 @@ export const FIGMA_CF = {
   priorEndingCash: 10_200_000,
 };
 
-export function formatRoundDate(value: string | null | undefined) {
-  if (!value) return "—";
-  try {
-    return new Date(value).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  } catch {
-    return "—";
-  }
+/**
+ * `locale` defaults to "en" so the many existing call sites (none of
+ * which have a locale in scope yet) keep their current behavior; pass
+ * the resolved request locale from a migrated caller to get es-ES
+ * month names and date ordering instead.
+ */
+export function formatRoundDate(
+  value: string | null | undefined,
+  locale: Locale = "en"
+) {
+  return (
+    formatDate(value, locale, { month: "short", day: "numeric", year: "numeric" }) ??
+    "—"
+  );
 }
 
-export function formatAsOfDate(value: string | null | undefined) {
-  if (!value) return "July 31, 2026";
-  try {
-    return new Date(value).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-  } catch {
-    return "July 31, 2026";
-  }
+const DEFAULT_AS_OF: Record<Locale, string> = {
+  en: "July 31, 2026",
+  es: "31 de julio de 2026",
+};
+
+export function formatAsOfDate(
+  value: string | null | undefined,
+  locale: Locale = "en"
+) {
+  return (
+    formatDate(value, locale, { month: "long", day: "numeric", year: "numeric" }) ??
+    DEFAULT_AS_OF[locale]
+  );
 }
 
 export function mapOutcomesToRounds(
