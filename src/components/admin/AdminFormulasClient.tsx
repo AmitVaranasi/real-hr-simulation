@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { FormulaExpressionEditor } from "./FormulaExpressionEditor";
 
 type FormulaRow = {
   id: string;
@@ -242,6 +243,12 @@ export function AdminFormulasClient() {
                   placeholder="Pilot notes, known edge cases…"
                 />
               </label>
+
+              <FormulaExpressionEditor
+                key={selected.id}
+                formulaId={selected.id}
+                builtinExpression={selected.expression}
+              />
 
               {selected.configKeys.length > 0 && (
                 <div>
