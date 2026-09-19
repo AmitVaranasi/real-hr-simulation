@@ -7,6 +7,7 @@ import {
   FormulaInspector,
   type CarryForwardInfo,
 } from "@/components/instructor/FormulaInspector";
+import { CoachTranscriptPanel } from "@/components/instructor/CoachTranscriptPanel";
 import { formSelectClassName } from "@/components/ui/form-controls";
 import type { Decision, SimulationTrace } from "@/lib/engine/types";
 
@@ -161,6 +162,8 @@ export default function InspectPage() {
           carryForward={payload.carryForward}
         />
       )}
+
+      {teamId && <CoachTranscriptPanel teamId={teamId} />}
     </div>
   );
 }
