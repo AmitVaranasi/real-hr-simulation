@@ -35,48 +35,70 @@ function StatementTable({
   footer: { label: string; current: number; prior: number };
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-      <div className="grid grid-cols-[minmax(0,1.4fr)_1fr_1fr] gap-2 bg-[var(--portal-navy)] px-4 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wide text-white">
-        <span>{title}</span>
-        <span className="text-right">{columns[1]}</span>
-        <span className="text-right">{columns[2]}</span>
-      </div>
-      <div className="divide-y divide-[var(--portal-sidebar-border)]">
+    <div className="overflow-x-auto rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
+      <table className="w-full border-collapse text-xs">
+        <caption className="sr-only">{title}</caption>
+        <thead>
+          <tr className="bg-[var(--portal-navy)] text-[0.6875rem] font-bold uppercase tracking-wide text-white">
+            <th scope="col" className="px-4 py-2.5 text-left">
+              {title}
+            </th>
+            <th scope="col" className="px-4 py-2.5 text-right">
+              {columns[1]}
+            </th>
+            <th scope="col" className="px-4 py-2.5 text-right">
+              {columns[2]}
+            </th>
+          </tr>
+        </thead>
         {sections.map((section, si) => (
-          <div key={si}>
+          <tbody
+            key={si}
+            className="divide-y divide-[var(--portal-sidebar-border)] border-t border-[var(--portal-sidebar-border)]"
+          >
             {section.heading ? (
-              <p className="bg-[#f8fafc] px-4 py-2 text-xs font-bold text-[var(--portal-primary)]">
-                {section.heading}
-              </p>
+              <tr>
+                <th
+                  scope="rowgroup"
+                  colSpan={3}
+                  className="bg-[#f8fafc] px-4 py-2 text-left text-xs font-bold text-[var(--portal-primary)]"
+                >
+                  {section.heading}
+                </th>
+              </tr>
             ) : null}
             {section.rows.map((row) => (
-              <div
+              <tr
                 key={row.label}
-                className={`grid grid-cols-[minmax(0,1.4fr)_1fr_1fr] gap-2 px-4 py-2 text-xs ${
-                  row.bold ? "bg-[#f1f5f9] font-bold" : ""
-                }`}
+                className={row.bold ? "bg-[#f1f5f9] font-bold" : ""}
               >
-                <span className="text-[var(--portal-ink)]">{row.label}</span>
-                <span className="text-right tabular-nums text-[var(--portal-title)]">
+                <th scope="row" className="px-4 py-2 text-left text-[var(--portal-ink)]">
+                  {row.label}
+                </th>
+                <td className="px-4 py-2 text-right tabular-nums text-[var(--portal-title)]">
                   {formatMoneySigned(row.current)}
-                </span>
-                <span className="text-right tabular-nums text-[var(--portal-muted)]">
+                </td>
+                <td className="px-4 py-2 text-right tabular-nums text-[var(--portal-muted)]">
                   {formatMoneySigned(row.prior)}
-                </span>
-              </div>
+                </td>
+              </tr>
             ))}
-          </div>
+          </tbody>
         ))}
-        <div className="grid grid-cols-[minmax(0,1.4fr)_1fr_1fr] gap-2 bg-[var(--portal-navy)] px-4 py-2.5 text-xs font-bold text-white">
-          <span>{footer.label}</span>
-          <span className="text-right tabular-nums">
-            {formatMoneySigned(footer.current)}
-          </span>
-          <span className="text-right tabular-nums">
-            {formatMoneySigned(footer.prior)}
-          </span>
-        </div>
-      </div>
+        <tfoot>
+          <tr className="bg-[var(--portal-navy)] text-xs font-bold text-white">
+            <th scope="row" className="px-4 py-2.5 text-left font-bold">
+              {footer.label}
+            </th>
+            <td className="px-4 py-2.5 text-right tabular-nums">
+              {formatMoneySigned(footer.current)}
+            </td>
+            <td className="px-4 py-2.5 text-right tabular-nums">
+              {formatMoneySigned(footer.prior)}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
     </div>
   );
 }

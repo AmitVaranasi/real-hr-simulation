@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { BalanceSheetView } from "../BalanceSheetView";
 import { FIGMA_BS } from "@/lib/reports/statement-data";
@@ -22,11 +22,32 @@ function money(n: number) {
   }).format(n);
 }
 
-// NOTE: a11y gap — StatementTable (Assets / Liabilities & Equity) is built
-// from CSS-grid <div>s rather than a real <table>, so it has no row/column
-// semantics for assistive tech. Reported in the task summary, not fixed here.
-
 describe("BalanceSheetView — figma template", () => {
+  it("renders the Assets and Liabilities & Equity statements as real tables with column and row headers", () => {
+    render(
+      <BalanceSheetView roundNumber={1} asOfLabel="July 31, 2026" rounds={rounds} />
+    );
+    const tables = screen.getAllByRole("table");
+    expect(tables).toHaveLength(2);
+    expect(
+      screen.getByRole("table", { name: "Assets" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("table", { name: "Liabilities & Equity" })
+    ).toBeInTheDocument();
+
+    const assetsTable = screen.getByRole("table", { name: "Assets" });
+    const columnHeaders = within(assetsTable).getAllByRole("columnheader");
+    expect(columnHeaders.map((h) => h.textContent)).toEqual([
+      "Assets",
+      "Current Round",
+      "Prior Round",
+    ]);
+    expect(
+      within(assetsTable).getByRole("rowheader", { name: "Cash & Cash Equivalents" })
+    ).toBeInTheDocument();
+  });
+
   it("renders total assets equal to total liabilities plus equity (balances)", () => {
     render(
       <BalanceSheetView roundNumber={1} asOfLabel="July 31, 2026" rounds={rounds} />
