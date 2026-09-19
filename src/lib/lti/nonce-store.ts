@@ -44,6 +44,25 @@ export async function consumeNonce(nonce: string): Promise<boolean> {
   return Array.isArray(data) && data.length === 1;
 }
 
+/**
+ * Same as {@link consumeNonce} but additionally requires the OIDC `state`
+ * param returned by the platform to match the state we issued alongside
+ * this nonce — ties the launch back to the specific login round trip we
+ * started, not just any still-valid nonce.
+ */
+export async function consumeNonceWithState(nonce: string, state: string): Promise<boolean> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("lti_nonces")
+    .delete()
+    .eq("nonce", nonce)
+    .eq("state", state)
+    .gt("expires_at", new Date().toISOString())
+    .select("nonce");
+  if (error) return false;
+  return Array.isArray(data) && data.length === 1;
+}
+
 /** Best-effort cleanup of long-expired nonces; safe to call opportunistically. */
 export async function pruneExpiredNonces(): Promise<void> {
   const admin = createAdminClient();
