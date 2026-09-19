@@ -66,9 +66,14 @@ function PortalShellInner({
     status?: string;
   } | null>(null);
 
-  useEffect(() => {
+  // Close the mobile drawer on navigation, during render rather than in an
+  // effect — an effect leaves the drawer painted over the new route for one
+  // frame before it closes.
+  const [drawerPathname, setDrawerPathname] = useState(pathname);
+  if (pathname !== drawerPathname) {
+    setDrawerPathname(pathname);
     setMobileOpen(false);
-  }, [pathname]);
+  }
 
   useEffect(() => {
     if (typeof window === "undefined") return;

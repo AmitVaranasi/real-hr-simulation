@@ -408,11 +408,15 @@ function DecisionFormInner({
   ] as const;
 
   // Deep-link from Capsim-style sidebar: ?tab=recruitment|performance|...
-  useEffect(() => {
-    const tab = searchParams.get("tab");
-    const idx = TAB_KEYS.indexOf(tab as (typeof TAB_KEYS)[number]);
+  // Adopted during render: as an effect it showed the previous module for a
+  // frame, which on this form meant a flash of another module's inputs.
+  const tabParam = searchParams.get("tab");
+  const [seenTabParam, setSeenTabParam] = useState(tabParam);
+  if (tabParam !== seenTabParam) {
+    setSeenTabParam(tabParam);
+    const idx = TAB_KEYS.indexOf(tabParam as (typeof TAB_KEYS)[number]);
     if (idx >= 0) setActiveTab(idx);
-  }, [searchParams]);
+  }
 
   useEffect(() => {
     if (!roundId) return;

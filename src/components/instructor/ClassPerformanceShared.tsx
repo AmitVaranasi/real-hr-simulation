@@ -270,12 +270,21 @@ export function DonutScore({
     color: string;
   }>;
   const total = known.reduce((sum, s) => sum + s.value, 0);
-  let cursor = 0;
-  const stops = known.map((s) => {
-    const start = cursor;
-    cursor += total > 0 ? (s.value / total) * 100 : 0;
-    return `${s.color} ${start}% ${cursor}%`;
-  });
+
+  // Accumulate through the reduce rather than a `let` the map closes over:
+  // reassigning an outer binding while rendering is exactly what the React
+  // compiler cannot memoize safely.
+  const { stops } = known.reduce<{ cursor: number; stops: string[] }>(
+    (acc, s) => {
+      const start = acc.cursor;
+      const end = start + (total > 0 ? (s.value / total) * 100 : 0);
+      return {
+        cursor: end,
+        stops: [...acc.stops, `${s.color} ${start}% ${end}%`],
+      };
+    },
+    { cursor: 0, stops: [] }
+  );
 
   return (
     <div className="flex flex-wrap items-center gap-6">

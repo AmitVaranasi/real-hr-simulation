@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 type AdminUser = {
@@ -21,28 +21,34 @@ export function AdminUsersClient() {
   const [message, setMessage] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/admin/users", { cache: "no-store" });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Failed to load users");
-        setUsers([]);
-        return;
-      }
-      setUsers(data.users ?? []);
-    } catch {
-      setError("Failed to load users");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    void load();
-  }, [load]);
+    const controller = new AbortController();
+
+    void (async () => {
+      try {
+        const res = await fetch("/api/admin/users", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        if (controller.signal.aborted) return;
+        if (!res.ok) {
+          setError(data.error ?? "Failed to load users");
+          setUsers([]);
+          return;
+        }
+        setError(null);
+        setUsers(data.users ?? []);
+      } catch {
+        if (controller.signal.aborted) return;
+        setError("Failed to load users");
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    })();
+
+    return () => controller.abort();
+  }, []);
 
   async function changeRole(userId: string, role: string) {
     setBusyId(userId);

@@ -443,7 +443,9 @@ export function SimulationConfigCenter({
   }, []);
 
   useEffect(() => {
-    void loadConfig();
+    void (async () => {
+      await loadConfig();
+    })();
     void fetch("/api/sessions")
       .then((r) => r.json())
       .then((data) => {

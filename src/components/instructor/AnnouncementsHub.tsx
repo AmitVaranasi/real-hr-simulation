@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   CalendarDays,
   FileText,
@@ -122,9 +122,13 @@ export function AnnouncementsHub({
   const [menuOpen, setMenuOpen] = useState(false);
   const [showForm, setShowForm] = useState(!announcement);
 
-  useEffect(() => {
+  // Adopt a changed initialView during render so the hub does not show the
+  // previous tab for a frame when the server picks a different default.
+  const [seenInitialView, setSeenInitialView] = useState(initialView);
+  if (initialView !== seenInitialView) {
+    setSeenInitialView(initialView);
     setTab(initialView);
-  }, [initialView]);
+  }
 
   const posted = announcement?.trim()
     ? {

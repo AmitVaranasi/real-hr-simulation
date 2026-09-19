@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Check, ChevronDown, ChevronRight } from "lucide-react";
@@ -9,8 +9,9 @@ import {
   type PortalNavItem,
 } from "./portal-nav";
 import {
-  getVisitedModules,
-  subscribeModuleVisited,
+  getVisitedModulesServerSnapshot,
+  getVisitedModulesSnapshot,
+  subscribeVisitedModules,
 } from "@/lib/student/module-progress";
 
 function initialsFromName(name: string) {
@@ -54,9 +55,14 @@ function NavBranch({
   const [open, setOpen] = useState(shouldExpand);
 
   // Expand only when the current route requires it; collapse otherwise (PNG).
-  useEffect(() => {
+  // Adopted during render so a route change does not paint the group in its
+  // previous state first — and so a manual toggle survives re-renders that
+  // leave shouldExpand unchanged.
+  const [routeExpanded, setRouteExpanded] = useState(shouldExpand);
+  if (shouldExpand !== routeExpanded) {
+    setRouteExpanded(shouldExpand);
     setOpen(shouldExpand);
-  }, [shouldExpand]);
+  }
 
   const Icon = item.icon;
   const parentActive = selfActive || Boolean(childActive);
@@ -224,7 +230,6 @@ export function PortalSidebar({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const search = searchParams?.toString() ? `?${searchParams.toString()}` : "";
-  const [completedTabKeys, setCompletedTabKeys] = useState<string[]>([]);
 
   // Keep HR Decisions open on Review so module checkmarks stay visible (PNG 018).
   const decisionsExpanded = useMemo(
@@ -238,18 +243,20 @@ export function PortalSidebar({
     return m?.[1] ?? null;
   }, [pathname]);
 
-  useEffect(() => {
-    if (!openRoundIdFromPath) {
-      setCompletedTabKeys([]);
-      return;
-    }
-    setCompletedTabKeys(getVisitedModules(openRoundIdFromPath));
-    return subscribeModuleVisited((detail) => {
-      if (detail.roundId === openRoundIdFromPath) {
-        setCompletedTabKeys(getVisitedModules(openRoundIdFromPath));
-      }
-    });
-  }, [openRoundIdFromPath]);
+  // Visited modules are a localStorage store with a change event, so React
+  // subscribes to it rather than mirroring it into state from an effect.
+  const completedTabKeys = useSyncExternalStore(
+    useCallback(
+      (onChange: () => void) =>
+        subscribeVisitedModules(openRoundIdFromPath, onChange),
+      [openRoundIdFromPath]
+    ),
+    useCallback(
+      () => getVisitedModulesSnapshot(openRoundIdFromPath),
+      [openRoundIdFromPath]
+    ),
+    getVisitedModulesServerSnapshot
+  );
 
   if (collapsed) {
     return (

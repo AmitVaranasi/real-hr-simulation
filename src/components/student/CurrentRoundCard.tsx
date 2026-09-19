@@ -34,9 +34,13 @@ export function CurrentRoundCard({ initialOpenRound }: CurrentRoundCardProps) {
     }
   }, []);
 
-  useEffect(() => {
+  // Server data wins over the poll result. Adopted during render so a
+  // router.refresh() does not show the stale polled round for a frame first.
+  const [seenInitial, setSeenInitial] = useState(initialOpenRound);
+  if (initialOpenRound !== seenInitial) {
+    setSeenInitial(initialOpenRound);
     setOpenRound(initialOpenRound);
-  }, [initialOpenRound]);
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {

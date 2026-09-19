@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type AuditEntry = {
   id: string;
@@ -18,28 +18,29 @@ export function AdminAuditClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/admin/audit?limit=150", {
-        cache: "no-store",
-      });
-      const data = await res.json();
-      if (data.error && !(data.entries?.length)) {
-        setError(data.error);
-      }
-      setEntries(data.entries ?? []);
-    } catch {
-      setError("Failed to load audit log");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    void load();
-  }, [load]);
+    const controller = new AbortController();
+
+    void (async () => {
+      try {
+        const res = await fetch("/api/admin/audit?limit=150", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        if (controller.signal.aborted) return;
+        setError(data.error && !data.entries?.length ? data.error : null);
+        setEntries(data.entries ?? []);
+      } catch {
+        if (controller.signal.aborted) return;
+        setError("Failed to load audit log");
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    })();
+
+    return () => controller.abort();
+  }, []);
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">

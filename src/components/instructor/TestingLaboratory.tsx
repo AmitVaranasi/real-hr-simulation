@@ -62,7 +62,9 @@ export function TestingLaboratory({ embedded = false }: { embedded?: boolean } =
   }, []);
 
   useEffect(() => {
-    void loadEffective();
+    void (async () => {
+      await loadEffective();
+    })();
     void fetch("/api/sessions")
       .then((r) => r.json())
       .then((data) => {

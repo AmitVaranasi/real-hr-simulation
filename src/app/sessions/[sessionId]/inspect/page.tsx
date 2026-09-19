@@ -20,15 +20,28 @@ export default function InspectPage() {
   const [rounds, setRounds] = useState<RoundOption[]>([]);
   const [teamId, setTeamId] = useState(searchParams.get("team") ?? "");
   const [roundId, setRoundId] = useState(searchParams.get("round") ?? "");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [payload, setPayload] = useState<{
+  type TracePayload = {
     team: { name: string };
     round: { round_number: number; round_type: string };
     decision: Decision | null;
     trace: SimulationTrace;
     carryForward?: CarryForwardInfo | null;
-  } | null>();
+  };
+  /**
+   * Tagged with the team+round it describes, so a slow response for a
+   * previous selection can never render against the current one.
+   */
+  const [result, setResult] = useState<{
+    key: string;
+    payload: TracePayload | null;
+    error: string | null;
+  } | null>(null);
+
+  const selectionKey = teamId && roundId ? `${teamId}:${roundId}` : "";
+  const current = selectionKey && result?.key === selectionKey ? result : null;
+  const payload = current?.payload ?? null;
+  const error = current?.error ?? null;
+  const loading = Boolean(selectionKey) && current === null;
 
   useEffect(() => {
     async function loadMeta() {
@@ -56,29 +69,39 @@ export default function InspectPage() {
   }, [sessionId]);
 
   useEffect(() => {
-    if (!teamId || !roundId) {
-      setPayload(null);
-      return;
-    }
+    if (!selectionKey) return;
 
-    async function loadTrace() {
-      setLoading(true);
-      setError(null);
-      const res = await fetch(
-        `/api/sessions/${sessionId}/inspect/${teamId}/${roundId}`
-      );
-      setLoading(false);
-      if (!res.ok) {
+    const controller = new AbortController();
+
+    void (async () => {
+      try {
+        const res = await fetch(
+          `/api/sessions/${sessionId}/inspect/${teamId}/${roundId}`,
+          { signal: controller.signal }
+        );
         const data = await res.json();
-        setError(data.error ?? "Could not load trace");
-        setPayload(null);
-        return;
+        if (controller.signal.aborted) return;
+        setResult(
+          res.ok
+            ? { key: selectionKey, payload: data, error: null }
+            : {
+                key: selectionKey,
+                payload: null,
+                error: data.error ?? "Could not load trace",
+              }
+        );
+      } catch {
+        if (controller.signal.aborted) return;
+        setResult({
+          key: selectionKey,
+          payload: null,
+          error: "Could not load trace",
+        });
       }
-      const data = await res.json();
-      setPayload(data);
-    }
-    void loadTrace();
-  }, [sessionId, teamId, roundId]);
+    })();
+
+    return () => controller.abort();
+  }, [sessionId, teamId, roundId, selectionKey]);
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-5xl px-4 py-10">
