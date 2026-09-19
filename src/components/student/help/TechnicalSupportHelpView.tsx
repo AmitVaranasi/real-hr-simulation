@@ -46,21 +46,21 @@ export function TechnicalSupportHelpView() {
                   title: "Live Chat Support",
                   body: "Chat with our support team in real time during business hours.",
                   cta: "Start Live Chat",
-                  meta: "Mon–Fri, 8:00 AM – 6:00 PM CT",
+                  meta: "Coming soon — contact your instructor in the meantime.",
                 },
                 {
                   icon: Mail,
                   title: "Email Support",
                   body: "Send us a detailed message and we'll respond within 1 business day.",
                   cta: "Send Email",
-                  meta: "We reply within 1 business day",
+                  meta: "Coming soon — contact your instructor in the meantime.",
                 },
                 {
                   icon: Ticket,
                   title: "Submit a Ticket",
                   body: "Create a support ticket and we'll track your issue until it's resolved.",
                   cta: "Submit Ticket",
-                  meta: "We'll respond within 1 business day",
+                  meta: "Coming soon — contact your instructor in the meantime.",
                 },
               ].map((card) => {
                 const Icon = card.icon;
@@ -80,7 +80,9 @@ export function TechnicalSupportHelpView() {
                     </p>
                     <button
                       type="button"
-                      className="mt-4 rounded-lg bg-[var(--portal-navy)] px-3 py-2 text-hc-small font-semibold text-white hover:bg-[var(--portal-title)]"
+                      disabled
+                      title="This channel isn't connected yet — contact your instructor instead."
+                      className="mt-4 cursor-not-allowed rounded-lg bg-[var(--portal-navy)] px-3 py-2 text-hc-small font-semibold text-white opacity-50"
                     >
                       {card.cta}
                     </button>
