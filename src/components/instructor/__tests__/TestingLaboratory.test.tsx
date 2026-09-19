@@ -86,17 +86,15 @@ describe("TestingLaboratory", () => {
   });
 
   it("toggles a workflow checklist item and strikes through its label", async () => {
-    // NOTE: a11y gap — TestingLaboratory.tsx:145-156 renders each checklist
-    // <input type="checkbox"> as a sibling of its label text, not wrapped in
-    // a <label>, so the checkbox has no accessible name. Falling back to
-    // getAllByRole(checkbox) by index instead of getByRole(..., {name}).
     const user = userEvent.setup();
     render(<TestingLaboratory />);
     const firstStep = screen.getByText("Create or open a session");
     expect(firstStep.className).not.toContain("line-through");
 
-    const checkboxes = screen.getAllByRole("checkbox");
-    await user.click(checkboxes[0]);
+    const checkbox = screen.getByRole("checkbox", {
+      name: "Create or open a session",
+    });
+    await user.click(checkbox);
 
     expect(firstStep.className).toContain("line-through");
   });

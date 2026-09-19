@@ -144,17 +144,19 @@ export function TestingLaboratory({ embedded = false }: { embedded?: boolean } =
         <ul className="mt-4 space-y-2">
           {WORKFLOW_STEPS.map((step, i) => (
             <li key={step} className="flex items-start gap-2 text-sm">
-              <input
-                type="checkbox"
-                className="mt-1"
-                checked={!!checked[i]}
-                onChange={(e) =>
-                  setChecked((prev) => ({ ...prev, [i]: e.target.checked }))
-                }
-              />
-              <span className={checked[i] ? "text-[var(--portal-muted)] line-through" : ""}>
-                {step}
-              </span>
+              <label className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={!!checked[i]}
+                  onChange={(e) =>
+                    setChecked((prev) => ({ ...prev, [i]: e.target.checked }))
+                  }
+                />
+                <span className={checked[i] ? "text-[var(--portal-muted)] line-through" : ""}>
+                  {step}
+                </span>
+              </label>
             </li>
           ))}
         </ul>
