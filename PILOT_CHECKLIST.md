@@ -76,3 +76,4 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 - Students cannot leave/rejoin teams yet
 - No separate system-admin role / formula version repository
 - No presence indicator for concurrent decision editing (students aren't shown *who else* has the round open, only warned via a save-time conflict — see `future-fixes.md`)
+- No i18n on most surfaces yet: en/es translation infrastructure (typed t(), plural rules via Intl.PluralRules, locale-aware currency/percent/date formatting, cookie+Accept-Language+profile locale resolution) is built and tested, and proven on the join-team flow + dashboard empty state, but the rest of the ~279 candidate strings (StudentLanding, Help Center, Navbar, all instructor/admin surfaces) are still hardcoded English — see future-fixes.md for the prioritized list and `npm run i18n:coverage` for what's measurably left.

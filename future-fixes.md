@@ -135,3 +135,78 @@ Ideas and enhancements to consider for a later release.
 - Presence (see above) so a conflict is anticipated rather than a surprise at save time.
 - The debounced autosave in `DecisionWorkspace.tsx` now also handles 409s, but a conflict raised by autosave (vs. a manual Save click) could use a less intrusive UI treatment — right now it's the same full dialog either way.
 - `route.test.ts`'s pinned NOTE about `round_id` not being validated against `team_id`'s session predates this change and is still an open issue, unrelated to concurrency.
+
+---
+
+## i18n: infrastructure done, ~2% of strings migrated (deliberate scope)
+
+**Status:** Full translation engine shipped and tested (catalogs, typed `t()`,
+`Intl.PluralRules`-based pluralization, `Intl.NumberFormat`/`DateTimeFormat`
+locale-aware formatting, cookie+`Accept-Language`+profile locale resolution,
+`profiles.locale` persistence). Proven end to end on the join-team flow
+(`src/app/join/page.tsx`, `src/components/student/JoinTeamForm.tsx`) and the
+dashboard's no-team empty state. Everything else is still hardcoded English.
+This was a deliberate choice — "a working, proven system beats a fully
+migrated one with a broken plural rule" — not an oversight.
+
+**What a translator/engineer picks up next, in priority order:**
+1. `src/components/student/StudentLanding.tsx` (665 lines) — the main
+   dashboard a student sees every session. Only the empty state (no team
+   yet) is migrated; the populated dashboard (budget, round status, last
+   score, team roster) is not.
+2. `src/components/student/help/HelpOverview.tsx` and the content arrays in
+   `src/lib/student/help-center-content.ts` — the latter is data-driven
+   (category/quick-link objects with `title`/`description`/`action`
+   fields), so it needs a small schema change (string → translation key) in
+   addition to catalog entries, not just JSX swaps.
+3. `src/components/layout/NavbarClient.tsx` (356 lines) — portal chrome,
+   highest exposure per pixel, also the most likely place Spanish text
+   overflows fixed-width nav items (not yet checked — see the overflow note
+   below).
+4. Instructor surfaces (`src/app/sessions/**`) — namespace `instructor.json`
+   exists as a reserved stub only; genuinely untouched.
+5. Admin surfaces (`src/app/admin/**`) — same, `admin.json` stub only.
+6. Decisions flow — explicitly **do not touch** `DecisionForm.tsx` or
+   `src/lib/decisions/**` per this task's constraints (owned by another
+   branch); `decisions.json` is a stub for when that lands.
+
+Run `npm run i18n:coverage` after adding `useTranslation`/
+`getServerTranslator` calls to a new file — it lists leftover hardcoded JSX
+text in any component that already imports the translation hook, so partial
+migrations stay measurable.
+
+**Formatting call sites not yet routed through locale:** `src/lib/utils.ts`'s
+`formatCurrency`/`formatCompactCurrency`/`formatPercent` are still hard-wired
+to `"en"` for backward compatibility with ~130 existing call sites (grep
+`from "@/lib/utils"` + `formatCurrency|formatPercent|formatCompactCurrency`
+to find them). The locale-aware versions already exist in
+`src/lib/i18n/format.ts` and are exported from `utils.ts` under a `*Locale`
+suffix — the remaining work is swapping call sites to pass the resolved
+locale, one report/component at a time, not writing new formatting code.
+
+**Terms flagged for native Spanish review:** none yet — the ~40 strings
+translated so far (join flow, dashboard empty state, common nav/actions) are
+plain conversational UI copy with no ambiguous HR jargon. The first genuinely
+ambiguous terms will likely show up migrating `StudentLanding.tsx`
+(scorecard/BSC terminology) and the reports namespace (financial-statement
+line items) — flag those with `// TODO(i18n-review)` as encountered, per the
+project's translation-quality rule; don't invent confident Spanish for HR
+jargon.
+
+**Spanish overflow in fixed-width chrome:** not yet observed, because no
+fixed-width nav/sidebar chrome has been migrated yet (`NavbarClient.tsx` is
+next in line above). Check it first when that migration happens — Spanish
+strings run 20-30% longer than English and this codebase has several
+`w-*`/`truncate` nav items that were sized for English text.
+
+**Build verification gap:** `npx next build` could not be run to completion
+in this environment — Turbopack fails with `Symlink [project]/node_modules
+is invalid, it points out of the filesystem root`, because the worktree's
+`node_modules` is a symlink to a path outside the worktree's directory tree
+(`/Users/.../Volunteering/Project Scope Goals and Objectives/HR
+Simulation/node_modules`, pre-existing, not created by this change). This
+reproduces on `next build` regardless of the i18n changes (Turbopack's own
+project-root sandboxing, unrelated to any code in this branch). `tsc
+--noEmit`, `eslint`, and the full `vitest run` suite (1296+ tests) all pass
+clean after every commit in this branch — re-run `next build` once the
+worktree has a real (non-cross-tree-symlinked) `node_modules`.
