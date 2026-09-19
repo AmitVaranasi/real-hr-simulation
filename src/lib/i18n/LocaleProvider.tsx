@@ -29,6 +29,16 @@ export function LocaleProvider({
 
   const setLocale = useCallback((next: Locale) => {
     document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
+    // Best-effort: persist to profiles.locale for signed-in users so the
+    // preference follows them to another device. The cookie above is
+    // what actually takes effect on this device/reload, so a failure or
+    // slow response here must never block the switch.
+    fetch("/api/user/locale", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ locale: next }),
+      keepalive: true,
+    }).catch(() => {});
     // A locale switch changes text resolved during Server Component
     // rendering too, so a full reload is the simplest correct approach
     // rather than trying to re-render the RSC tree client-side.
