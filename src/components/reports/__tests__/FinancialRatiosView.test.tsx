@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { FinancialRatiosView } from "../FinancialRatiosView";
 import type { FinancialRoundItem } from "../FinancialReportChrome";
@@ -13,10 +13,31 @@ const rounds: FinancialRoundItem[] = [
   },
 ];
 
-// NOTE: a11y gap — the Financial Ratio Summary is a CSS-grid of <div>s, not a
-// real <table>. Reported in the task summary, not fixed here.
-
 describe("FinancialRatiosView", () => {
+  it("renders the Financial Ratio Summary as a real table with column and row headers", () => {
+    render(
+      <FinancialRatiosView
+        roundNumber={1}
+        asOfLabel="July 31, 2026"
+        rounds={rounds}
+      />
+    );
+    const table = screen.getByRole("table", { name: "Financial Ratio Summary" });
+    expect(
+      within(table)
+        .getAllByRole("columnheader")
+        .map((h) => h.textContent)
+    ).toEqual([
+      "Ratio",
+      "Current Round",
+      "Prior Round",
+      "Change",
+      "Change % / pp",
+    ]);
+    expect(
+      within(table).getByRole("rowheader", { name: "Current Ratio" })
+    ).toBeInTheDocument();
+  });
   it("renders the report title and the six ratio summary cards", () => {
     render(
       <FinancialRatiosView
