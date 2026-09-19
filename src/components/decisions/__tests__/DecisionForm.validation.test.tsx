@@ -111,22 +111,30 @@ describe("DecisionForm live warning boundaries", () => {
     ).not.toBeInTheDocument();
   });
 
-  // NOTE: a11y gap — the Diversity Sourcing Goal, Training Coverage, and
-  // Benefits % range inputs (DecisionForm.tsx ~L865-888, ~L1280-1303,
-  // ~L1750-1773) render their numeric readout in a sibling <span>, not a
-  // <label>, and carry no aria-label/aria-labelledby. A screen reader user
-  // tabbing to the slider hears no name for it at all. Pinned here via a
-  // failed accessible-name lookup rather than getByLabelText succeeding.
-  it("documents that the Diversity Sourcing Goal slider has no accessible name", async () => {
+  it("gives the Diversity Sourcing Goal slider an accessible name", async () => {
     render(<DecisionForm industry="Manufacturing" strategy="Cost Leadership" hideRunButton />);
     await screen.findByRole("heading", { level: 1, name: "Recruitment & Selection" });
 
-    expect(() => screen.getByLabelText(/diversity sourcing goal/i)).toThrow();
-    // The slider exists and is reachable by role, just unnamed.
-    const diversitySection = screen
-      .getByText("3. Diversity Sourcing Goal")
-      .closest("section")!;
-    const slider = within(diversitySection).getByRole("slider");
-    expect(slider).toHaveAccessibleName("");
+    const diversitySlider = screen.getByLabelText(/diversity sourcing goal/i);
+    expect(diversitySlider).toHaveAccessibleName("Diversity Sourcing Goal");
+    expect(diversitySlider).toHaveAttribute("aria-valuetext", expect.stringMatching(/%$/));
+  });
+
+  it("gives the Training Coverage slider an accessible name", async () => {
+    mockSearchParams = new URLSearchParams({ tab: "training" });
+    render(<DecisionForm industry="Manufacturing" strategy="Cost Leadership" hideRunButton />);
+    await screen.findByRole("heading", { level: 1, name: "Training & Development" });
+
+    const trainingSlider = screen.getByLabelText(/employees trained/i);
+    expect(trainingSlider).toHaveAccessibleName("Employees Trained");
+    expect(trainingSlider).toHaveAttribute("aria-valuetext", expect.stringMatching(/%$/));
+  });
+
+  it("gives the Benefits % slider an accessible name", async () => {
+    mockSearchParams = new URLSearchParams({ tab: "compensation" });
+    render(<DecisionForm industry="Manufacturing" strategy="Cost Leadership" hideRunButton />);
+    const benefitsSlider = await screen.findByLabelText(/benefits %/i);
+    expect(benefitsSlider).toHaveAccessibleName("Benefits %");
+    expect(benefitsSlider).toHaveAttribute("aria-valuetext", expect.stringMatching(/%$/));
   });
 });

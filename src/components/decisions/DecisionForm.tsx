@@ -878,7 +878,10 @@ function DecisionFormInner({
                 </div>
                 <div className="mt-4">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
+                    <span
+                      id="diversity-goal-pct-label"
+                      className="text-[0.6875rem] font-semibold text-[var(--portal-ink)]"
+                    >
                       Diversity Sourcing Goal
                     </span>
                     <span className="text-2xl font-bold tabular-nums text-[var(--portal-icon-purple)]">
@@ -894,6 +897,8 @@ function DecisionFormInner({
                     onChange={(e) =>
                       update("diversity_goal_pct", Number(e.target.value))
                     }
+                    aria-labelledby="diversity-goal-pct-label"
+                    aria-valuetext={`${decision.diversity_goal_pct}%`}
                   />
                   <div className="mt-1 flex justify-between text-[0.625rem] text-[var(--portal-muted)]">
                     <span>0%</span>
@@ -1293,7 +1298,10 @@ function DecisionFormInner({
                 </div>
                 <div className="mt-4">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
+                    <span
+                      id="pct-employees-trained-label"
+                      className="text-[0.6875rem] font-semibold text-[var(--portal-ink)]"
+                    >
                       Employees Trained
                     </span>
                     <span className="text-2xl font-bold tabular-nums text-[var(--portal-accent-blue)]">
@@ -1309,6 +1317,8 @@ function DecisionFormInner({
                     onChange={(e) =>
                       update("pct_employees_trained", Number(e.target.value))
                     }
+                    aria-labelledby="pct-employees-trained-label"
+                    aria-valuetext={`${decision.pct_employees_trained}%`}
                   />
                   <div className="mt-1 flex justify-between text-[0.625rem] text-[var(--portal-muted)]">
                     <span>0%</span>
@@ -1763,7 +1773,10 @@ function DecisionFormInner({
                 </div>
                 <div className="mt-4">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-[0.6875rem] font-semibold text-[var(--portal-ink)]">
+                    <span
+                      id="benefits-pct-label"
+                      className="text-[0.6875rem] font-semibold text-[var(--portal-ink)]"
+                    >
                       Benefits %
                     </span>
                     <span className="text-2xl font-bold tabular-nums text-[var(--portal-accent-blue)]">
@@ -1779,6 +1792,8 @@ function DecisionFormInner({
                     onChange={(e) =>
                       update("benefits_pct", Number(e.target.value))
                     }
+                    aria-labelledby="benefits-pct-label"
+                    aria-valuetext={`${decision.benefits_pct}%`}
                   />
                   <div className="mt-1 flex justify-between text-[0.625rem] text-[var(--portal-muted)]">
                     <span>6%</span>
