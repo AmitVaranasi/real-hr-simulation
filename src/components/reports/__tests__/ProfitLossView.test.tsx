@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { ProfitLossView } from "../ProfitLossView";
 import { FIGMA_PL } from "@/lib/reports/statement-data";
@@ -14,15 +14,40 @@ const rounds: FinancialRoundItem[] = [
   },
 ];
 
-// NOTE: a11y gap — the statement and workforce-cost tables here are rendered
-// as CSS-grid <div>s, not real <table>/<th role="columnheader">/<td>
-// elements (unlike src/components/results/MetricTable.tsx, which does use a
-// real <table>). Screen-reader users get no row/column semantics. Reported
-// in the task summary; not fixed here per instructions (pin, don't fix).
-// Assertions below query by text content rather than table roles because no
-// such roles exist in the DOM.
-
 describe("ProfitLossView — figma template (no live data)", () => {
+  it("renders the statement and workforce-cost tables as real tables with row/column semantics", () => {
+    render(
+      <ProfitLossView roundNumber={1} asOfLabel="July 31, 2026" rounds={rounds} />
+    );
+    const statementTable = screen.getByRole("table", {
+      name: "Profit & Loss Statement",
+    });
+    expect(statementTable).toBeInTheDocument();
+    expect(
+      within(statementTable)
+        .getAllByRole("columnheader")
+        .map((h) => h.textContent)
+    ).toEqual([
+      "Profit & Loss Statement",
+      "Current Round",
+      "Prior Round",
+      "Change",
+      "Change %",
+    ]);
+    expect(
+      within(statementTable).getByRole("rowheader", { name: "Total Revenue" })
+    ).toBeInTheDocument();
+
+    const workforceTable = screen.getByRole("table", {
+      name: "Workforce Cost Analysis",
+    });
+    expect(workforceTable).toBeInTheDocument();
+    expect(
+      within(workforceTable).getByRole("rowheader", {
+        name: "Total Workforce Costs",
+      })
+    ).toBeInTheDocument();
+  });
   it("renders the report title for the given round", () => {
     render(
       <ProfitLossView roundNumber={1} asOfLabel="July 31, 2026" rounds={rounds} />

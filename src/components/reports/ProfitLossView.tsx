@@ -297,128 +297,175 @@ export function ProfitLossView({
         />
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-        <div className="grid grid-cols-[minmax(0,1.6fr)_1fr_1fr_1fr_0.8fr] gap-2 bg-[var(--portal-navy)] px-4 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wide text-white">
-          <span>Profit &amp; Loss Statement</span>
-          <span className="text-right">Current Round</span>
-          <span className="text-right">Prior Round</span>
-          <span className="text-right">Change</span>
-          <span className="text-right">Change %</span>
-        </div>
-        <div>
-          {plRows.map((row) => {
-            if (row.section) {
+      <div className="overflow-x-auto rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
+        <table className="w-full border-collapse text-xs">
+          <caption className="sr-only">Profit &amp; Loss Statement</caption>
+          <thead>
+            <tr className="bg-[var(--portal-navy)] text-[0.6875rem] font-bold uppercase tracking-wide text-white">
+              <th scope="col" className="px-4 py-2.5 text-left">
+                Profit &amp; Loss Statement
+              </th>
+              <th scope="col" className="px-4 py-2.5 text-right">
+                Current Round
+              </th>
+              <th scope="col" className="px-4 py-2.5 text-right">
+                Prior Round
+              </th>
+              <th scope="col" className="px-4 py-2.5 text-right">
+                Change
+              </th>
+              <th scope="col" className="px-4 py-2.5 text-right">
+                Change %
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {plRows.map((row) => {
+              if (row.section) {
+                return (
+                  <tr key={row.label}>
+                    <th
+                      scope="rowgroup"
+                      colSpan={5}
+                      className="bg-[#f8fafc] px-4 py-2 text-left text-xs font-bold uppercase tracking-wide text-[var(--portal-primary)]"
+                    >
+                      {row.label}
+                    </th>
+                  </tr>
+                );
+              }
+              const ch = changeAmt(row.current, row.prior);
+              const pct = pctChange(row.current, row.prior);
               return (
-                <div
+                <tr
                   key={row.label}
-                  className="bg-[#f8fafc] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[var(--portal-primary)]"
+                  className={`border-b border-[var(--portal-sidebar-border)] ${
+                    row.highlight
+                      ? "bg-red-50 font-bold"
+                      : row.total
+                        ? "bg-[#f1f5f9] font-bold"
+                        : ""
+                  }`}
                 >
-                  {row.label}
-                </div>
+                  <th scope="row" className="px-4 py-2 text-left">
+                    {row.label}
+                  </th>
+                  <td
+                    className={`px-4 py-2 text-right tabular-nums ${
+                      row.current < 0 ? "text-red-600" : ""
+                    }`}
+                  >
+                    {formatMoneySigned(row.current)}
+                  </td>
+                  <td className="px-4 py-2 text-right tabular-nums text-[var(--portal-muted)]">
+                    {formatMoneySigned(row.prior)}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-right tabular-nums ${
+                      ch < 0 ? "text-red-600" : ""
+                    }`}
+                  >
+                    {formatMoneySigned(ch)}
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <TrendBadge change={pct} />
+                  </td>
+                </tr>
               );
-            }
-            const ch = changeAmt(row.current, row.prior);
-            const pct = pctChange(row.current, row.prior);
-            return (
-              <div
-                key={row.label}
-                className={`grid grid-cols-[minmax(0,1.6fr)_1fr_1fr_1fr_0.8fr] gap-2 border-b border-[var(--portal-sidebar-border)] px-4 py-2 text-xs ${
-                  row.highlight
-                    ? "bg-red-50 font-bold"
-                    : row.total
-                      ? "bg-[#f1f5f9] font-bold"
-                      : ""
-                }`}
-              >
-                <span>{row.label}</span>
-                <span
-                  className={`text-right tabular-nums ${
-                    row.current < 0 ? "text-red-600" : ""
-                  }`}
-                >
-                  {formatMoneySigned(row.current)}
-                </span>
-                <span className="text-right tabular-nums text-[var(--portal-muted)]">
-                  {formatMoneySigned(row.prior)}
-                </span>
-                <span
-                  className={`text-right tabular-nums ${
-                    ch < 0 ? "text-red-600" : ""
-                  }`}
-                >
-                  {formatMoneySigned(ch)}
-                </span>
-                <span className="text-right">
-                  <TrendBadge change={pct} />
-                </span>
-              </div>
-            );
-          })}
-        </div>
+            })}
+          </tbody>
+        </table>
       </div>
 
       <section>
         <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-[var(--portal-primary)]">
           Workforce Cost Analysis (Supplemental Information)
         </h2>
-        <div className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-          <div className="grid grid-cols-[minmax(0,1.5fr)_1fr_0.8fr_1fr_0.8fr_0.8fr] gap-2 bg-[var(--portal-navy)] px-4 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wide text-white">
-            <span>Workforce Cost</span>
-            <span className="text-right">Amount</span>
-            <span className="text-right">% of Revenue</span>
-            <span className="text-right">Prior Round</span>
-            <span className="text-right">% of Revenue</span>
-            <span className="text-right">Change %</span>
-          </div>
-          {workforceRows.map((row) => (
-            <div
-              key={row.label}
-              className="grid grid-cols-[minmax(0,1.5fr)_1fr_0.8fr_1fr_0.8fr_0.8fr] gap-2 border-b border-[var(--portal-sidebar-border)] px-4 py-2 text-xs"
-            >
-              <span className="flex items-center gap-2">
-                <span className={`h-2 w-2 rounded-full ${row.color}`} />
-                {row.label}
-              </span>
-              <span className="text-right tabular-nums">
-                {formatMoneySigned(row.amount)}
-              </span>
-              <span className="text-right tabular-nums text-[var(--portal-muted)]">
-                {revenue > 0
-                  ? `${((row.amount / revenue) * 100).toFixed(1)}%`
-                  : "—"}
-              </span>
-              <span className="text-right tabular-nums text-[var(--portal-muted)]">
-                {formatMoneySigned(row.prior)}
-              </span>
-              <span className="text-right tabular-nums text-[var(--portal-muted)]">
-                {priorRevenue > 0
-                  ? `${((row.prior / priorRevenue) * 100).toFixed(1)}%`
-                  : "—"}
-              </span>
-              <span className="text-right">
-                <TrendBadge change={pctChange(row.amount, row.prior)} invert />
-              </span>
-            </div>
-          ))}
-          <div className="grid grid-cols-[minmax(0,1.5fr)_1fr_0.8fr_1fr_0.8fr_0.8fr] gap-2 bg-[var(--portal-navy)] px-4 py-2.5 text-xs font-bold text-white">
-            <span>Total Workforce Costs</span>
-            <span className="text-right tabular-nums">
-              {formatMoneySigned(workforceCosts)}
-            </span>
-            <span className="text-right tabular-nums">{wfPct.toFixed(1)}%</span>
-            <span className="text-right tabular-nums">
-              {formatMoneySigned(priorWorkforce)}
-            </span>
-            <span className="text-right tabular-nums">
-              {priorWfPct.toFixed(1)}%
-            </span>
-            <span className="text-right">
-              <TrendBadge
-                change={pctChange(workforceCosts, priorWorkforce)}
-                invert
-              />
-            </span>
-          </div>
+        <div className="overflow-x-auto rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
+          <table className="w-full border-collapse text-xs">
+            <caption className="sr-only">Workforce Cost Analysis</caption>
+            <thead>
+              <tr className="bg-[var(--portal-navy)] text-[0.6875rem] font-bold uppercase tracking-wide text-white">
+                <th scope="col" className="px-4 py-2.5 text-left">
+                  Workforce Cost
+                </th>
+                <th scope="col" className="px-4 py-2.5 text-right">
+                  Amount
+                </th>
+                <th scope="col" className="px-4 py-2.5 text-right">
+                  % of Revenue
+                </th>
+                <th scope="col" className="px-4 py-2.5 text-right">
+                  Prior Round
+                </th>
+                <th scope="col" className="px-4 py-2.5 text-right">
+                  % of Revenue
+                </th>
+                <th scope="col" className="px-4 py-2.5 text-right">
+                  Change %
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {workforceRows.map((row) => (
+                <tr
+                  key={row.label}
+                  className="border-b border-[var(--portal-sidebar-border)]"
+                >
+                  <th scope="row" className="px-4 py-2 text-left font-normal">
+                    <span className="flex items-center gap-2">
+                      <span className={`h-2 w-2 rounded-full ${row.color}`} />
+                      {row.label}
+                    </span>
+                  </th>
+                  <td className="px-4 py-2 text-right tabular-nums">
+                    {formatMoneySigned(row.amount)}
+                  </td>
+                  <td className="px-4 py-2 text-right tabular-nums text-[var(--portal-muted)]">
+                    {revenue > 0
+                      ? `${((row.amount / revenue) * 100).toFixed(1)}%`
+                      : "—"}
+                  </td>
+                  <td className="px-4 py-2 text-right tabular-nums text-[var(--portal-muted)]">
+                    {formatMoneySigned(row.prior)}
+                  </td>
+                  <td className="px-4 py-2 text-right tabular-nums text-[var(--portal-muted)]">
+                    {priorRevenue > 0
+                      ? `${((row.prior / priorRevenue) * 100).toFixed(1)}%`
+                      : "—"}
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <TrendBadge change={pctChange(row.amount, row.prior)} invert />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr className="bg-[var(--portal-navy)] text-xs font-bold text-white">
+                <th scope="row" className="px-4 py-2.5 text-left font-bold">
+                  Total Workforce Costs
+                </th>
+                <td className="px-4 py-2.5 text-right tabular-nums">
+                  {formatMoneySigned(workforceCosts)}
+                </td>
+                <td className="px-4 py-2.5 text-right tabular-nums">
+                  {wfPct.toFixed(1)}%
+                </td>
+                <td className="px-4 py-2.5 text-right tabular-nums">
+                  {formatMoneySigned(priorWorkforce)}
+                </td>
+                <td className="px-4 py-2.5 text-right tabular-nums">
+                  {priorWfPct.toFixed(1)}%
+                </td>
+                <td className="px-4 py-2.5 text-right">
+                  <TrendBadge
+                    change={pctChange(workforceCosts, priorWorkforce)}
+                    invert
+                  />
+                </td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </section>
 
