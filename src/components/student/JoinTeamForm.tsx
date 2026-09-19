@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { formInputClassName } from "@/components/ui/form-controls";
+import { useTranslation } from "@/lib/i18n/LocaleProvider";
 
 type TeamPreview = {
   name: string;
@@ -24,6 +25,7 @@ export function JoinTeamForm({
   allowSwitch?: boolean;
 }) {
   const router = useRouter();
+  const t = useTranslation();
   const [code, setCode] = useState(initialCode);
   /**
    * Preview result tagged with the code it describes. Reading it back through
@@ -69,7 +71,7 @@ export function JoinTeamForm({
           setPreview({
             code: normalized,
             team: null,
-            error: "No team found for this code. Check with your instructor.",
+            error: t("student", "joinForm.notFound"),
           });
           return;
         }
@@ -80,7 +82,7 @@ export function JoinTeamForm({
           setPreview({
             code: normalized,
             team: null,
-            error: "Could not look up this code. Try again.",
+            error: t("student", "joinForm.lookupFailed"),
           });
         }
       }
@@ -90,12 +92,16 @@ export function JoinTeamForm({
       clearTimeout(timer);
       controller.abort();
     };
+    // t is a stable function for the lifetime of the active locale (see
+    // LocaleProvider), and including it here would re-run the lookup on
+    // every render without changing behavior.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [normalized, tooShort]);
 
   async function handleJoin(e: React.FormEvent) {
     e.preventDefault();
     if (!normalized) {
-      setJoinError("Enter the join code from your instructor.");
+      setJoinError(t("student", "joinForm.codeRequired"));
       return;
     }
 
@@ -108,7 +114,7 @@ export function JoinTeamForm({
     });
     const data = await res.json();
     if (!res.ok) {
-      setJoinError(data.error ?? "Could not join team");
+      setJoinError(data.error ?? t("student", "joinForm.joinFailed"));
       setJoinLoading(false);
       return;
     }
@@ -120,29 +126,31 @@ export function JoinTeamForm({
     <form onSubmit={handleJoin} className="mt-6 space-y-4">
       {allowSwitch && (
         <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-          Joining will leave your current team and switch you to the new
-          session.
+          {t("student", "joinForm.switchWarning")}
         </p>
       )}
       <label className="block text-sm">
-        <span className="font-medium text-[var(--portal-ink)]">Team join code</span>
+        <span className="font-medium text-[var(--portal-ink)]">
+          {t("student", "joinForm.codeLabel")}
+        </span>
         <input
           type="text"
           autoComplete="off"
           spellCheck={false}
-          placeholder="e.g. a3f9bc21"
+          placeholder={t("student", "joinForm.codePlaceholder")}
           className={`mt-1 font-mono ${formInputClassName}`}
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
         <span className="mt-1 block text-xs text-[var(--portal-muted)]">
-          Your instructor shares this code for your team (letters and numbers,
-          no spaces).
+          {t("student", "joinForm.codeHint")}
         </span>
       </label>
 
       {previewLoading && (
-        <p className="text-sm text-[var(--portal-muted)]">Looking up team…</p>
+        <p className="text-sm text-[var(--portal-muted)]">
+          {t("student", "joinForm.lookingUp")}
+        </p>
       )}
 
       {previewError && !previewLoading && (
@@ -160,11 +168,11 @@ export function JoinTeamForm({
       {team && !previewLoading && (
         <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-emerald-800">
-            Team found
+            {t("student", "joinForm.teamFound")}
           </p>
           <p className="mt-1 font-medium text-[var(--portal-ink)]">{team.name}</p>
           <p className="text-sm text-[var(--portal-muted)]">
-            {team.sessions?.name ?? "Class session"}
+            {team.sessions?.name ?? t("student", "joinForm.fallbackSession")}
           </p>
           <p className="mt-1 text-sm text-[var(--portal-muted)]">
             {team.industry} · {team.strategy}
@@ -178,10 +186,10 @@ export function JoinTeamForm({
         disabled={joinLoading || !normalized || previewLoading || !team}
       >
         {joinLoading
-          ? "Joining…"
+          ? t("student", "joinForm.joining")
           : allowSwitch
-            ? "Switch to this team"
-            : "Join this team"}
+            ? t("student", "joinForm.switchCta")
+            : t("student", "joinForm.joinCta")}
       </Button>
     </form>
   );

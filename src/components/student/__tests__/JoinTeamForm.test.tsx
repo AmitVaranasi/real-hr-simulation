@@ -1,7 +1,17 @@
+import type { ComponentProps } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { JoinTeamForm } from "../JoinTeamForm";
+import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
+
+function renderJoinForm(props?: ComponentProps<typeof JoinTeamForm>) {
+  return render(
+    <LocaleProvider initialLocale="en">
+      <JoinTeamForm {...props} />
+    </LocaleProvider>
+  );
+}
 
 const push = vi.fn();
 const refresh = vi.fn();
@@ -24,7 +34,7 @@ describe("JoinTeamForm", () => {
   });
 
   it("associates the join-code input with its label", () => {
-    render(<JoinTeamForm />);
+    renderJoinForm();
     expect(
       screen.getByLabelText(/Team join code/)
     ).toBeInTheDocument();
@@ -44,7 +54,7 @@ describe("JoinTeamForm", () => {
       }),
     });
 
-    render(<JoinTeamForm />);
+    renderJoinForm();
     const submit = screen.getByRole("button", { name: "Join this team" });
     expect(submit).toBeDisabled();
 
@@ -59,7 +69,7 @@ describe("JoinTeamForm", () => {
     const user = userEvent.setup({ delay: null });
     (fetch as ReturnType<typeof vi.fn>).mockResolvedValue({ ok: false });
 
-    render(<JoinTeamForm />);
+    renderJoinForm();
     await user.type(screen.getByLabelText(/Team join code/), "nomatch1");
     await vi.advanceTimersByTimeAsync(500);
 
@@ -74,7 +84,7 @@ describe("JoinTeamForm", () => {
   });
 
   it("shows the switch-team warning and label only when allowSwitch is set", () => {
-    const { rerender } = render(<JoinTeamForm />);
+    const { rerender } = renderJoinForm();
     expect(
       screen.queryByText(/Joining will leave your current team/)
     ).not.toBeInTheDocument();
@@ -82,7 +92,11 @@ describe("JoinTeamForm", () => {
       screen.queryByRole("button", { name: "Switch to this team" })
     ).not.toBeInTheDocument();
 
-    rerender(<JoinTeamForm allowSwitch />);
+    rerender(
+      <LocaleProvider initialLocale="en">
+        <JoinTeamForm allowSwitch />
+      </LocaleProvider>
+    );
     expect(
       screen.getByText(/Joining will leave your current team/)
     ).toBeInTheDocument();
@@ -110,7 +124,7 @@ describe("JoinTeamForm", () => {
         json: async () => ({}),
       });
 
-    render(<JoinTeamForm />);
+    renderJoinForm();
     await user.type(screen.getByLabelText(/Team join code/), "abcd1234");
     await vi.advanceTimersByTimeAsync(500);
     const submit = await screen.findByRole("button", {

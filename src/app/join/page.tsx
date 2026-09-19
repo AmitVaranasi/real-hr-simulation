@@ -2,6 +2,7 @@ import Link from "next/link";
 import { JoinTeamForm } from "@/components/student/JoinTeamForm";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getServerTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -17,9 +18,11 @@ export default async function JoinPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, locale")
     .eq("id", user.id)
     .single();
+
+  const { t } = await getServerTranslator(profile?.locale);
 
   if (profile?.role === "admin") {
     redirect("/admin");
@@ -42,27 +45,29 @@ export default async function JoinPage() {
   return (
     <div className="mx-auto w-full min-w-0 max-w-md px-4 py-12 sm:py-16">
       <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-primary)]">
-        Student portal
+        {t("common", "studentPortal.label")}
       </p>
       <h1 className="mt-1 text-2xl font-bold text-[var(--portal-ink)]">
-        {currentTeam ? "Join a new session" : "Join your team"}
+        {currentTeam
+          ? t("student", "join.title.switch")
+          : t("student", "join.title.first")}
       </h1>
       <p className="mt-2 text-sm text-[var(--portal-muted)]">
         {currentTeam
-          ? "Enter a join code from another class session. This will switch you to that team (one active team at a time)."
-          : "Enter the join code your instructor gave you to join your company team."}
+          ? t("student", "join.body.switch")
+          : t("student", "join.body.first")}
       </p>
 
       {currentTeam && (
         <div className="mt-4 rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-4 text-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
-            Current team
+            {t("student", "join.currentTeam.eyebrow")}
           </p>
           <p className="mt-1 font-semibold text-[var(--portal-ink)]">{currentTeam.name}</p>
           <p className="text-[var(--portal-muted)]">
             {[currentTeam.sessions?.name, currentTeam.sessions?.course_code]
               .filter(Boolean)
-              .join(" · ") || "Active session"}
+              .join(" · ") || t("student", "join.currentTeam.fallbackSession")}
           </p>
         </div>
       )}
@@ -71,7 +76,7 @@ export default async function JoinPage() {
 
       <p className="mt-8 text-center text-sm text-[var(--portal-muted)]">
         <Link href="/dashboard" className="font-medium text-[var(--portal-primary)] hover:underline">
-          Back to dashboard
+          {t("student", "join.backToDashboard")}
         </Link>
       </p>
     </div>

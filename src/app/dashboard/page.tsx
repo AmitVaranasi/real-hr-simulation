@@ -6,6 +6,7 @@ import { getDiscretionaryBudget } from "@/lib/engine/simulation-config";
 import { DISCRETIONARY_BUDGET } from "@/lib/engine/defaults";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { getServerTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +19,11 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role, display_name")
+    .select("role, display_name, locale")
     .eq("id", user.id)
     .single();
+
+  const { t } = await getServerTranslator(profile?.locale);
 
   if (profile?.role === "admin") {
     redirect("/admin");
@@ -64,24 +67,23 @@ export default async function DashboardPage() {
     return (
       <div className="mx-auto w-full max-w-lg rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-6 py-12 text-center shadow-sm">
         <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-primary)]">
-          Getting started
+          {t("student", "dashboard.noTeam.eyebrow")}
         </p>
         <h1 className="mt-2 text-2xl font-bold text-[var(--portal-title)]">
-          Join your company
+          {t("student", "dashboard.noTeam.title")}
         </h1>
         <p className="mt-2 text-[var(--portal-muted)]">
-          Enter the join code from your instructor to unlock your team
-          dashboard.
+          {t("student", "dashboard.noTeam.body")}
         </p>
         <Link href="/join" className="mt-8 inline-block">
-          <Button size="lg">Join a team</Button>
+          <Button size="lg">{t("student", "dashboard.noTeam.cta")}</Button>
         </Link>
         <p className="mt-4 text-sm">
           <Link
             href="/dashboard/getting-started"
             className="text-[var(--portal-primary)] hover:underline"
           >
-            Or open Getting Started →
+            {t("student", "dashboard.noTeam.gettingStartedLink")}
           </Link>
         </p>
       </div>
