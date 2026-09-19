@@ -50,7 +50,10 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 
 ## Known limits (deferred)
 
-- No full AI coach
+- AI coach ships behind `ANTHROPIC_API_KEY`: student-only, Socratic (no
+  answer key), grounded only in the student's own team data, capped at
+  20 messages/student/day, transcripts visible to the owning instructor.
+  Route degrades gracefully (503) when the key is unset.
 - No formula expression editor (parameters only)
 - Students cannot leave/rejoin teams yet
 - No separate system-admin role / formula version repository

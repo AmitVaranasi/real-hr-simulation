@@ -4,6 +4,7 @@ import {
   WorkforceBriefView,
   type WorkforceBriefData,
 } from "@/components/results/WorkforceBriefView";
+import { HRCoach } from "@/components/results/HRCoach";
 import { generateTeamPdf, outcomeToPdfData } from "@/lib/export/pdf";
 
 export function WorkforceBriefClient({
@@ -56,14 +57,21 @@ export function WorkforceBriefClient({
   }
 
   return (
-    <WorkforceBriefView
-      data={{
-        ...data,
-        onSaveReflection:
-          teamId && roundId ? handleSaveReflection : undefined,
-        onDownloadPdf:
-          outcome && team && sessionName ? handleDownloadPdf : undefined,
-      }}
-    />
+    <>
+      <WorkforceBriefView
+        data={{
+          ...data,
+          onSaveReflection:
+            teamId && roundId ? handleSaveReflection : undefined,
+          onDownloadPdf:
+            outcome && team && sessionName ? handleDownloadPdf : undefined,
+        }}
+      />
+      {teamId && (
+        <div className="mx-auto mt-6 max-w-5xl px-4">
+          <HRCoach teamId={teamId} roundId={roundId} />
+        </div>
+      )}
+    </>
   );
 }
