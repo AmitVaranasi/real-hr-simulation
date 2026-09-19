@@ -208,3 +208,27 @@ branch's code: `npx next build --webpack` compiles the full app successfully
 (all ~110 routes, including every route touched by this change), and `tsc
 --noEmit`, `eslint`, and the full `vitest run` suite (1296+ tests) all pass
 clean after every commit in this branch.
+## LTI 1.3 / Canvas integration — follow-ups (un-certified, no live Canvas tested)
+
+**Added:** `supabase/migration-v14-lti.sql`, `src/lib/lti/**`,
+`src/app/api/lti/**`, `src/app/.well-known/jwks.json`, `src/app/lti/deep-link`.
+Full detail in `docs/lti-setup.md`, including a security checklist and an
+explicit "what remains unverified" list — read that before enabling this in
+production.
+
+**Not yet done, deliberately out of scope for this pass:**
+- Grade passback only runs when an instructor hits
+  `POST /api/lti/ags/sync/[sessionId]` — it is not wired into round close or
+  any scheduled job. Auto-sync on round close is the natural next step once
+  the manual flow has been confirmed against a real Canvas instance.
+- No UI for managing platform registrations yet beyond the raw
+  `POST/GET/PATCH/DELETE /api/lti/platforms(/[platformId])` API — an admin
+  screen listing an instructor's registered Canvas instances (and showing
+  our JWKS/login/launch URLs to copy into Canvas) would remove the need to
+  hand-craft requests.
+- JWKS key rotation is manual (swap `LTI_TOOL_PRIVATE_KEY`/`LTI_TOOL_PUBLIC_KEY`
+  and bump `LTI_TOOL_KID`); no dual-key rotation window, so a rotation briefly
+  invalidates deep-linking responses/AGS tokens signed just before it.
+- `findOrCreateLineItem`'s "list and match by resourceLinkId" step reads the
+  first page of the platform's line items only; a course with a very large
+  number of existing line items could miss a match and create a duplicate.

@@ -77,3 +77,18 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 - No separate system-admin role / formula version repository
 - No presence indicator for concurrent decision editing (students aren't shown *who else* has the round open, only warned via a save-time conflict — see `future-fixes.md`)
 - No i18n on most surfaces yet: en/es translation infrastructure (typed t(), plural rules via Intl.PluralRules, locale-aware currency/percent/date formatting, cookie+Accept-Language+profile locale resolution) is built and tested, and proven on the join-team flow + dashboard empty state, but the rest of the ~279 candidate strings (StudentLanding, Help Center, Navbar, all instructor/admin surfaces) are still hardcoded English — see future-fixes.md for the prioritized list and `npm run i18n:coverage` for what's measurably left.
+
+## LTI 1.3 (Canvas) — added, un-certified
+
+- LTI 1.3 / LTI Advantage launch, deep linking, and AGS grade passback are
+  implemented (`docs/lti-setup.md` has the full admin setup steps, security
+  checklist, and unverified-items list).
+- **Never exercised against a real Canvas instance** — no developer key or
+  network access to one was available while building it. Treat the first
+  real connection as its own pilot with a throwaway course before trusting
+  it with real students.
+- Grade passback is instructor-triggered only
+  (`POST /api/lti/ags/sync/[sessionId]`), not automatic on round close.
+- Requires `LTI_TOOL_PRIVATE_KEY` / `LTI_TOOL_PUBLIC_KEY` env vars and
+  `supabase/migration-v14-lti.sql` applied before any LTI feature works; the
+  rest of the app is unaffected if these are never set up.
