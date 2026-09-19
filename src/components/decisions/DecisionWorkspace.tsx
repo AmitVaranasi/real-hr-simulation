@@ -4,6 +4,7 @@ import { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { DecisionForm } from "@/components/decisions/DecisionForm";
+import { ConflictResolutionDialog } from "@/components/decisions/ConflictResolutionDialog";
 import { rowToDecision } from "@/lib/db/decisions";
 import { createDefaultDecision } from "@/lib/engine/defaults";
 import { markModuleVisited } from "@/lib/student/module-progress";
@@ -36,6 +37,14 @@ interface DecisionWorkspaceProps {
   roundNumber?: number;
 }
 
+interface ConflictState {
+  /** The client's local edits at the moment the save was rejected. */
+  mine: Decision;
+  /** The server's current row, from the 409 response. */
+  theirs: Decision;
+  serverVersion: number;
+}
+
 export function DecisionWorkspace(props: DecisionWorkspaceProps) {
   return (
     <Suspense
@@ -65,63 +74,88 @@ function DecisionWorkspaceInner({
       ? rowToDecision(initialDecision)
       : createDefaultDecision()
   );
+  // What the client last knew to be on the server: the baseline conflicts
+  // are classified against, and the version sent back on the next save.
+  const [base, setBase] = useState<Decision>(decision);
+  const [version, setVersion] = useState<number>(
+    Number(initialDecision?.version ?? 0)
+  );
   const [saving, setSaving] = useState(false);
   const [submitted, setSubmitted] = useState(
     Boolean(initialDecision?.is_submitted)
   );
+  const [conflict, setConflict] = useState<ConflictState | null>(null);
 
-  const save = useCallback(
-    async (submit = false) => {
-      if (!roundOpen) return false;
+  /**
+   * POSTs `payload` at `atVersion`. On success, updates decision/base/version
+   * and returns true. On a 409, stores the server's current row as a
+   * conflict for the resolution dialog (without touching local edits) and
+   * returns false. Shared by the manual save path and the debounced
+   * autosave so both go through the same conflict handling.
+   */
+  const performSave = useCallback(
+    async (payload: Decision, atVersion: number, submit: boolean) => {
       setSaving(true);
       const res = await fetch("/api/decisions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...decision,
+          ...payload,
           team_id: teamId,
           round_id: roundId,
           is_submitted: submit,
+          version: atVersion,
         }),
       });
       setSaving(false);
-      if (!res.ok) {
+
+      if (res.status === 409) {
         const data = await res.json();
+        setConflict({
+          mine: payload,
+          theirs: data.serverDecision as Decision,
+          serverVersion: data.serverVersion as number,
+        });
+        return false;
+      }
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
         toast.error(data.error ?? "Failed to save");
         return false;
       }
+
       const data = await res.json();
-      setDecision(data.decision);
+      const saved = data.decision as Decision & { version?: number };
+      setDecision(saved);
+      setBase(saved);
+      setVersion(saved.version ?? atVersion + 1);
+      setConflict(null);
       if (submit) {
         setSubmitted(true);
         toast.success("Decision submitted");
       }
       return true;
     },
-    [decision, teamId, roundId, roundOpen]
+    [teamId, roundId]
+  );
+
+  const save = useCallback(
+    async (submit = false) => {
+      if (!roundOpen) return false;
+      return performSave(decision, version, submit);
+    },
+    [decision, version, roundOpen, performSave]
   );
 
   useEffect(() => {
-    if (!roundOpen || submitted) return;
+    if (!roundOpen || submitted || conflict) return;
     const t = setTimeout(() => {
-      void (async () => {
-        setSaving(true);
-        await fetch("/api/decisions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...decision,
-            team_id: teamId,
-            round_id: roundId,
-            is_submitted: false,
-          }),
-        });
-        setSaving(false);
-      })();
+      void performSave(decision, version, false);
     }, 1500);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- debounced save on field changes
-  }, [decision, roundOpen, submitted, teamId, roundId]);
+  }, [decision, roundOpen, submitted, conflict]);
 
   async function saveAndContinue() {
     const tab = searchParams.get("tab") ?? "recruitment";
@@ -136,6 +170,10 @@ function DecisionWorkspaceInner({
     }
     const next = TAB_KEYS[idx + 1];
     router.push(`/round/${roundId}/decisions?tab=${next}`);
+  }
+
+  async function resolveConflict(merged: Decision, atVersion: number) {
+    await performSave(merged, atVersion, false);
   }
 
   if (!roundOpen) {
@@ -160,19 +198,31 @@ function DecisionWorkspaceInner({
   }
 
   return (
-    <DecisionForm
-      industry={industry}
-      strategy={strategy}
-      economy={economy}
-      controlledDecision={decision}
-      onDecisionChange={setDecision}
-      hideRunButton
-      roundNumber={roundNumber}
-      roundOpen={roundOpen}
-      roundId={roundId}
-      saving={saving}
-      onSaveNow={() => void save(false)}
-      onSaveAndContinue={() => void saveAndContinue()}
-    />
+    <div className="space-y-4">
+      {conflict && (
+        <ConflictResolutionDialog
+          base={base}
+          mine={conflict.mine}
+          theirs={conflict.theirs}
+          serverVersion={conflict.serverVersion}
+          onResolve={resolveConflict}
+          onCancel={() => setConflict(null)}
+        />
+      )}
+      <DecisionForm
+        industry={industry}
+        strategy={strategy}
+        economy={economy}
+        controlledDecision={decision}
+        onDecisionChange={setDecision}
+        hideRunButton
+        roundNumber={roundNumber}
+        roundOpen={roundOpen}
+        roundId={roundId}
+        saving={saving}
+        onSaveNow={() => void save(false)}
+        onSaveAndContinue={() => void saveAndContinue()}
+      />
+    </div>
   );
 }
