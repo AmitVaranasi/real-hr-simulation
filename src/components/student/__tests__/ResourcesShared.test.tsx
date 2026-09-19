@@ -82,13 +82,11 @@ describe("ResourcesShared", () => {
       render(<ResourcesSearchRow placeholder="Search guides..." />);
       const input = screen.getByPlaceholderText("Search guides...");
       expect(input).toHaveAttribute("type", "search");
-      // NOTE: a11y gap — the search input has no accessible name: the
-      // wrapping <label> contains only a decorative icon and the input
-      // itself, so screen readers announce nothing but "search". Only the
-      // placeholder conveys purpose, which isn't a substitute for a label.
+      // The wrapping <label> carries sr-only text matching the placeholder,
+      // so the field has a real accessible name beyond its decorative icon.
       expect(
-        screen.queryByRole("searchbox", { name: /search/i })
-      ).not.toBeInTheDocument();
+        screen.getByRole("searchbox", { name: "Search guides..." })
+      ).toBe(input);
     });
   });
 
