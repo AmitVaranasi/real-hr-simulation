@@ -7,10 +7,13 @@ import { consumeNonceWithState } from "@/lib/lti/nonce-store";
 import { verifyLtiLaunch } from "@/lib/lti/verifier";
 import { establishSessionForLaunch } from "@/lib/lti/session";
 import { DEEP_LINK_CONTEXT_COOKIE } from "@/lib/lti/deep-link-cookie";
+import { resolveSessionForResourceLink } from "@/lib/lti/resource-link";
 import {
+  CLAIM_CONTEXT,
   CLAIM_DEEP_LINKING_SETTINGS,
   CLAIM_MESSAGE_TYPE,
   CLAIM_RESOURCE_LINK,
+  CLAIM_TARGET_LINK_URI,
   LTI_MESSAGE_TYPE_DEEP_LINKING,
 } from "@/lib/lti/types";
 
@@ -122,11 +125,23 @@ export async function POST(request: Request) {
 
   const resourceLink = claims[CLAIM_RESOURCE_LINK];
   const resourceLinkId = resourceLink?.id;
-  const dest = resourceLinkId
-    ? `${baseUrl}/lti/resource/${encodeURIComponent(platform.id)}/${encodeURIComponent(resourceLinkId)}`
-    : session.role === "instructor"
-      ? `${baseUrl}/sessions`
-      : `${baseUrl}/dashboard`;
 
+  if (resourceLinkId) {
+    const sessionId = await resolveSessionForResourceLink({
+      platformId: platform.id,
+      resourceLinkId,
+      targetLinkUri: claims[CLAIM_TARGET_LINK_URI],
+      contextId: claims[CLAIM_CONTEXT]?.id,
+    });
+    if (sessionId) {
+      const dest =
+        session.role === "instructor"
+          ? `${baseUrl}/sessions/${encodeURIComponent(sessionId)}`
+          : `${baseUrl}/dashboard?join_session=${encodeURIComponent(sessionId)}`;
+      return NextResponse.redirect(dest, { status: 303 });
+    }
+  }
+
+  const dest = session.role === "instructor" ? `${baseUrl}/sessions` : `${baseUrl}/dashboard`;
   return NextResponse.redirect(dest, { status: 303 });
 }
