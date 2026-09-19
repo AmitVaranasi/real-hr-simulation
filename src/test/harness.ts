@@ -121,7 +121,13 @@ class FakeQueryBuilder implements PromiseLike<QueuedResult> {
   eq() {
     return this;
   }
+  in() {
+    return this;
+  }
   order() {
+    return this;
+  }
+  limit() {
     return this;
   }
   insert() {
