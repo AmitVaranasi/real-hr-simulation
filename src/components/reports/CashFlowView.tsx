@@ -268,51 +268,73 @@ export function CashFlowView({
         />
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-        <div className="grid grid-cols-[minmax(0,1.6fr)_1fr_1fr_1fr_0.8fr] gap-2 bg-[var(--portal-navy)] px-4 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wide text-white">
-          <span>Cash Flow</span>
-          <span className="text-right">Current Round</span>
-          <span className="text-right">Prior Round</span>
-          <span className="text-right">Change</span>
-          <span className="text-right">Change %</span>
-        </div>
-        {rows.map((row, i) => {
-          if (row.kind === "section") {
-            return (
-              <div
-                key={`${row.label}-${i}`}
-                className={`bg-[#f8fafc] px-4 py-2 text-xs font-bold uppercase tracking-wide ${row.color}`}
-              >
-                {row.label}
-              </div>
-            );
-          }
-          const ch = row.current - row.prior;
-          const pct =
-            row.prior === 0 && row.current !== 0
-              ? null
-              : pctChange(row.current, row.prior);
-          return (
-            <div
-              key={`${row.label}-${i}`}
-              className={`grid grid-cols-[minmax(0,1.6fr)_1fr_1fr_1fr_0.8fr] gap-2 border-b border-[var(--portal-sidebar-border)] px-4 py-2 text-xs ${rowBg(row.tone)}`}
-            >
-              <span>{row.label}</span>
-              <span className="text-right tabular-nums">
-                {formatMoneyParens(row.current)}
-              </span>
-              <span className="text-right tabular-nums text-[var(--portal-muted)]">
-                {formatMoneyParens(row.prior)}
-              </span>
-              <span className="text-right tabular-nums">
-                {formatMoneyParens(ch)}
-              </span>
-              <span className="text-right">
-                <TrendBadge change={pct} />
-              </span>
-            </div>
-          );
-        })}
+      <div className="overflow-x-auto rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
+        <table className="w-full border-collapse text-xs">
+          <caption className="sr-only">Cash Flow Statement</caption>
+          <thead>
+            <tr className="bg-[var(--portal-navy)] text-[0.6875rem] font-bold uppercase tracking-wide text-white">
+              <th scope="col" className="px-4 py-2.5 text-left">
+                Cash Flow
+              </th>
+              <th scope="col" className="px-4 py-2.5 text-right">
+                Current Round
+              </th>
+              <th scope="col" className="px-4 py-2.5 text-right">
+                Prior Round
+              </th>
+              <th scope="col" className="px-4 py-2.5 text-right">
+                Change
+              </th>
+              <th scope="col" className="px-4 py-2.5 text-right">
+                Change %
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, i) => {
+              if (row.kind === "section") {
+                return (
+                  <tr key={`${row.label}-${i}`}>
+                    <th
+                      scope="rowgroup"
+                      colSpan={5}
+                      className={`bg-[#f8fafc] px-4 py-2 text-left text-xs font-bold uppercase tracking-wide ${row.color}`}
+                    >
+                      {row.label}
+                    </th>
+                  </tr>
+                );
+              }
+              const ch = row.current - row.prior;
+              const pct =
+                row.prior === 0 && row.current !== 0
+                  ? null
+                  : pctChange(row.current, row.prior);
+              return (
+                <tr
+                  key={`${row.label}-${i}`}
+                  className={`border-b border-[var(--portal-sidebar-border)] ${rowBg(row.tone)}`}
+                >
+                  <th scope="row" className="px-4 py-2 text-left">
+                    {row.label}
+                  </th>
+                  <td className="px-4 py-2 text-right tabular-nums">
+                    {formatMoneyParens(row.current)}
+                  </td>
+                  <td className="px-4 py-2 text-right tabular-nums text-[var(--portal-muted)]">
+                    {formatMoneyParens(row.prior)}
+                  </td>
+                  <td className="px-4 py-2 text-right tabular-nums">
+                    {formatMoneyParens(ch)}
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <TrendBadge change={pct} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
 
       <section>

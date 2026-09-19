@@ -288,37 +288,56 @@ export function FinancialRatiosView({
         })}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
-        <div className="bg-[var(--portal-navy)] px-4 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wide text-white">
-          Financial Ratio Summary
-        </div>
-        <div className="grid grid-cols-[minmax(0,1.4fr)_1fr_1fr_1fr_1fr] gap-2 border-b border-[var(--portal-sidebar-border)] bg-[#f8fafc] px-4 py-2 text-[0.6875rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
-          <span>Ratio</span>
-          <span className="text-right">Current Round</span>
-          <span className="text-right">Prior Round</span>
-          <span className="text-right">Change</span>
-          <span className="text-right">Change % / pp</span>
-        </div>
-        {summaryRows.map((row) => (
-          <div
-            key={row.label}
-            className="grid grid-cols-[minmax(0,1.4fr)_1fr_1fr_1fr_1fr] gap-2 border-b border-[var(--portal-sidebar-border)] px-4 py-2.5 text-xs"
-          >
-            <span className="font-medium text-[var(--portal-title)]">
-              {row.label}
-            </span>
-            <span className="text-right tabular-nums font-semibold">
-              {row.current}
-            </span>
-            <span className="text-right tabular-nums text-[var(--portal-muted)]">
-              {row.prior}
-            </span>
-            <span className="text-right tabular-nums">{row.change}</span>
-            <span className="text-right">
-              <TrendBadge change={row.changePct} unit={row.unit} />
-            </span>
-          </div>
-        ))}
+      <div className="overflow-x-auto rounded-xl border border-[var(--portal-sidebar-border)] bg-white shadow-sm">
+        <table className="w-full border-collapse text-xs">
+          <caption className="caption-top bg-[var(--portal-navy)] px-4 py-2.5 text-left text-[0.6875rem] font-bold uppercase tracking-wide text-white">
+            Financial Ratio Summary
+          </caption>
+          <thead>
+            <tr className="border-b border-[var(--portal-sidebar-border)] bg-[#f8fafc] text-[0.6875rem] font-bold uppercase tracking-wide text-[var(--portal-muted)]">
+              <th scope="col" className="px-4 py-2 text-left">
+                Ratio
+              </th>
+              <th scope="col" className="px-4 py-2 text-right">
+                Current Round
+              </th>
+              <th scope="col" className="px-4 py-2 text-right">
+                Prior Round
+              </th>
+              <th scope="col" className="px-4 py-2 text-right">
+                Change
+              </th>
+              <th scope="col" className="px-4 py-2 text-right">
+                Change % / pp
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {summaryRows.map((row) => (
+              <tr
+                key={row.label}
+                className="border-b border-[var(--portal-sidebar-border)]"
+              >
+                <th
+                  scope="row"
+                  className="px-4 py-2.5 text-left font-medium text-[var(--portal-title)]"
+                >
+                  {row.label}
+                </th>
+                <td className="px-4 py-2.5 text-right tabular-nums font-semibold">
+                  {row.current}
+                </td>
+                <td className="px-4 py-2.5 text-right tabular-nums text-[var(--portal-muted)]">
+                  {row.prior}
+                </td>
+                <td className="px-4 py-2.5 text-right tabular-nums">{row.change}</td>
+                <td className="px-4 py-2.5 text-right">
+                  <TrendBadge change={row.changePct} unit={row.unit} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-5 shadow-sm">
