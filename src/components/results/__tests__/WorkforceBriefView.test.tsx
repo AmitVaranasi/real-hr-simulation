@@ -7,11 +7,6 @@ import {
   type WorkforceBriefData,
 } from "../WorkforceBriefView";
 
-// NOTE: a11y gap — every metric group / feedback-metrics grid here (Workforce
-// Performance Metrics, Strategic KPIs, etc.) is built from <div>/<ul> markup
-// rather than a real <table>, unlike src/components/results/MetricTable.tsx
-// which does use one. Reported in the task summary, not fixed here.
-
 function round(n: number, over: Partial<RoundListItem> = {}): RoundListItem {
   return {
     id: String(n),
@@ -224,5 +219,28 @@ describe("WorkforceBriefView — default data", () => {
     expect(
       screen.getByRole("heading", { name: /Round 1 Results/ })
     ).toBeInTheDocument();
+  });
+});
+
+describe("WorkforceBriefView — Workforce Performance Metrics tables", () => {
+  it("renders each metric group as a real table with a named caption and row headers", () => {
+    render(<WorkforceBriefView data={{ rounds: [] }} />);
+    const tables = screen.getAllByRole("table");
+    // One table per metric group (Talent Acquisition, Workforce & Employee
+    // Experience, Learning & Talent Development, Performance Management,
+    // Compensation & HR Financials, Workforce Inclusion, HR Technology &
+    // Capability).
+    expect(tables).toHaveLength(7);
+
+    const talentAcquisition = screen.getByRole("table", {
+      name: "Talent Acquisition",
+    });
+    expect(talentAcquisition).toBeInTheDocument();
+    expect(
+      within(talentAcquisition).getByRole("rowheader", { name: "Cost per Hire" })
+    ).toBeInTheDocument();
+    expect(
+      within(talentAcquisition).getAllByRole("columnheader")
+    ).toHaveLength(2);
   });
 });

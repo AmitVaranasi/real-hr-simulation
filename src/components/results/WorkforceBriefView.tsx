@@ -733,26 +733,34 @@ export function WorkforceBriefView({
                   key={g.title}
                   className="min-w-0 overflow-hidden rounded-xl border border-[var(--portal-sidebar-border)] bg-white"
                 >
-                  <div
-                    className={`${g.header} px-1.5 py-2 text-center text-[0.5625rem] font-bold uppercase leading-tight tracking-wide text-white`}
-                  >
-                    {g.title}
-                  </div>
-                  <ul className="space-y-1.5 p-2 text-[0.625rem]">
-                    {g.rows.map((row) => (
-                      <li
-                        key={row.label}
-                        className="flex items-start justify-between gap-1"
-                      >
-                        <span className="min-w-0 leading-snug text-[var(--portal-muted)]">
-                          {row.label}
-                        </span>
-                        <span className="shrink-0 font-bold text-[var(--portal-title)]">
-                          {row.value}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                  <table className="w-full border-collapse text-[0.625rem]">
+                    <caption
+                      className={`${g.header} caption-top px-1.5 py-2 text-center text-[0.5625rem] font-bold uppercase leading-tight tracking-wide text-white`}
+                    >
+                      {g.title}
+                    </caption>
+                    <thead className="sr-only">
+                      <tr>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {g.rows.map((row) => (
+                        <tr key={row.label} className="align-top">
+                          <th
+                            scope="row"
+                            className="min-w-0 px-2 pt-1.5 pb-0 text-left align-top font-normal leading-snug text-[var(--portal-muted)]"
+                          >
+                            {row.label}
+                          </th>
+                          <td className="px-2 pt-1.5 pb-0 text-right align-top font-bold text-[var(--portal-title)]">
+                            {row.value}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               ))}
             </div>
