@@ -49,11 +49,13 @@ export function ScoreOverrideDialog({
     <div className="mt-2 flex flex-wrap items-end gap-2 rounded border bg-white p-2">
       <input
         type="number"
+        aria-label="Override score"
         className="w-16 rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-2 py-1 text-sm text-[var(--portal-title)] [color-scheme:light]"
         value={score}
         onChange={(e) => setScore(Number(e.target.value))}
       />
       <input
+        aria-label="Reason for override"
         className="min-w-0 flex-1 rounded-lg border border-[var(--portal-sidebar-border)] bg-white px-2 py-1 text-sm text-[var(--portal-title)] [color-scheme:light]"
         placeholder="Reason"
         value={reason}

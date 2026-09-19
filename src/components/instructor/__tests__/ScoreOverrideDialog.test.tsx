@@ -40,11 +40,13 @@ describe("ScoreOverrideDialog", () => {
     render(<ScoreOverrideDialog teamId="t1" roundId="r1" currentScore={72} />);
     await user.click(screen.getByRole("button", { name: "Override" }));
 
-    // NOTE: a11y gap — ScoreOverrideDialog.tsx:50-61 renders the score and
-    // reason <input>s with a placeholder only, no <label>, so neither has
-    // an accessible name distinct from role. Falling back to spinbutton role.
-    const scoreInput = screen.getByRole("spinbutton") as HTMLInputElement;
+    const scoreInput = screen.getByRole("spinbutton", {
+      name: "Override score",
+    }) as HTMLInputElement;
     expect(scoreInput.value).toBe("72");
+    expect(
+      screen.getByRole("textbox", { name: "Reason for override" })
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Cancel" }));
     expect(screen.queryByRole("spinbutton")).not.toBeInTheDocument();
