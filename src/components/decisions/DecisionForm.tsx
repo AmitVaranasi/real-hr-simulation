@@ -49,7 +49,7 @@ import {
   computeReviewCoverage,
   computeTimeToFill,
 } from "@/lib/engine/metrics";
-import { generateWarnings } from "@/lib/engine/validation";
+import { generateWarnings, validateDecision } from "@/lib/engine/validation";
 import {
   CHANGE_MGMT_COST,
   COLLABORATION_COST,
@@ -481,6 +481,8 @@ function DecisionFormInner({
     [decision, prior.headcount, industryConfig, industry, configReady]
   );
 
+  const validation = useMemo(() => validateDecision(decision), [decision]);
+
   const activeModule = MODULES[activeTab];
   const yourInvestmentPct = useMemo(() => {
     return (activeModuleSpend / Math.max(1, budget.available_budget)) * 100;
@@ -726,6 +728,9 @@ function DecisionFormInner({
   }
 
   const hireTotal = totalHires(decision.positions_to_fill);
+  const hireTotalError = validation.errors.find((e) =>
+    e.includes("Total positions to fill")
+  );
   const economyLabel =
     economy.charAt(0).toUpperCase() + economy.slice(1);
   const roundLabel =
@@ -827,6 +832,11 @@ function DecisionFormInner({
                   Total New Hires{" "}
                   <span className="ml-1 text-base tabular-nums">{hireTotal}</span>
                 </p>
+                {hireTotalError ? (
+                  <p className="mt-1.5 text-[0.6875rem] font-semibold text-red-700">
+                    {hireTotalError}
+                  </p>
+                ) : null}
               </section>
 
               <section className="flex flex-col rounded-xl border border-blue-200/80 bg-white p-3.5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
@@ -2321,6 +2331,7 @@ function DecisionFormInner({
             module={MODULES[activeTab]}
             yourInvestmentPct={yourInvestmentPct}
             warnings={warnings}
+            errors={validation.errors}
             moduleSpend={activeModuleSpend}
             availableBudget={budget.available_budget}
           />
@@ -2330,6 +2341,7 @@ function DecisionFormInner({
       {(onSaveNow || onSaveAndContinue) && (
         <DecisionStickyFooter
           saving={saving}
+          disabled={!validation.valid}
           continueLabel={nextLabel}
           onSaveNow={onSaveNow}
           onSaveAndContinue={onSaveAndContinue}
