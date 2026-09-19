@@ -9,6 +9,7 @@ import { establishSessionForLaunch } from "@/lib/lti/session";
 import { DEEP_LINK_CONTEXT_COOKIE } from "@/lib/lti/deep-link-cookie";
 import { resolveSessionForResourceLink } from "@/lib/lti/resource-link";
 import {
+  CLAIM_AGS_ENDPOINT,
   CLAIM_CONTEXT,
   CLAIM_DEEP_LINKING_SETTINGS,
   CLAIM_MESSAGE_TYPE,
@@ -132,6 +133,7 @@ export async function POST(request: Request) {
       resourceLinkId,
       targetLinkUri: claims[CLAIM_TARGET_LINK_URI],
       contextId: claims[CLAIM_CONTEXT]?.id,
+      agsLineitemsUrl: claims[CLAIM_AGS_ENDPOINT]?.lineitems,
     });
     if (sessionId) {
       const dest =

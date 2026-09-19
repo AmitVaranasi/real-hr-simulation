@@ -15,16 +15,27 @@ export async function resolveSessionForResourceLink(params: {
   resourceLinkId: string;
   targetLinkUri?: string;
   contextId?: string;
+  agsLineitemsUrl?: string;
 }): Promise<string | null> {
   const admin = createAdminClient();
 
   const { data: existing } = await admin
     .from("lti_resource_links")
-    .select("session_id")
+    .select("id, session_id, ags_lineitems_url")
     .eq("platform_id", params.platformId)
     .eq("resource_link_id", params.resourceLinkId)
     .maybeSingle();
-  if (existing) return existing.session_id as string;
+  if (existing) {
+    // Backfill the AGS lineitems URL if an earlier launch didn't carry the
+    // ags claim (e.g. line item scope wasn't yet granted) but this one does.
+    if (!existing.ags_lineitems_url && params.agsLineitemsUrl) {
+      await admin
+        .from("lti_resource_links")
+        .update({ ags_lineitems_url: params.agsLineitemsUrl })
+        .eq("id", existing.id);
+    }
+    return existing.session_id as string;
+  }
 
   if (!params.targetLinkUri) return null;
   let sessionId: string | null = null;
@@ -40,6 +51,7 @@ export async function resolveSessionForResourceLink(params: {
     resource_link_id: params.resourceLinkId,
     session_id: sessionId,
     context_id: params.contextId ?? null,
+    ags_lineitems_url: params.agsLineitemsUrl ?? null,
   });
   // A concurrent first-launch race would trip the (platform_id,
   // resource_link_id) unique constraint — the row already exists in that

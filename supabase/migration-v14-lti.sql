@@ -57,9 +57,13 @@ CREATE TABLE IF NOT EXISTS public.lti_resource_links (
   resource_link_id TEXT NOT NULL,
   session_id UUID NOT NULL REFERENCES public.sessions(id) ON DELETE CASCADE,
   context_id TEXT,
+  ags_lineitems_url TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (platform_id, resource_link_id)
 );
+
+COMMENT ON COLUMN public.lti_resource_links.ags_lineitems_url IS
+  'AGS lineitems collection URL from the endpoint claim of the launch that created this row. Captured once per resource link since Canvas returns the same URL for every launch of a given placement.';
 
 COMMENT ON TABLE public.lti_resource_links IS
   'Maps a Canvas assignment (resource_link_id) placed via deep linking to one of our simulation sessions, so a resource launch knows which session to open.';
