@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { Navbar } from "@/components/layout/Navbar";
 import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
+import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
+import { getServerLocale } from "@/lib/i18n/server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -46,22 +48,26 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getServerLocale();
+
   return (
-    <html lang="en" className="light" suppressHydrationWarning>
+    <html lang={locale} className="light" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-[var(--portal-page)] text-[var(--portal-ink)] antialiased`}
       >
-        <ImpersonationBanner />
-        <Navbar />
-        <main className="min-h-screen w-full min-w-0 overflow-x-hidden">
-          {children}
-        </main>
-        <Toaster position="top-right" />
+        <LocaleProvider initialLocale={locale}>
+          <ImpersonationBanner />
+          <Navbar />
+          <main className="min-h-screen w-full min-w-0 overflow-x-hidden">
+            {children}
+          </main>
+          <Toaster position="top-right" />
+        </LocaleProvider>
       </body>
     </html>
   );
