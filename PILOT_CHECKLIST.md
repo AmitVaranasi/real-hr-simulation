@@ -55,5 +55,21 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
   20 messages/student/day, transcripts visible to the owning instructor.
   Route degrades gracefully (503) when the key is unset.
 - No formula expression editor (parameters only)
+- No full AI coach
+- Formula expression editor now exists (Admin → Formula Repository) for the
+  subset of catalog formulas with a configured variable whitelist
+  (`src/lib/formula-lang/engine-variables.ts`): turnover, hiring quality,
+  productivity, DEI, training ROI, revenue cascade, profit, stock price,
+  BSC perspective/total, and strategy bonus. Budget-allocation formulas
+  (`discretionary-budget`, `module-allocation`) don't map to a stored
+  outcome column yet, so they remain documentation-only in the editor.
+  Edits are validated by a hand-written parser/evaluator (no `eval`), must
+  pass a preview against real historical `outcomes` rows before save, and
+  are versioned via `formula_overrides` / `formula_override_revisions`
+  (apply `supabase/migration-v13-formula-editor.sql`). The saved
+  expression is **not yet wired into the live scoring pipeline** —
+  `metrics.ts` / `scoring.ts` still compute with the built-in TypeScript
+  formulas; the override is evaluated only for the editor's own preview.
+  Wiring overrides into the runtime pipeline is the next step.
 - Students cannot leave/rejoin teams yet
 - No separate system-admin role / formula version repository
