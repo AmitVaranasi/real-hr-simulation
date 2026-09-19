@@ -127,7 +127,13 @@ class FakeQueryBuilder implements PromiseLike<QueuedResult> {
   lte() {
     return this;
   }
+  in() {
+    return this;
+  }
   order() {
+    return this;
+  }
+  limit() {
     return this;
   }
   insert() {
@@ -179,6 +185,14 @@ export class FakeSupabaseClient {
       data: { user: unknown };
       error: unknown;
     },
+    getSession: async () => ({
+      data: { session: null as unknown },
+      error: null as unknown,
+    }),
+    exchangeCodeForSession: async () => ({
+      data: { session: null as unknown, user: null as unknown },
+      error: null as unknown,
+    }),
     admin: {
       listUsers: async () => ({
         data: { users: [] as unknown[] },
@@ -188,7 +202,18 @@ export class FakeSupabaseClient {
         data: {},
         error: null as unknown,
       }),
+      getUserById: async () => ({
+        data: { user: null as unknown },
+        error: null as unknown,
+      }),
+      generateLink: async () => ({
+        data: { properties: null as unknown },
+        error: null as unknown,
+      }),
     },
+    resetPasswordForEmail: async () => ({
+      error: null as unknown,
+    }),
   };
 
   from(table: string) {
