@@ -199,14 +199,12 @@ next in line above). Check it first when that migration happens — Spanish
 strings run 20-30% longer than English and this codebase has several
 `w-*`/`truncate` nav items that were sized for English text.
 
-**Build verification gap:** `npx next build` could not be run to completion
-in this environment — Turbopack fails with `Symlink [project]/node_modules
-is invalid, it points out of the filesystem root`, because the worktree's
-`node_modules` is a symlink to a path outside the worktree's directory tree
-(`/Users/.../Volunteering/Project Scope Goals and Objectives/HR
-Simulation/node_modules`, pre-existing, not created by this change). This
-reproduces on `next build` regardless of the i18n changes (Turbopack's own
-project-root sandboxing, unrelated to any code in this branch). `tsc
+**Build verification note:** the default `npx next build` (Turbopack) fails
+with `Symlink [project]/node_modules is invalid, it points out of the
+filesystem root` — the worktree's `node_modules` is a symlink to a path
+outside the worktree's own directory tree, which Turbopack's project-root
+sandboxing rejects. This is a property of the worktree setup, not this
+branch's code: `npx next build --webpack` compiles the full app successfully
+(all ~110 routes, including every route touched by this change), and `tsc
 --noEmit`, `eslint`, and the full `vitest run` suite (1296+ tests) all pass
-clean after every commit in this branch — re-run `next build` once the
-worktree has a real (non-cross-tree-symlinked) `node_modules`.
+clean after every commit in this branch.
