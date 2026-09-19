@@ -252,6 +252,7 @@ export function AnnouncementsHub({
         searchPlaceholder="Search announcements..."
       >
         <select
+          aria-label="Filter by announcement type"
           className={`${formSelectClassName} min-w-0`}
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
@@ -263,6 +264,7 @@ export function AnnouncementsHub({
           ))}
         </select>
         <select
+          aria-label="Filter by round"
           className={`${formSelectClassName} min-w-0`}
           value={roundFilter}
           onChange={(e) => setRoundFilter(e.target.value)}

@@ -88,10 +88,12 @@ describe("AnnouncementsHub", () => {
         rail={RAIL}
       />
     );
-    // NOTE: a11y gap — AnnouncementsHub.tsx:250-272 renders the type and
-    // round filter <select> elements with no <label> or aria-label, so
-    // neither has an accessible name. Falling back to index-based lookup.
-    const [typeSelect] = screen.getAllByRole("combobox");
+    const typeSelect = screen.getByRole("combobox", {
+      name: "Filter by announcement type",
+    });
+    expect(
+      screen.getByRole("combobox", { name: "Filter by round" })
+    ).toBeInTheDocument();
     await user.selectOptions(typeSelect, "reminder");
     expect(screen.getByText("No announcement posted.")).toBeInTheDocument();
   });
