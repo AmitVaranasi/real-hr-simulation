@@ -91,15 +91,14 @@ describe("DecisionForm save / continue footer", () => {
     unmount();
   });
 
-  // NOTE: real defect — DecisionStickyFooter (DecisionChrome.tsx L121-147)
-  // never passes `disabled={saving}` to either button, it only swaps the
-  // "All changes auto-saved" text to "Saving…". A student double-clicking
-  // Save & Continue while a save is already in flight fires onSaveAndContinue
-  // twice with no guard in this component.
-  it("does not disable Save Now while saving=true (pins the missing double-submit guard)", async () => {
-    const user = userEvent.setup();
+  // Fixed: DecisionStickyFooter (DecisionChrome.tsx) now disables both
+  // buttons while `saving` is true, in addition to swapping the "All
+  // changes auto-saved" text to "Saving…". This closes the double-submit
+  // gap where a student clicking Save & Continue repeatedly mid-save could
+  // fire the handler multiple times.
+  it("disables Save Now while saving=true, and re-enables once saving clears", async () => {
     const onSaveNow = vi.fn();
-    render(
+    const { rerender } = render(
       <DecisionForm
         industry="Manufacturing"
         strategy="Cost Leadership"
@@ -109,11 +108,19 @@ describe("DecisionForm save / continue footer", () => {
       />
     );
     await screen.findByRole("heading", { level: 1, name: "Recruitment & Selection" });
-    const button = screen.getByRole("button", { name: "Save Now" });
-    expect(button).not.toBeDisabled();
-    await user.click(button);
-    expect(onSaveNow).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "Save Now" })).toBeDisabled();
     expect(screen.getByText("Saving…")).toBeInTheDocument();
+
+    rerender(
+      <DecisionForm
+        industry="Manufacturing"
+        strategy="Cost Leadership"
+        hideRunButton
+        saving={false}
+        onSaveNow={onSaveNow}
+      />
+    );
+    expect(screen.getByRole("button", { name: "Save Now" })).not.toBeDisabled();
   });
 
   it("shows Run simulation / Reset defaults instead of a save footer when hideRunButton is false", async () => {
