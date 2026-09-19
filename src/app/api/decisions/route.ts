@@ -9,10 +9,17 @@ export async function POST(request: Request) {
   if (error) return error;
 
   const body = await request.json();
-  const { team_id, round_id, is_submitted, ...fields } = body as Decision & {
-    team_id: string;
-    round_id: string;
-  };
+  const { team_id, round_id, is_submitted, version, ...fields } =
+    body as Decision & {
+      team_id: string;
+      round_id: string;
+      /**
+       * Version the client loaded from, for optimistic concurrency.
+       * undefined/null means "I loaded before any row existed" — a
+       * first-time save. See supabase/migration-v11-decision-version.sql.
+       */
+      version?: number | null;
+    };
 
   if (!team_id || !round_id) {
     return NextResponse.json(
@@ -51,6 +58,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ errors: validation.errors }, { status: 400 });
   }
 
+  // Optimistic-concurrency check: look up whatever row currently exists for
+  // this team/round and compare its version against what the client says it
+  // loaded from. A never-saved row is null-safe as version 0, so a genuine
+  // first save (version undefined/null) still proceeds normally.
+  const { data: existing } = await supabase
+    .from("decisions")
+    .select("*")
+    .eq("team_id", team_id)
+    .eq("round_id", round_id)
+    .maybeSingle();
+
+  const currentVersion = (existing?.version as number | undefined) ?? 0;
+  const clientVersion = version ?? 0;
+
+  if (existing && currentVersion !== clientVersion) {
+    return NextResponse.json(
+      {
+        error: "conflict",
+        serverDecision: rowToDecision(existing as Record<string, unknown>),
+        serverVersion: currentVersion,
+      },
+      { status: 409 }
+    );
+  }
+
   const row = decisionToRow(
     { ...decision, is_submitted: Boolean(is_submitted) },
     team_id,
@@ -68,5 +100,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: upsertError.message }, { status: 500 });
   }
 
-  return NextResponse.json({ decision: rowToDecision(data) });
+  return NextResponse.json({
+    decision: { ...rowToDecision(data), version: data?.version as number | undefined },
+  });
 }
