@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { CashFlowView } from "../CashFlowView";
 import { FIGMA_CF } from "@/lib/reports/statement-data";
@@ -23,10 +23,28 @@ function parens(n: number) {
   return n < 0 ? `(${formatted})` : formatted;
 }
 
-// NOTE: a11y gap — the cash flow statement rows are CSS-grid <div>s, not a
-// real <table>. Reported in the task summary, not fixed here.
-
 describe("CashFlowView — figma template", () => {
+  it("renders the cash flow statement as a real table with column and row headers", () => {
+    render(
+      <CashFlowView roundNumber={1} asOfLabel="July 31, 2026" rounds={rounds} />
+    );
+    const table = screen.getByRole("table", { name: "Cash Flow Statement" });
+    expect(
+      within(table)
+        .getAllByRole("columnheader")
+        .map((h) => h.textContent)
+    ).toEqual([
+      "Cash Flow",
+      "Current Round",
+      "Prior Round",
+      "Change",
+      "Change %",
+    ]);
+    expect(
+      within(table).getByRole("rowheader", { name: "ENDING CASH BALANCE" })
+    ).toBeInTheDocument();
+  });
+
   it("renders outflows in accounting parentheses format, not a leading minus sign", () => {
     render(
       <CashFlowView roundNumber={1} asOfLabel="July 31, 2026" rounds={rounds} />
