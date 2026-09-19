@@ -1,0 +1,17 @@
+{
+  "nav.dashboard": "Dashboard",
+  "nav.team": "Team",
+  "nav.reports": "Reports",
+  "nav.help": "Help",
+  "nav.leaderboard": "Leaderboard",
+  "nav.history": "History",
+  "action.back": "Back",
+  "action.cancel": "Cancel",
+  "action.save": "Save",
+  "action.submit": "Submit",
+  "action.close": "Close",
+  "action.tryAgain": "Try again",
+  "status.loading": "Loading…",
+  "error.generic": "Something went wrong. Please try again.",
+  "studentPortal.label": "Student portal"
+}

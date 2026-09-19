@@ -1,0 +1,3 @@
+{
+  "_todo": "Espacio de nombres reservado para el flujo de decisiones. DecisionForm.tsx y src/lib/decisions/** pertenecen a otra rama; no migrar hasta que se integre. Ver future-fixes.md."
+}

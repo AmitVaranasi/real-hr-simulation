@@ -1,0 +1,3 @@
+{
+  "_todo": "Namespace reserved for the decisions flow. DecisionForm.tsx and src/lib/decisions/** are owned by another branch — do not migrate until that lands. See future-fixes.md."
+}

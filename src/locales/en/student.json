@@ -1,0 +1,33 @@
+{
+  "dashboard.noTeam.eyebrow": "Getting started",
+  "dashboard.noTeam.title": "Join your company",
+  "dashboard.noTeam.body": "Enter the join code from your instructor to unlock your team dashboard.",
+  "dashboard.noTeam.cta": "Join a team",
+  "dashboard.noTeam.gettingStartedLink": "Or open Getting Started →",
+
+  "join.title.switch": "Join a new session",
+  "join.title.first": "Join your team",
+  "join.body.switch": "Enter a join code from another class session. This will switch you to that team (one active team at a time).",
+  "join.body.first": "Enter the join code your instructor gave you to join your company team.",
+  "join.currentTeam.eyebrow": "Current team",
+  "join.currentTeam.fallbackSession": "Active session",
+  "join.backToDashboard": "Back to dashboard",
+
+  "joinForm.switchWarning": "Joining will leave your current team and switch you to the new session.",
+  "joinForm.codeLabel": "Team join code",
+  "joinForm.codePlaceholder": "e.g. a3f9bc21",
+  "joinForm.codeHint": "Your instructor shares this code for your team (letters and numbers, no spaces).",
+  "joinForm.lookingUp": "Looking up team…",
+  "joinForm.notFound": "No team found for this code. Check with your instructor.",
+  "joinForm.lookupFailed": "Could not look up this code. Try again.",
+  "joinForm.codeRequired": "Enter the join code from your instructor.",
+  "joinForm.joinFailed": "Could not join team",
+  "joinForm.teamFound": "Team found",
+  "joinForm.fallbackSession": "Class session",
+  "joinForm.joining": "Joining…",
+  "joinForm.switchCta": "Switch to this team",
+  "joinForm.joinCta": "Join this team",
+
+  "teamsInClass": "{count, plural, =0 {No other teams in your class yet} one {# team in your class} other {# teams in your class}}",
+  "roundsCompleted": "{count, plural, =0 {No rounds completed yet} one {# round completed} other {# rounds completed}}"
+}

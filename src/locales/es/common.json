@@ -1,0 +1,17 @@
+{
+  "nav.dashboard": "Panel",
+  "nav.team": "Equipo",
+  "nav.reports": "Informes",
+  "nav.help": "Ayuda",
+  "nav.leaderboard": "Clasificación",
+  "nav.history": "Historial",
+  "action.back": "Atrás",
+  "action.cancel": "Cancelar",
+  "action.save": "Guardar",
+  "action.submit": "Enviar",
+  "action.close": "Cerrar",
+  "action.tryAgain": "Intentar de nuevo",
+  "status.loading": "Cargando…",
+  "error.generic": "Algo salió mal. Inténtalo de nuevo.",
+  "studentPortal.label": "Portal del estudiante"
+}

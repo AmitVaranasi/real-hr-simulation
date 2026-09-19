@@ -1,0 +1,33 @@
+{
+  "dashboard.noTeam.eyebrow": "Primeros pasos",
+  "dashboard.noTeam.title": "Únete a tu empresa",
+  "dashboard.noTeam.body": "Ingresa el código de acceso de tu instructor para desbloquear el panel de tu equipo.",
+  "dashboard.noTeam.cta": "Unirse a un equipo",
+  "dashboard.noTeam.gettingStartedLink": "O abre Primeros pasos →",
+
+  "join.title.switch": "Unirse a una nueva sesión",
+  "join.title.first": "Únete a tu equipo",
+  "join.body.switch": "Ingresa un código de acceso de otra sesión de clase. Esto te cambiará a ese equipo (solo puedes tener un equipo activo a la vez).",
+  "join.body.first": "Ingresa el código de acceso que te dio tu instructor para unirte al equipo de tu empresa.",
+  "join.currentTeam.eyebrow": "Equipo actual",
+  "join.currentTeam.fallbackSession": "Sesión activa",
+  "join.backToDashboard": "Volver al panel",
+
+  "joinForm.switchWarning": "Al unirte dejarás tu equipo actual y pasarás a la nueva sesión.",
+  "joinForm.codeLabel": "Código de acceso del equipo",
+  "joinForm.codePlaceholder": "p. ej. a3f9bc21",
+  "joinForm.codeHint": "Tu instructor comparte este código con tu equipo (letras y números, sin espacios).",
+  "joinForm.lookingUp": "Buscando equipo…",
+  "joinForm.notFound": "No se encontró ningún equipo con este código. Consulta con tu instructor.",
+  "joinForm.lookupFailed": "No se pudo buscar este código. Inténtalo de nuevo.",
+  "joinForm.codeRequired": "Ingresa el código de acceso de tu instructor.",
+  "joinForm.joinFailed": "No se pudo unir al equipo",
+  "joinForm.teamFound": "Equipo encontrado",
+  "joinForm.fallbackSession": "Sesión de clase",
+  "joinForm.joining": "Uniéndote…",
+  "joinForm.switchCta": "Cambiar a este equipo",
+  "joinForm.joinCta": "Unirse a este equipo",
+
+  "teamsInClass": "{count, plural, =0 {Aún no hay otros equipos en tu clase} one {# equipo en tu clase} other {# equipos en tu clase}}",
+  "roundsCompleted": "{count, plural, =0 {Ninguna ronda completada aún} one {# ronda completada} other {# rondas completadas}}"
+}
