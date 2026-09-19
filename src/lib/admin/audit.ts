@@ -11,7 +11,9 @@ export type AuditAction =
   | "config.reset"
   | "config.restore"
   | "config.snapshot"
-  | "formula.note_update";
+  | "formula.note_update"
+  | "formula.override_save"
+  | "formula.override_restore";
 
 export async function writeAdminAudit(opts: {
   actorId: string | null;
