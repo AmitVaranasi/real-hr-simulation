@@ -5,6 +5,7 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 ## Prerequisites
 
 - [ ] Run `supabase/migration-v4.sql` (adds `sessions.announcement`)
+- [ ] Run `supabase/migration-v11-decision-version.sql` (adds `decisions.version` / `last_edited_by` + bump trigger, needed for concurrent-edit protection below)
 - [ ] Supabase Auth redirect URLs include `{APP_URL}/auth/callback`
 - [ ] `.env.local` has URL, anon key, service role key, `NEXT_PUBLIC_APP_URL`
 - [ ] `npm run test` passes (engine golden tests)
@@ -21,6 +22,7 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 - [ ] Dashboard shows team, round, budget, progress, announcements
 - [ ] **Continue Simulation** opens decisions (or Review when draft exists)
 - [ ] Role secondary nav appears on student pages
+- [ ] Two teammates editing the same round's decisions concurrently: second save gets a resolution dialog instead of silently losing the first teammate's field (open the same round decision page in two browser sessions as two team members, edit different fields, save both — second save should show "Resolve & Save" / "Merge & Save", not a silent overwrite)
 
 ## Professor landing
 
@@ -54,3 +56,4 @@ Use this before Cooper (or another HR domain expert) evaluates the platform.
 - No formula expression editor (parameters only)
 - Students cannot leave/rejoin teams yet
 - No separate system-admin role / formula version repository
+- No presence indicator for concurrent decision editing (students aren't shown *who else* has the round open, only warned via a save-time conflict — see `future-fixes.md`)
