@@ -21,6 +21,7 @@ export function decisionToRow(
     submitted_by: d.is_submitted ? userId ?? d.submitted_by : null,
     submitted_at: d.is_submitted ? new Date().toISOString() : null,
     is_submitted: d.is_submitted ?? false,
+    last_edited_by: userId ?? null,
 
     positions_to_fill_json: d.positions_to_fill,
     role_compensation_json: d.role_compensation,

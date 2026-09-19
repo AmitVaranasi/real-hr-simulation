@@ -31,13 +31,18 @@ export class FakeDecisionsTable {
   }
 
   /** Mimics the BEFORE INSERT/UPDATE trigger: version is never trusted from the payload. */
-  upsert(row: Omit<FakeDecisionRow, "version">): FakeDecisionRow {
+  upsert(row: {
+    team_id: string;
+    round_id: string;
+    last_edited_by: string | null;
+    [key: string]: unknown;
+  }): FakeDecisionRow {
     const k = this.key(row.team_id, row.round_id);
     const existing = this.rows.get(k);
-    const next: FakeDecisionRow = {
+    const next = {
       ...row,
       version: existing ? existing.version + 1 : 1,
-    };
+    } as FakeDecisionRow;
     this.rows.set(k, next);
     return next;
   }
@@ -90,7 +95,12 @@ export function fakeDecisionsSupabaseClient(table: FakeDecisionsTable) {
             );
             return { data: row, error: null };
           },
-          upsert: (row: Omit<FakeDecisionRow, "version">) => ({
+          upsert: (row: {
+            team_id: string;
+            round_id: string;
+            last_edited_by: string | null;
+            [key: string]: unknown;
+          }) => ({
             select: () => ({
               single: async () => ({
                 data: table.upsert(row),

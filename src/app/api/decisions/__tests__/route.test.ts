@@ -107,7 +107,13 @@ describe("POST /api/decisions", () => {
       "r1",
       "student-1"
     );
-    harness.serverClient.queue("decisions", { data: row, error: null });
+    // First "decisions" result is the pre-write version-check select (no
+    // existing row: this is a first-time save). Second is the upsert result.
+    harness.serverClient.queue("decisions", { data: null, error: null });
+    harness.serverClient.queue("decisions", {
+      data: { ...row, version: 1 },
+      error: null,
+    });
 
     const res = await POST(
       req({ team_id: "t1", round_id: "r1", ...validDecision, is_submitted: true })
@@ -116,5 +122,37 @@ describe("POST /api/decisions", () => {
     const body = await res.json();
     expect(body.decision.bonus_tier).toBe(validDecision.bonus_tier);
     expect(body.decision.is_submitted).toBe(true);
+    expect(body.decision.version).toBe(1);
+  });
+
+  it("409s with the server's current row when the write is built on a stale version", async () => {
+    harness.setAuth(authedContext("student", { id: "student-1" }));
+    harness.serverClient.queue("team_members", { data: { id: "m1" }, error: null });
+    harness.serverClient.queue("rounds", { data: { status: "open" }, error: null });
+
+    const serverRow = decisionToRow(
+      { ...validDecision, benefits_pct: 18 },
+      "t1",
+      "r1",
+      "teammate-1"
+    );
+    harness.serverClient.queue("decisions", {
+      data: { ...serverRow, version: 3 },
+      error: null,
+    });
+
+    const res = await POST(
+      req({
+        team_id: "t1",
+        round_id: "r1",
+        ...validDecision,
+        version: 1, // stale: server is already at version 3
+      })
+    );
+    expect(res.status).toBe(409);
+    const body = await res.json();
+    expect(body.error).toBe("conflict");
+    expect(body.serverVersion).toBe(3);
+    expect(body.serverDecision.benefits_pct).toBe(18);
   });
 });
