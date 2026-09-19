@@ -183,6 +183,10 @@ export class FakeSupabaseClient {
       data: { session: null as unknown },
       error: null as unknown,
     }),
+    exchangeCodeForSession: async () => ({
+      data: { session: null as unknown, user: null as unknown },
+      error: null as unknown,
+    }),
     admin: {
       listUsers: async () => ({
         data: { users: [] as unknown[] },
