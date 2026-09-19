@@ -81,16 +81,24 @@ describe("DecisionForm live warning boundaries", () => {
     ).not.toBeInTheDocument();
   });
 
-  // NOTE: real defect — validateDecision()'s hard rule "Total positions to
-  // fill must be between 0 and 50" (src/lib/engine/validation.ts:20-22) is
-  // never invoked from DecisionForm, so a student can push the UI into that
-  // invalid state (each role's stepper is independently capped at 20 by
-  // `Math.min(20, ...)` in DecisionForm.tsx, so 3+ roles can exceed 50
-  // combined) with zero feedback of any kind — no warning, no error, no
-  // disabled Save button. This test pins that gap.
-  it("lets total hires exceed 50 via the UI with no validation feedback at all", async () => {
+  // Fixed: validateDecision()'s hard rule "Total positions to fill must be
+  // between 0 and 50" (src/lib/engine/validation.ts:20-22) is now run live
+  // against the current decision. Each role's stepper is still independently
+  // capped at 20 by `Math.min(20, ...)`, so 3+ roles can still push the
+  // combined total over 50 — but the student now sees an inline hard error
+  // next to the Total New Hires readout, and the Save/Save & Continue
+  // buttons in the sticky footer are disabled while it's outstanding.
+  it("shows an inline hard error and disables Save when total hires exceeds 50 via the UI", async () => {
     const user = userEvent.setup();
-    render(<DecisionForm industry="Manufacturing" strategy="Cost Leadership" hideRunButton />);
+    render(
+      <DecisionForm
+        industry="Manufacturing"
+        strategy="Cost Leadership"
+        hideRunButton
+        onSaveNow={vi.fn()}
+        onSaveAndContinue={vi.fn()}
+      />
+    );
     await screen.findByRole("heading", { level: 1, name: "Recruitment & Selection" });
 
     const hiringCard = screen.getByText("1. Hiring Needs").closest("section")!;
@@ -107,8 +115,54 @@ describe("DecisionForm live warning boundaries", () => {
 
     expect(screen.getByText("Total New Hires").parentElement).toHaveTextContent("100");
     expect(
+      (await screen.findAllByText(/must be between 0 and 50/)).length
+    ).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: "Save Now" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: /save & continue/i })
+    ).toBeDisabled();
+  });
+
+  it("re-enables Save once total hires is brought back within range", async () => {
+    const user = userEvent.setup();
+    render(
+      <DecisionForm
+        industry="Manufacturing"
+        strategy="Cost Leadership"
+        hideRunButton
+        onSaveNow={vi.fn()}
+      />
+    );
+    await screen.findByRole("heading", { level: 1, name: "Recruitment & Selection" });
+
+    const hiringCard = screen.getByText("1. Hiring Needs").closest("section")!;
+    const plusButtons = within(hiringCard)
+      .getAllByRole("button")
+      .filter((b) => b.textContent === "+");
+    for (const btn of plusButtons) {
+      for (let i = 0; i < 20; i++) {
+        await user.click(btn);
+      }
+    }
+    expect(
+      (await screen.findAllByText(/must be between 0 and 50/)).length
+    ).toBeGreaterThan(0);
+
+    const minusButtons = within(hiringCard)
+      .getAllByRole("button")
+      .filter((b) => b.textContent === "−");
+    // Bring total from 100 down to 50 (10 clicks per role x 5 roles = 50).
+    for (const btn of minusButtons) {
+      for (let i = 0; i < 10; i++) {
+        await user.click(btn);
+      }
+    }
+
+    expect(screen.getByText("Total New Hires").parentElement).toHaveTextContent("50");
+    expect(
       screen.queryByText(/must be between 0 and 50/)
     ).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save Now" })).not.toBeDisabled();
   });
 
   it("gives the Diversity Sourcing Goal slider an accessible name", async () => {

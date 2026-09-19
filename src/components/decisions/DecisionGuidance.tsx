@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Lightbulb } from "lucide-react";
+import { AlertTriangle, Lightbulb, OctagonAlert } from "lucide-react";
 import {
   DEFAULT_INDUSTRY_NORMS,
   MODULE_TAB_GUIDANCE,
@@ -59,6 +59,8 @@ interface DecisionGuidanceProps {
   /** Current module spend as % of discretionary HR budget */
   yourInvestmentPct: number | null;
   warnings: Warning[];
+  /** Hard validation errors from validateDecision() — always shown, never module-filtered. */
+  errors?: string[];
   moduleSpend?: number;
   availableBudget?: number;
 }
@@ -68,6 +70,7 @@ export function DecisionGuidance({
   module,
   yourInvestmentPct,
   warnings,
+  errors = [],
   moduleSpend,
   availableBudget,
 }: DecisionGuidanceProps) {
@@ -178,6 +181,25 @@ export function DecisionGuidance({
           Consider whether your current investment supports your workforce needs,
           organizational strategy, and other HR priorities.
         </p>
+
+        {errors.length > 0 && (
+          <div className="space-y-1.5">
+            <p className="flex items-center gap-1.5 text-[0.6875rem] font-bold uppercase tracking-wide text-red-700">
+              <OctagonAlert className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
+              Errors — must fix before saving
+            </p>
+            <ul className="space-y-2">
+              {errors.map((message, i) => (
+                <li
+                  key={`error-${i}`}
+                  className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[0.75rem] font-medium text-red-800"
+                >
+                  {message}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {filtered.length > 0 && (
           <ul className="space-y-2">

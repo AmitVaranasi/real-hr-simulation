@@ -87,6 +87,7 @@ export function DecisionStatusStrip({
 
 export function DecisionStickyFooter({
   saving,
+  disabled,
   continueLabel,
   onSaveNow,
   onSaveAndContinue,
@@ -95,6 +96,8 @@ export function DecisionStickyFooter({
   contentMaxClassName = "max-w-[1400px]",
 }: {
   saving?: boolean;
+  /** Blocks Save Now / Save & Continue, e.g. while a hard validation error is outstanding. */
+  disabled?: boolean;
   continueLabel: string;
   onSaveNow?: () => void;
   onSaveAndContinue?: () => void;
@@ -103,6 +106,7 @@ export function DecisionStickyFooter({
   /** Aligns footer content width with the page container (e.g. Review & Submit). */
   contentMaxClassName?: string;
 }) {
+  const actionsDisabled = Boolean(saving) || Boolean(disabled);
   return (
     <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-[var(--portal-sidebar-border)] bg-white/95 backdrop-blur lg:left-[var(--portal-sidebar-width)]">
       <div
@@ -123,7 +127,8 @@ export function DecisionStickyFooter({
             <button
               type="button"
               onClick={onSaveNow}
-              className="rounded-md border border-[var(--portal-accent-blue)] bg-white px-4 py-2 text-sm font-semibold text-[var(--portal-accent-blue)] hover:bg-[var(--portal-accent-blue-soft)]"
+              disabled={actionsDisabled}
+              className="rounded-md border border-[var(--portal-accent-blue)] bg-white px-4 py-2 text-sm font-semibold text-[var(--portal-accent-blue)] hover:bg-[var(--portal-accent-blue-soft)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white"
             >
               Save Now
             </button>
@@ -133,7 +138,8 @@ export function DecisionStickyFooter({
               <button
                 type="button"
                 onClick={onSaveAndContinue}
-                className="rounded-md bg-[var(--portal-brand)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--portal-brand-hover)]"
+                disabled={actionsDisabled}
+                className="rounded-md bg-[var(--portal-brand)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--portal-brand-hover)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[var(--portal-brand)]"
               >
                 {continueLabel}
               </button>

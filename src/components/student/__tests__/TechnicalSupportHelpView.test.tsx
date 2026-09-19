@@ -1,24 +1,29 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { TechnicalSupportHelpView } from "../help/TechnicalSupportHelpView";
 
 describe("TechnicalSupportHelpView", () => {
-  it("renders the three support channel cards as real, clickable buttons", async () => {
-    const user = userEvent.setup();
+  // Fixed: there is no messaging backend behind this page, so "Start Live
+  // Chat", "Send Email", and "Submit Ticket" used to render as live-looking
+  // buttons with no onClick — a silent no-op for a student who is already
+  // stuck. None of the three can reach a real instructor address from this
+  // component's context (no session/team data is fetched here), so all
+  // three are now honestly disabled with "coming soon" helper text that
+  // points the student to their instructor instead.
+  it("renders the three support channel cards as disabled controls with explanatory helper text", () => {
     render(<TechnicalSupportHelpView />);
 
     const chat = screen.getByRole("button", { name: "Start Live Chat" });
     const email = screen.getByRole("button", { name: "Send Email" });
     const ticket = screen.getByRole("button", { name: "Submit Ticket" });
-    expect(chat).toBeInTheDocument();
-    expect(email).toBeInTheDocument();
-    expect(ticket).toBeInTheDocument();
+    expect(chat).toBeDisabled();
+    expect(email).toBeDisabled();
+    expect(ticket).toBeDisabled();
 
-    // NOTE: a11y gap — src/components/student/help/TechnicalSupportHelpView.tsx:81-86
-    // these buttons have no onClick handler at all, so clicking them is a
-    // silent no-op with no feedback to the user.
-    await user.click(chat);
+    expect(screen.getAllByText(/coming soon/i).length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/contact your instructor/i).length
+    ).toBeGreaterThan(0);
   });
 
   it("lists the troubleshooting categories from configured data", () => {
