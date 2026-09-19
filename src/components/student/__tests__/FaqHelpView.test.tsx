@@ -79,13 +79,10 @@ describe("FaqHelpView", () => {
     ).toHaveAttribute("href", "/help/technical-support");
   });
 
-  it("does not give the search input an accessible name", () => {
+  it("gives the search input an accessible name", () => {
     render(<FaqHelpView />);
-    // NOTE: a11y gap — src/components/student/help/FaqHelpView.tsx:60-68 wraps
-    // the search input in a <label> containing only a decorative Search icon,
-    // so the input has no accessible name beyond its placeholder text.
     expect(
-      screen.queryByRole("textbox", { name: /search/i })
-    ).not.toBeInTheDocument();
+      screen.getByRole("textbox", { name: /search questions and answers/i })
+    ).toBeInTheDocument();
   });
 });
