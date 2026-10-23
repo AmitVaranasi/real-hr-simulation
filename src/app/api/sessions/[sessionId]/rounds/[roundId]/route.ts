@@ -1,4 +1,6 @@
 import { requireInstructor } from "@/lib/api/auth";
+import { processRound } from "@/lib/db/process-round";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
@@ -83,18 +85,20 @@ export async function PATCH(
   if (status === "closed") {
     // The round is closed first so no decision can change while it is scored.
     // If scoring fails, reopen it so the instructor can retry instead of being
-    // left with a closed round and no results.
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL ?? new URL(request.url).origin;
-    const computeRes = await fetch(
-      `${baseUrl}/api/sessions/${sessionId}/rounds/${roundId}/compute`,
-      { method: "POST", headers: { cookie: request.headers.get("cookie") ?? "" } }
-    ).catch(() => null);
-    const computed = computeRes
-      ? await computeRes.json().catch(() => null)
-      : null;
-
-    if (!computeRes?.ok) {
+    // left with a closed round and no results. Scored in-process rather than
+    // over HTTP, so it never depends on NEXT_PUBLIC_APP_URL or deployment
+    // protection in front of our own API.
+    try {
+      const processed = await processRound(
+        createAdminClient(),
+        sessionId,
+        round
+      );
+      return NextResponse.json({
+        round,
+        processed: { computed: processed.results.length, ...processed },
+      });
+    } catch (e) {
       await supabase
         .from("rounds")
         .update({ status: "open", closed_at: null })
@@ -103,14 +107,12 @@ export async function PATCH(
       return NextResponse.json(
         {
           error: `Round could not be processed and has been reopened: ${
-            computed?.error ?? "processing service unavailable"
+            e instanceof Error ? e.message : "unknown error"
           }`,
         },
-        { status: 502 }
+        { status: 500 }
       );
     }
-
-    return NextResponse.json({ round, processed: computed });
   }
 
   return NextResponse.json({ round });
