@@ -22,6 +22,7 @@ import {
   CircleDollarSign,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { deadlineState } from "@/lib/instructor/deadline";
 import { formatCompactCurrency, formatCurrency } from "@/lib/utils";
 
 type OpenRound = {
@@ -30,6 +31,8 @@ type OpenRound = {
   round_type: string;
   status: string;
   economy_condition: string;
+  /** Professor-set deadline from Round Management; null = not established. */
+  decision_deadline?: string | null;
 };
 
 type DecisionStatus = {
@@ -127,6 +130,12 @@ export function StudentLanding({
   const [openRound, setOpenRound] = useState(initialOpenRound);
   const [decision, setDecision] = useState(initialDecision);
   const [checking, setChecking] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(timer);
+  }, []);
+  const due = deadlineState(openRound?.decision_deadline, now);
 
   const availableBudget = budgetBase + team.budget_carryover;
   const budgetPct =
@@ -454,11 +463,23 @@ export function StudentLanding({
             <p className="font-bold uppercase tracking-wide text-[var(--portal-title)]">
               Decisions Due:{" "}
               <span className="font-normal normal-case text-[var(--portal-muted)]">
-                Set by your instructor when the round opens
+                {due.kind === "unset"
+                  ? "Set by your instructor when the round opens"
+                  : due.label}
               </span>
             </p>
-            <p className="font-semibold text-[var(--portal-accent-blue)]">
-              {checking ? "Updating…" : "Time Remaining: —"}
+            <p
+              className={`font-semibold ${
+                due.kind === "passed"
+                  ? "text-[var(--portal-brand)]"
+                  : "text-[var(--portal-accent-blue)]"
+              }`}
+            >
+              {checking
+                ? "Updating…"
+                : due.kind === "passed"
+                  ? "Deadline passed"
+                  : `Time Remaining: ${due.remaining}`}
             </p>
           </div>
         </section>

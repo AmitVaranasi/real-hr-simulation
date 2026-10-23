@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   BarChart3,
   CalendarDays,
@@ -27,6 +27,7 @@ import {
 } from "@/lib/instructor/deadline";
 import { formatCurrency } from "@/lib/utils";
 import type { EconomyCondition } from "@/lib/engine/types";
+import { toast } from "sonner";
 
 export type RoundRow = {
   id: string;
@@ -148,6 +149,7 @@ export function RoundControls({
   rounds,
 }: RoundControlsProps) {
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const router = useRouter();
   const searchParams = useSearchParams();
   const requestedTab = searchParams.get("tab");
   const [tab, setTab] = useState<"all" | "practice" | "competitive" | "completed">(
@@ -169,6 +171,11 @@ export function RoundControls({
   const [createError, setCreateError] = useState<string | null>(null);
   const ordered = [...rounds].sort((a, b) => a.round_number - b.round_number);
   const openCount = ordered.filter((r) => r.status === "open").length;
+  // Rounds carry state forward, so only the first round after the closed ones
+  // may be opened (the API enforces the same rule).
+  const firstUnclosed = ordered.find((r) => r.status !== "closed");
+  const nextOpenableId =
+    firstUnclosed?.status === "pending" ? firstUnclosed.id : null;
   const upcomingCount = ordered.filter((r) => r.status === "pending").length;
   const completedCount = ordered.filter((r) => r.status === "closed").length;
   const practiceCount = ordered.filter((r) => r.round_type === "practice").length;
@@ -207,13 +214,30 @@ export function RoundControls({
     economy?: EconomyCondition
   ) {
     setLoadingId(roundId);
-    await fetch(`/api/sessions/${sessionId}/rounds/${roundId}`, {
+    const res = await fetch(`/api/sessions/${sessionId}/rounds/${roundId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status, economy_condition: economy }),
     });
     setLoadingId(null);
-    window.location.reload();
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      toast.error(data?.error ?? "Could not update the round");
+      router.refresh();
+      return;
+    }
+    const skipped = (data?.processed?.skipped ?? []) as Array<{
+      team_name: string;
+    }>;
+    if (skipped.length) {
+      toast.warning(
+        `${skipped.length} team(s) had not submitted and received no results this round: ${skipped
+          .map((s) => s.team_name)
+          .join(", ")}`,
+        { duration: 15_000 }
+      );
+    }
+    router.refresh();
   }
 
   /** Iteration 5 §7: "Deadline should populate from Round Management." */
@@ -472,7 +496,7 @@ export function RoundControls({
                           }
                         />
                       )}
-                      {due.kind !== "unset" ? (
+                      {due.kind !== "unset" && round.status !== "closed" ? (
                         <p
                           className={`mt-0.5 text-[0.6875rem] ${
                             due.kind === "passed"
@@ -516,7 +540,11 @@ export function RoundControls({
                         {round.status === "pending" ? (
                           <Button
                             size="sm"
-                            disabled={loadingId === round.id || openCount > 0}
+                            disabled={
+                              loadingId === round.id ||
+                              openCount > 0 ||
+                              round.id !== nextOpenableId
+                            }
                             onClick={() => updateRound(round.id, "open")}
                           >
                             Open round

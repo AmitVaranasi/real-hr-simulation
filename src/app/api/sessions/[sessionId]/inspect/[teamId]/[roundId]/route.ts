@@ -1,5 +1,9 @@
 import { requireInstructor } from "@/lib/api/auth";
-import { computeTeamOutcome, priorMetricsFromOutcome } from "@/lib/db/compute";
+import {
+  computeTeamOutcome,
+  loadRoundStart,
+  priorMetricsFromOutcome,
+} from "@/lib/db/compute";
 import { rowToDecision } from "@/lib/db/decisions";
 import { withSimulationConfig } from "@/lib/db/simulation-config";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -99,12 +103,18 @@ export async function GET(
   }
 
   if (!trace && decision) {
+    const { startTeam, priorMetrics: startMetrics } = await loadRoundStart(
+      admin,
+      team as Team,
+      sessionId,
+      roundNumber
+    );
     trace = await withSimulationConfig(async () => {
       const computed = computeTeamOutcome(
         decision,
-        team as Team,
+        startTeam,
         round.economy_condition as EconomyCondition,
-        priorMetrics
+        startMetrics
       );
       return computed.trace;
     });

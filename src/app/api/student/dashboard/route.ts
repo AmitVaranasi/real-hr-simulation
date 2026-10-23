@@ -41,7 +41,7 @@ export async function GET() {
 
   const { data: openRound } = await supabase
     .from("rounds")
-    .select("id, round_number, round_type, status, economy_condition")
+    .select("id, round_number, round_type, status, economy_condition, decision_deadline")
     .eq("session_id", team.session_id)
     .eq("status", "open")
     .maybeSingle();

@@ -1,6 +1,4 @@
 import { requireInstructor } from "@/lib/api/auth";
-import { decisionToRow } from "@/lib/db/decisions";
-import { createDefaultDecision } from "@/lib/engine/defaults";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
@@ -25,6 +23,32 @@ export async function PATCH(
 
   if (!session) {
     return NextResponse.json({ error: "Session not found" }, { status: 404 });
+  }
+
+  if (status === "open") {
+    // Rounds carry state forward, so they must run in order: refuse to open a
+    // round while any earlier round in the session is still pending or open.
+    const { data: target } = await supabase
+      .from("rounds")
+      .select("round_number")
+      .eq("id", roundId)
+      .eq("session_id", sessionId)
+      .single();
+    const { data: earlierUnclosed } = await supabase
+      .from("rounds")
+      .select("round_number")
+      .eq("session_id", sessionId)
+      .lt("round_number", target?.round_number ?? 0)
+      .neq("status", "closed")
+      .limit(1);
+    if (earlierUnclosed?.length) {
+      return NextResponse.json(
+        {
+          error: `Close round ${earlierUnclosed[0].round_number} before opening this one.`,
+        },
+        { status: 409 }
+      );
+    }
   }
 
   const updates: Record<string, unknown> = {};
@@ -56,42 +80,37 @@ export async function PATCH(
     return NextResponse.json({ error: roundError.message }, { status: 500 });
   }
 
-  if (status === "open") {
-    const { data: teams } = await supabase
-      .from("teams")
-      .select("id")
-      .eq("session_id", sessionId);
-
-    if (teams) {
-      for (const team of teams) {
-        const { data: existing } = await supabase
-          .from("decisions")
-          .select("id")
-          .eq("team_id", team.id)
-          .eq("round_id", roundId)
-          .maybeSingle();
-
-        if (!existing) {
-          const defaults = createDefaultDecision();
-          await supabase.from("decisions").insert(
-            decisionToRow(
-              { ...defaults, team_id: team.id, round_id: roundId },
-              team.id,
-              roundId
-            )
-          );
-        }
-      }
-    }
-  }
-
   if (status === "closed") {
+    // The round is closed first so no decision can change while it is scored.
+    // If scoring fails, reopen it so the instructor can retry instead of being
+    // left with a closed round and no results.
     const baseUrl =
       process.env.NEXT_PUBLIC_APP_URL ?? new URL(request.url).origin;
-    await fetch(
+    const computeRes = await fetch(
       `${baseUrl}/api/sessions/${sessionId}/rounds/${roundId}/compute`,
       { method: "POST", headers: { cookie: request.headers.get("cookie") ?? "" } }
-    );
+    ).catch(() => null);
+    const computed = computeRes
+      ? await computeRes.json().catch(() => null)
+      : null;
+
+    if (!computeRes?.ok) {
+      await supabase
+        .from("rounds")
+        .update({ status: "open", closed_at: null })
+        .eq("id", roundId)
+        .eq("session_id", sessionId);
+      return NextResponse.json(
+        {
+          error: `Round could not be processed and has been reopened: ${
+            computed?.error ?? "processing service unavailable"
+          }`,
+        },
+        { status: 502 }
+      );
+    }
+
+    return NextResponse.json({ round, processed: computed });
   }
 
   return NextResponse.json({ round });

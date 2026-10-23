@@ -1,5 +1,5 @@
 import { requireInstructor } from "@/lib/api/auth";
-import { computeTeamOutcome, priorMetricsFromOutcome } from "@/lib/db/compute";
+import { computeTeamOutcome, loadRoundStart } from "@/lib/db/compute";
 import { decisionToRow, rowToDecision } from "@/lib/db/decisions";
 import { withSimulationConfig } from "@/lib/db/simulation-config";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -96,25 +96,14 @@ export async function POST(
   const actual = rowToDecision(storedDecision);
   const explored: Decision = { ...actual, ...(body.overrides ?? {}) };
 
-  // Prior state comes from the real previous round, so the what-if sits in the
-  // team's actual trajectory rather than a synthetic one.
-  const { data: priorRound } = await admin
-    .from("rounds")
-    .select("id")
-    .eq("session_id", sessionId)
-    .eq("round_number", Number(round.round_number) - 1)
-    .maybeSingle();
-
-  let priorMetrics = null;
-  if (priorRound) {
-    const { data: priorOutcome } = await admin
-      .from("outcomes")
-      .select("*")
-      .eq("team_id", teamId)
-      .eq("round_id", priorRound.id)
-      .maybeSingle();
-    priorMetrics = priorMetricsFromOutcome(priorOutcome);
-  }
+  // Start state comes from the team's real earlier rounds, so the what-if sits
+  // in the team's actual trajectory rather than a synthetic one.
+  const { startTeam, priorMetrics } = await loadRoundStart(
+    admin,
+    team as Team,
+    sessionId,
+    Number(round.round_number)
+  );
 
   const economy = round.economy_condition as EconomyCondition;
   const { actualOutcome, exploredOutcome } = await withSimulationConfig(
@@ -124,13 +113,13 @@ export async function POST(
       // comparison travel the identical engine path.
       actualOutcome: computeTeamOutcome(
         storedDecision,
-        team as Team,
+        startTeam,
         economy,
         priorMetrics
       ),
       exploredOutcome: computeTeamOutcome(
         decisionToRow(explored, teamId, roundId),
-        team as Team,
+        startTeam,
         economy,
         priorMetrics
       ),

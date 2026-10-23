@@ -85,6 +85,9 @@ function DecisionWorkspaceInner({
         }),
       });
       setSaving(false);
+      if (res.status === 409) {
+        setSubmitted(true);
+      }
       if (!res.ok) {
         const data = await res.json();
         toast.error(data.error ?? "Failed to save");
@@ -106,7 +109,7 @@ function DecisionWorkspaceInner({
     const t = setTimeout(() => {
       void (async () => {
         setSaving(true);
-        await fetch("/api/decisions", {
+        const res = await fetch("/api/decisions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -117,6 +120,11 @@ function DecisionWorkspaceInner({
           }),
         });
         setSaving(false);
+        // A teammate submitted while this page was open: lock it.
+        if (res.status === 409) {
+          setSubmitted(true);
+          toast.info("Your team has submitted decisions for this round.");
+        }
       })();
     }, 1500);
     return () => clearTimeout(t);

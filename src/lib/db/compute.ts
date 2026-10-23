@@ -7,14 +7,17 @@ import { DISCRETIONARY_BUDGET } from "@/lib/engine/defaults";
 import { runSimulationWithTrace } from "@/lib/engine/engine";
 import { rowToDecision } from "@/lib/db/decisions";
 import type {
+  BudgetBreakdown,
   EconomyCondition,
   HRMetrics,
   Industry,
   Outcome,
   PriorState,
+  SimulationTrace,
   Strategy,
   Team,
 } from "@/lib/engine/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export function priorMetricsFromOutcome(
   row: Record<string, unknown> | null | undefined
@@ -80,13 +83,82 @@ export function computeTeamOutcome(
     { priorMetrics }
   );
 
-  const budget = trace.budget_breakdown;
-  const newCarryover = Math.max(
-    0,
-    (budget.available_budget - budget.total_spend) * 0.2
-  );
+  const newCarryover = carryoverFromBudget(trace.budget_breakdown);
 
   return { outcome, trace, newCarryover, industry, strategy };
+}
+
+/** 20% of a round's unspent discretionary budget carries into the next round. */
+export function carryoverFromBudget(budget: BudgetBreakdown): number {
+  return Math.max(0, (budget.available_budget - budget.total_spend) * 0.2);
+}
+
+/**
+ * The team as it stood at the start of `roundNumber`: state from its latest
+ * outcome in an earlier round of the session, or the industry baseline when it
+ * has none. Rebuilt from stored outcomes instead of read from the `teams` row,
+ * because that row already holds post-round state once a round is processed —
+ * reading it made re-processing a round compound on its own result.
+ */
+export async function loadRoundStart(
+  db: SupabaseClient,
+  team: Team,
+  sessionId: string,
+  roundNumber: number
+): Promise<{
+  startTeam: Team;
+  priorMetrics: HRMetrics | null;
+  hasLaterOutcome: boolean;
+}> {
+  const [{ data: rounds }, { data: outcomes }] = await Promise.all([
+    db.from("rounds").select("id, round_number").eq("session_id", sessionId),
+    db.from("outcomes").select("*").eq("team_id", team.id),
+  ]);
+  const roundNumberById = new Map(
+    (rounds ?? []).map((r) => [r.id as string, Number(r.round_number)])
+  );
+
+  let prior: Record<string, unknown> | null = null;
+  let priorNumber = -Infinity;
+  let hasLaterOutcome = false;
+  for (const row of outcomes ?? []) {
+    const n = roundNumberById.get(row.round_id as string);
+    if (n == null) continue;
+    if (n > roundNumber) hasLaterOutcome = true;
+    else if (n < roundNumber && n > priorNumber) {
+      prior = row;
+      priorNumber = n;
+    }
+  }
+
+  if (!prior) {
+    const base = priorStateFromIndustry(
+      (team.industry ?? "Manufacturing") as Industry
+    );
+    return {
+      startTeam: { ...team, ...base, budget_carryover: 0 },
+      priorMetrics: null,
+      hasLaterOutcome,
+    };
+  }
+
+  const budget = (prior.trace_json as SimulationTrace | null)?.budget_breakdown;
+  return {
+    startTeam: {
+      ...team,
+      headcount: Number(prior.headcount),
+      revenue: Number(prior.revenue),
+      stock_price: Number(prior.stock_price),
+      market_share: Number(prior.market_share),
+      profit_margin: Number(prior.profit_margin),
+      satisfaction: Number(prior.employee_satisfaction),
+      engagement: Number(prior.engagement_level),
+      turnover_rate: Number(prior.turnover_rate),
+      budget_carryover: budget ? carryoverFromBudget(budget) : 0,
+    },
+    priorMetrics: priorMetricsFromOutcome(prior),
+    hasLaterOutcome,
+  };
 }
 
 export function outcomeToDbRow(

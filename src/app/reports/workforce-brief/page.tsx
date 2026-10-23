@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { WorkforceBriefClient } from "@/components/results/WorkforceBriefClient";
 import type { WorkforceBriefData } from "@/components/results/WorkforceBriefView";
@@ -98,7 +99,7 @@ export default async function WorkforceBriefIndexPage() {
   const { data: membership } = await supabase
     .from("team_members")
     .select(
-      "team_id, teams(id, name, industry, strategy, headcount, session_id, sessions(name))"
+      "team_id, teams(id, name, industry, strategy, headcount, session_id, sessions(name, rounds_total, practice_rounds))"
     )
     .eq("user_id", user.id)
     .maybeSingle();
@@ -110,20 +111,46 @@ export default async function WorkforceBriefIndexPage() {
     strategy: string;
     headcount: number;
     session_id: string;
-    sessions: { name: string } | null;
+    sessions: {
+      name: string;
+      rounds_total: number | null;
+      practice_rounds: number | null;
+    } | null;
   } | null;
 
-  if (!team) {
-    return <WorkforceBriefClient data={{}} />;
-  }
+  if (!team) redirect("/dashboard");
 
-  const { data: outcomes } = await supabase
+  const { data: fetched } = await supabase
     .from("outcomes")
     .select("*, rounds(id, round_number, status, closed_at)")
-    .eq("team_id", team.id)
-    .order("computed_at", { ascending: false });
+    .eq("team_id", team.id);
 
-  const latest = outcomes?.[0] ?? null;
+  // Latest by round, not by computed_at: re-processing an earlier round must
+  // not make it the "latest" brief.
+  const roundNumberOf = (o: Record<string, unknown>) =>
+    Number((o.rounds as { round_number?: number } | null)?.round_number ?? 0);
+  const outcomes = [...(fetched ?? [])].sort(
+    (a, b) => roundNumberOf(b) - roundNumberOf(a)
+  );
+
+  const latest = outcomes[0] ?? null;
+
+  // Without a scored round there is nothing to report; the brief would
+  // otherwise fill every figure with sample values.
+  if (!latest) {
+    return (
+      <div className="mx-auto max-w-lg px-4 py-16 text-center">
+        <h1 className="text-xl font-bold">No results yet</h1>
+        <p className="mt-2 text-[var(--portal-muted)]">
+          Your Workforce Brief appears after your instructor closes a round in
+          which your team submitted decisions.
+        </p>
+        <Link href="/dashboard" className="mt-4 inline-block text-[var(--portal-primary)]">
+          Back to dashboard
+        </Link>
+      </div>
+    );
+  }
   const round = latest?.rounds as unknown as {
     id: string;
     round_number: number;
@@ -131,7 +158,7 @@ export default async function WorkforceBriefIndexPage() {
     closed_at: string | null;
   } | null;
 
-  const rounds: WorkforceBriefData["rounds"] = (outcomes ?? []).map((o) => {
+  const rounds: WorkforceBriefData["rounds"] = outcomes.map((o) => {
     const r = o.rounds as unknown as {
       id: string;
       round_number: number;
@@ -162,6 +189,10 @@ export default async function WorkforceBriefIndexPage() {
   const briefData: Partial<WorkforceBriefData> = {
     ...mapOutcomeToBrief(team, latest, round),
     rounds,
+    // rounds_total counts competitive rounds only.
+    roundsTotal:
+      (team.sessions?.rounds_total ?? 0) + (team.sessions?.practice_rounds ?? 0) ||
+      undefined,
     selectedRoundId: (latest?.round_id as string | undefined) ?? null,
     reflectionContent,
   };

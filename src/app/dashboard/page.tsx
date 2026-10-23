@@ -94,7 +94,7 @@ export default async function DashboardPage() {
 
   const { data: openRound } = await supabase
     .from("rounds")
-    .select("id, round_number, round_type, status, economy_condition")
+    .select("id, round_number, round_type, status, economy_condition, decision_deadline")
     .eq("session_id", team.session_id)
     .eq("status", "open")
     .maybeSingle();
@@ -174,6 +174,7 @@ export default async function DashboardPage() {
               round_type: openRound.round_type,
               status: openRound.status,
               economy_condition: openRound.economy_condition,
+              decision_deadline: openRound.decision_deadline ?? null,
             }
           : null
       }
