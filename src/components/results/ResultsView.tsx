@@ -15,6 +15,7 @@ interface ResultsViewProps {
   priorOutcome?: Record<string, unknown> | null;
   reflection?: { content: string; submitted_at: string } | null;
   rounds?: RoundListItem[];
+  roundsTotal?: number;
   trendData?: Array<{
     round: string;
     total: number;
@@ -34,6 +35,7 @@ export function ResultsView({
   outcome,
   reflection,
   rounds = [],
+  roundsTotal,
 }: ResultsViewProps) {
   const strategyConfig = getStrategyConfig(team.strategy as Strategy);
   const weights = strategyConfig.bsc_weights;
@@ -85,6 +87,7 @@ export function ResultsView({
         deiScore: Number(outcome.dei_score ?? 0),
         hrTechScore: Number(outcome.hr_tech_score ?? 0),
         rounds,
+        roundsTotal,
         selectedRoundId: roundId,
         reflectionContent: reflection?.content ?? null,
       }}

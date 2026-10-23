@@ -45,6 +45,22 @@ export async function POST(request: Request) {
     );
   }
 
+  // A submitted decision is final. Without this check a teammate's open
+  // decisions page could autosave over it and silently un-submit it.
+  const { data: existing } = await supabase
+    .from("decisions")
+    .select("is_submitted")
+    .eq("team_id", team_id)
+    .eq("round_id", round_id)
+    .maybeSingle();
+
+  if (existing?.is_submitted) {
+    return NextResponse.json(
+      { error: "Your team has already submitted decisions for this round." },
+      { status: 409 }
+    );
+  }
+
   const decision = { ...fields, is_submitted } as Decision;
   const validation = validateDecision(decision);
   if (!validation.valid) {

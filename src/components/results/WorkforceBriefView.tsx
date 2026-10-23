@@ -71,6 +71,8 @@ export interface WorkforceBriefData {
   hrTechScore: number;
 
   rounds?: RoundListItem[];
+  /** Rounds in the session; the round list shows exactly this many slots. */
+  roundsTotal?: number;
   selectedRoundId?: string | null;
   reflectionContent?: string | null;
   onSaveReflection?: (content: string) => Promise<void>;
@@ -204,10 +206,15 @@ function ProgressBar({
 
 function padRounds(
   rounds: RoundListItem[],
-  currentRound: number
+  currentRound: number,
+  roundsTotal = 5
 ): Array<RoundListItem & { placeholder?: boolean }> {
   const byNumber = new Map(rounds.map((r) => [r.roundNumber, r]));
-  const maxShown = Math.max(5, currentRound, ...rounds.map((r) => r.roundNumber));
+  const maxShown = Math.max(
+    roundsTotal,
+    currentRound,
+    ...rounds.map((r) => r.roundNumber)
+  );
   return Array.from({ length: maxShown }, (_, i) => {
     const n = i + 1;
     return (
@@ -419,8 +426,9 @@ export function WorkforceBriefView({
           value: brief.reviewCoverage.toFixed(2),
         },
         {
+          // The engine stores productivity as a 0–1 index.
           label: "Productivity Index (%)",
-          value: brief.productivityIndex.toFixed(2),
+          value: (brief.productivityIndex * 100).toFixed(2),
         },
       ],
     },
@@ -520,7 +528,11 @@ export function WorkforceBriefView({
             Select a round to review results
           </p>
           <ul className="mt-3 space-y-2">
-            {padRounds(brief.rounds ?? [], brief.roundNumber).map((r) => {
+            {padRounds(
+              brief.rounds ?? [],
+              brief.roundNumber,
+              brief.roundsTotal
+            ).map((r) => {
               const active =
                 !r.placeholder &&
                 (brief.selectedRoundId === r.roundId ||

@@ -321,10 +321,17 @@ export function applyIndustryMultipliers(
     ...metrics,
     cost_per_hire: metrics.cost_per_hire / m.recruitment,
     time_to_fill: metrics.time_to_fill / m.recruitment,
-    review_coverage: metrics.review_coverage * (0.5 + m.performance * 0.5),
+    // Re-clamped after the multiplier so coverage stays a 0–100% share and ROI
+    // keeps the -50..200% bounds computeTrainingROI applies (both bounds sit
+    // above the "excellent" benchmarks, so BSC scores are unaffected).
+    review_coverage: clamp(
+      metrics.review_coverage * (0.5 + m.performance * 0.5),
+      0,
+      100
+    ),
     training_effectiveness:
       metrics.training_effectiveness * m.training,
-    training_roi: metrics.training_roi * m.training,
+    training_roi: clamp(metrics.training_roi * m.training, -50, 200),
     employee_satisfaction:
       metrics.employee_satisfaction * (0.5 + m.relations * 0.5),
     engagement_level: metrics.engagement_level * (0.5 + m.relations * 0.5),

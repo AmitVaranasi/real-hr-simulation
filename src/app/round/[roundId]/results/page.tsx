@@ -18,7 +18,7 @@ export default async function RoundResultsPage({
 
   const { data: membership } = await supabase
     .from("team_members")
-    .select("team_id, teams(*, sessions(name))")
+    .select("team_id, teams(*, sessions(name, rounds_total, practice_rounds))")
     .eq("user_id", user.id)
     .single();
 
@@ -28,7 +28,11 @@ export default async function RoundResultsPage({
     industry: string;
     strategy: string;
     session_id: string;
-    sessions: { name: string };
+    sessions: {
+      name: string;
+      rounds_total: number | null;
+      practice_rounds: number | null;
+    };
   } | null;
 
   if (!team) redirect("/dashboard");
@@ -61,12 +65,19 @@ export default async function RoundResultsPage({
     .maybeSingle();
 
   if (!outcome) {
+    // Only submitted decisions are scored, so a closed round with no outcome
+    // means the team did not submit before the round closed.
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <h1 className="text-xl font-bold">Computing results</h1>
+        <h1 className="text-xl font-bold">No results for this round</h1>
         <p className="mt-2 text-[var(--portal-muted)]">
-          Outcomes are being processed. Check back shortly.
+          Your team did not submit decisions before this round closed, so it
+          was not scored. Your company carries into the next round from its
+          last scored results.
         </p>
+        <Link href="/dashboard" className="mt-4 inline-block text-[var(--portal-primary)]">
+          Back to dashboard
+        </Link>
       </div>
     );
   }
@@ -135,6 +146,11 @@ export default async function RoundResultsPage({
         priorOutcome={priorList?.[0] ?? null}
         reflection={reflection}
         rounds={rounds}
+        // rounds_total counts competitive rounds only.
+        roundsTotal={
+          (team.sessions?.rounds_total ?? 0) +
+            (team.sessions?.practice_rounds ?? 0) || undefined
+        }
       />
   );
 }
