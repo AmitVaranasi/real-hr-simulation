@@ -128,7 +128,7 @@ export function mapOutcomesToRounds(
       dateLabel: formatRoundDate(
         r?.closed_at ?? (o.computed_at as string | undefined)
       ),
-      href: `${basePath}?round=${o.round_id}`,
+      href: `${basePath}${basePath.includes("?") ? "&" : "?"}round=${o.round_id}`,
     };
   });
 }

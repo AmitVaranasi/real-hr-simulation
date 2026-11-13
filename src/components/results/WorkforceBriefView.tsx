@@ -77,6 +77,11 @@ export interface WorkforceBriefData {
   reflectionContent?: string | null;
   onSaveReflection?: (content: string) => Promise<void>;
   onDownloadPdf?: () => void;
+  /**
+   * Professor view: the same brief, but the team's reflection is shown as
+   * submitted and cannot be edited, and copy names the team instead of "your".
+   */
+  readOnly?: boolean;
 }
 
 const DEFAULT_BRIEF_DATA: WorkforceBriefData = {
@@ -202,6 +207,11 @@ function ProgressBar({
       </div>
     </div>
   );
+}
+
+/** "Market Leaders" → "Market Leaders’", "Team 3" → "Team 3’s". */
+function possessive(name: string) {
+  return /s$/i.test(name) ? `${name}\u2019` : `${name}\u2019s`;
 }
 
 function padRounds(
@@ -602,7 +612,9 @@ export function WorkforceBriefView({
         <div className="min-w-0 space-y-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <h1 className="text-[1.375rem] font-bold leading-tight text-[var(--portal-title)]">
-              The Workforce Brief – Round {brief.roundNumber} Results
+              The Workforce Brief –{" "}
+              {brief.readOnly ? `${brief.teamName} – ` : ""}Round{" "}
+              {brief.roundNumber} Results
             </h1>
             <button
               type="button"
@@ -624,8 +636,9 @@ export function WorkforceBriefView({
                   {brief.totalScore.toFixed(1)}%
                 </p>
                 <p className="mt-2 max-w-[200px] text-xs leading-relaxed text-[var(--portal-muted)]">
-                  Overall effectiveness of your team&apos;s HR decisions this
-                  round.
+                  Overall effectiveness of{" "}
+                  {brief.readOnly ? possessive(brief.teamName) : "your team\u2019s"}{" "}
+                  HR decisions this round.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -843,37 +856,51 @@ export function WorkforceBriefView({
                   </p>
                 </div>
               </div>
-              <form onSubmit={handleReflectionSubmit} className="mt-2 space-y-2">
-                <textarea
-                  rows={2}
-                  value={reflectionText}
-                  onChange={(e) => setReflectionText(e.target.value)}
-                  placeholder="Our team focused on..."
-                  maxLength={2000}
-                  className="w-full rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-2 text-sm text-[var(--portal-ink)] placeholder:text-[var(--portal-muted)] focus:border-[var(--portal-primary)] focus:outline-none"
-                />
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[0.625rem] text-[var(--portal-muted)]">
-                    {reflectionText.length} / 2000
-                    {submittedMessage ? (
-                      <span className="ml-2 font-semibold text-emerald-700">
-                        {submittedMessage}
-                      </span>
-                    ) : null}
-                  </span>
-                  <button
-                    type="submit"
-                    disabled={
-                      isSubmitting ||
-                      reflectionText.length < 100 ||
-                      !brief.onSaveReflection
-                    }
-                    className="rounded-lg bg-[var(--portal-primary)] px-3 py-1.5 text-[0.6875rem] font-bold text-white hover:bg-[var(--portal-primary-hover)] disabled:opacity-50"
-                  >
-                    {isSubmitting ? "Submitting..." : "Submit Reflection"}
-                  </button>
+              {brief.readOnly ? (
+                <div className="mt-2 rounded-lg border border-[var(--portal-sidebar-border)] bg-[#f8fafc] p-2">
+                  {brief.reflectionContent ? (
+                    <p className="whitespace-pre-wrap text-sm text-[var(--portal-ink)]">
+                      {brief.reflectionContent}
+                    </p>
+                  ) : (
+                    <p className="text-sm italic text-[var(--portal-muted)]">
+                      No reflection submitted for this round.
+                    </p>
+                  )}
                 </div>
-              </form>
+              ) : (
+                <form onSubmit={handleReflectionSubmit} className="mt-2 space-y-2">
+                  <textarea
+                    rows={2}
+                    value={reflectionText}
+                    onChange={(e) => setReflectionText(e.target.value)}
+                    placeholder="Our team focused on..."
+                    maxLength={2000}
+                    className="w-full rounded-lg border border-[var(--portal-sidebar-border)] bg-white p-2 text-sm text-[var(--portal-ink)] placeholder:text-[var(--portal-muted)] focus:border-[var(--portal-primary)] focus:outline-none"
+                  />
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[0.625rem] text-[var(--portal-muted)]">
+                      {reflectionText.length} / 2000
+                      {submittedMessage ? (
+                        <span className="ml-2 font-semibold text-emerald-700">
+                          {submittedMessage}
+                        </span>
+                      ) : null}
+                    </span>
+                    <button
+                      type="submit"
+                      disabled={
+                        isSubmitting ||
+                        reflectionText.length < 100 ||
+                        !brief.onSaveReflection
+                      }
+                      className="rounded-lg bg-[var(--portal-primary)] px-3 py-1.5 text-[0.6875rem] font-bold text-white hover:bg-[var(--portal-primary-hover)] disabled:opacity-50"
+                    >
+                      {isSubmitting ? "Submitting..." : "Submit Reflection"}
+                    </button>
+                  </div>
+                </form>
+              )}
             </section>
           </div>
         </div>

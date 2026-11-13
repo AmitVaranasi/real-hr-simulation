@@ -13,6 +13,7 @@ export function WorkforceBriefClient({
   sessionName,
   team,
   outcome,
+  readOnly = false,
 }: {
   data: Partial<WorkforceBriefData>;
   teamId?: string;
@@ -20,6 +21,8 @@ export function WorkforceBriefClient({
   sessionName?: string;
   team?: { name: string; industry: string; strategy: string };
   outcome?: Record<string, unknown> | null;
+  /** Professor portal: view only — no reflection submission. */
+  readOnly?: boolean;
 }) {
   async function handleSaveReflection(content: string) {
     if (!teamId || !roundId) {
@@ -59,8 +62,9 @@ export function WorkforceBriefClient({
     <WorkforceBriefView
       data={{
         ...data,
+        readOnly,
         onSaveReflection:
-          teamId && roundId ? handleSaveReflection : undefined,
+          !readOnly && teamId && roundId ? handleSaveReflection : undefined,
         onDownloadPdf:
           outcome && team && sessionName ? handleDownloadPdf : undefined,
       }}

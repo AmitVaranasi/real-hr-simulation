@@ -420,6 +420,12 @@ export function professorNavItems(opts: {
         p.startsWith("/sessions/class-performance"),
       children: [
         {
+          href: "/sessions/class-performance/workforce-brief",
+          label: "Workforce Brief",
+          icon: FileText,
+          match: (p) => p.startsWith("/sessions/class-performance/workforce-brief"),
+        },
+        {
           href: "/sessions/class-performance",
           label: "Overview",
           icon: LayoutDashboard,

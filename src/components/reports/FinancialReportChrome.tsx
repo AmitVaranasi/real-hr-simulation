@@ -98,7 +98,9 @@ export function FinancialReportChrome({
   infoText,
   children,
   onDownloadPdf,
+  backHref = "/reports/workforce-brief",
 }: {
+  backHref?: string;
   reportLabel: string;
   rounds: FinancialRoundItem[];
   selectedRoundId?: string | null;
@@ -187,7 +189,7 @@ export function FinancialReportChrome({
             })}
           </ul>
           <Link
-            href="/reports/workforce-brief"
+            href={backHref}
             className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
           >
             <ArrowLeft className="h-3.5 w-3.5" />

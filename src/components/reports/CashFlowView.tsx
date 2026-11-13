@@ -21,6 +21,8 @@ import {
 import { FIGMA_CF, scaleByRevenue } from "@/lib/reports/statement-data";
 
 type Props = {
+  /** Where "Back to The Workforce Brief" goes (professor portal overrides). */
+  backHref?: string;
   roundNumber: number;
   asOfLabel: string;
   rounds: FinancialRoundItem[];
@@ -30,6 +32,7 @@ type Props = {
 };
 
 export function CashFlowView({
+  backHref,
   roundNumber,
   asOfLabel,
   rounds,
@@ -224,6 +227,7 @@ export function CashFlowView({
 
   return (
     <FinancialReportChrome
+      backHref={backHref}
       reportLabel="Cash Flow Statement"
       rounds={rounds}
       selectedRoundId={selectedRoundId}
