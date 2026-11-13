@@ -19,11 +19,8 @@ export type ReportPageData = {
   liveHeadcount: number | null;
 };
 
-export async function loadFinancialReportData(
-  basePath: string,
-  roundQuery?: string | null
-): Promise<ReportPageData> {
-  const empty: ReportPageData = {
+function emptyReportData(): ReportPageData {
+  return {
     rounds: [],
     selectedRoundId: null,
     roundNumber: 1,
@@ -36,7 +33,13 @@ export async function loadFinancialReportData(
     liveCashflow: null,
     liveHeadcount: null,
   };
+}
 
+export async function loadFinancialReportData(
+  basePath: string,
+  roundQuery?: string | null
+): Promise<ReportPageData> {
+  const empty = emptyReportData();
   const supabase = await createClient();
   const {
     data: { user },
@@ -51,12 +54,30 @@ export async function loadFinancialReportData(
 
   if (!membership?.team_id) return empty;
 
+  return loadFinancialReportDataForTeam(
+    membership.team_id as string,
+    basePath,
+    roundQuery
+  );
+}
+
+/**
+ * Financial statements for a given team. Row-level security decides who may
+ * read it: the team's own students, or the instructor of the team's session.
+ */
+export async function loadFinancialReportDataForTeam(
+  teamId: string,
+  basePath: string,
+  roundQuery?: string | null
+): Promise<ReportPageData> {
+  const supabase = await createClient();
+
   const { data: outcomes } = await supabase
     .from("outcomes")
     .select(
       "id, round_id, computed_at, revenue, profit, profit_margin, total_compensation, turnover_cost, cashflow, headcount, rounds(id, round_number, status, closed_at)"
     )
-    .eq("team_id", membership.team_id)
+    .eq("team_id", teamId)
     .order("computed_at", { ascending: false });
 
   const list = outcomes ?? [];

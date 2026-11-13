@@ -12,6 +12,8 @@ import {
 import { FIGMA_PL, scaleByRevenue } from "@/lib/reports/statement-data";
 
 type Props = {
+  /** Where "Back to The Workforce Brief" goes (professor portal overrides). */
+  backHref?: string;
   roundNumber: number;
   asOfLabel: string;
   rounds: FinancialRoundItem[];
@@ -28,6 +30,7 @@ function changeAmt(current: number, prior: number) {
 }
 
 export function ProfitLossView({
+  backHref,
   roundNumber,
   asOfLabel,
   rounds,
@@ -252,6 +255,7 @@ export function ProfitLossView({
 
   return (
     <FinancialReportChrome
+      backHref={backHref}
       reportLabel="Profit & Loss Statement"
       rounds={rounds}
       selectedRoundId={selectedRoundId}

@@ -94,7 +94,7 @@ export function ClassPerformanceOverview({
               icon: <Users className="h-4 w-4" strokeWidth={1.75} />,
               body: "View detailed reports for individual teams.",
               action: "View Reports",
-              href: reportsHref,
+              href: "/sessions/class-performance/workforce-brief",
             },
             {
               title: "Download Data",

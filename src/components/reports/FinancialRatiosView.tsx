@@ -19,6 +19,8 @@ import {
 import { FIGMA_BS, FIGMA_PL, scaleByRevenue } from "@/lib/reports/statement-data";
 
 type Props = {
+  /** Where "Back to The Workforce Brief" goes (professor portal overrides). */
+  backHref?: string;
   roundNumber: number;
   asOfLabel: string;
   rounds: FinancialRoundItem[];
@@ -30,6 +32,7 @@ type Props = {
 };
 
 export function FinancialRatiosView({
+  backHref,
   roundNumber,
   asOfLabel,
   rounds,
@@ -261,6 +264,7 @@ export function FinancialRatiosView({
 
   return (
     <FinancialReportChrome
+      backHref={backHref}
       reportLabel="Financial Ratio Report"
       rounds={rounds}
       selectedRoundId={selectedRoundId}

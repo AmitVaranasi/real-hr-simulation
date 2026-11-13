@@ -11,6 +11,8 @@ import {
 import { FIGMA_BS, scaleByRevenue } from "@/lib/reports/statement-data";
 
 type Props = {
+  /** Where "Back to The Workforce Brief" goes (professor portal overrides). */
+  backHref?: string;
   roundNumber: number;
   asOfLabel: string;
   rounds: FinancialRoundItem[];
@@ -82,6 +84,7 @@ function StatementTable({
 }
 
 export function BalanceSheetView({
+  backHref,
   roundNumber,
   asOfLabel,
   rounds,
@@ -157,6 +160,7 @@ export function BalanceSheetView({
 
   return (
     <FinancialReportChrome
+      backHref={backHref}
       reportLabel="Balance Sheet"
       rounds={rounds}
       selectedRoundId={selectedRoundId}
