@@ -178,6 +178,11 @@ export interface IndustryConfig {
   base_turnover: number;
   base_satisfaction: number;
   base_engagement: number;
+  /**
+   * Revenue multiplier for each preliminary HR performance band
+   * [0–39, 40–59, 60–74, 75–89, 90–100]. See hr-revenue.ts.
+   */
+  hr_revenue_multipliers?: [number, number, number, number, number];
   module_multipliers: {
     recruitment: number;
     performance: number;
@@ -301,6 +306,9 @@ export interface SimulationTrace {
     total: number;
   };
   financial_cascade: {
+    /** Preliminary HR performance score (0–100) that set the revenue multiplier. */
+    hr_performance_score?: number;
+    hr_revenue_multiplier?: number;
     revenue: number;
     total_compensation: number;
     turnover_cost: number;

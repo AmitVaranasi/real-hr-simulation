@@ -7,8 +7,9 @@ import {
 import { generateFeedback } from "./feedback";
 import { generateLearningInsights } from "./explainability";
 import { computeAllMetrics } from "./metrics";
+import { hrRevenueMultiplier } from "./hr-revenue";
 import { normalizeMetric } from "./normalize";
-import { computeBSCScores } from "./scoring";
+import { computeBSCScores, preliminaryHrScore } from "./scoring";
 import { withDerivedTrainingBudget } from "./training";
 import type {
   Decision,
@@ -101,6 +102,7 @@ export function runSimulationWithTrace(
   }
 
   const retention = 100 - hrMetrics.turnover_rate;
+  const hrPerformanceScore = preliminaryHrScore(hrMetrics);
   const trace: SimulationTrace = {
     budget_breakdown: budget,
     raw_metrics,
@@ -118,6 +120,11 @@ export function runSimulationWithTrace(
       total: hrMetrics.productivity,
     },
     financial_cascade: {
+      hr_performance_score: hrPerformanceScore,
+      hr_revenue_multiplier: hrRevenueMultiplier(
+        hrPerformanceScore,
+        industryConfig
+      ),
       revenue: financials.revenue,
       total_compensation: financials.total_compensation,
       turnover_cost: financials.turnover_cost,

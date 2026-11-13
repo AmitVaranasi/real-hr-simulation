@@ -96,9 +96,10 @@ export const FORMULA_CATALOG: FormulaCatalogEntry[] = [
     category: "Financials",
     name: "Revenue cascade",
     expression:
-      "prior.revenue × (1 + productivity_effect) × economy × industry_factor",
-    description: "Financial cascade from HR metrics into revenue.",
-    sourceFile: "financials.ts",
+      "prior.revenue × hr_revenue_multiplier(preliminary_hr_score, industry) × economy",
+    description:
+      "Revenue from last round's revenue, the industry's HR performance multiplier and the economy. The preliminary HR score (0–100) is the average of the Employee, Internal Process and Learning & Growth perspectives, with no financial inputs. Scores of 60–74 leave revenue unchanged; multiplier values per industry come from the Revenue Engine Calibration Proposal v1.0.",
+    sourceFile: "hr-revenue.ts",
     configKeys: ["economy_multipliers", "industries"],
   },
   {

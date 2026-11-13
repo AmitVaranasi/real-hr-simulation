@@ -22,6 +22,8 @@ export const INDUSTRY_CONFIGS: Record<Industry, IndustryConfig> = {
     base_stock_price: 25,
     base_market_share: 15,
     base_profit_margin: 12,
+    // Calibration Proposal v1.0: Manufacturing.
+    hr_revenue_multipliers: [0.94, 0.97, 1.0, 1.04, 1.08],
     base_turnover: 15,
     base_satisfaction: 65,
     base_engagement: 60,
@@ -50,6 +52,8 @@ export const INDUSTRY_CONFIGS: Record<Industry, IndustryConfig> = {
     base_stock_price: 20,
     base_market_share: 12,
     base_profit_margin: 10,
+    // Calibration Proposal v1.0: Professional Services row (mapping to be confirmed; Hospitality is the alternative).
+    hr_revenue_multipliers: [0.92, 0.96, 1.0, 1.06, 1.12],
     base_turnover: 18,
     base_satisfaction: 60,
     base_engagement: 58,
@@ -78,6 +82,8 @@ export const INDUSTRY_CONFIGS: Record<Industry, IndustryConfig> = {
     base_stock_price: 40,
     base_market_share: 10,
     base_profit_margin: 18,
+    // Calibration Proposal v1.0: Technology.
+    hr_revenue_multipliers: [0.94, 0.97, 1.0, 1.06, 1.12],
     base_turnover: 12,
     base_satisfaction: 70,
     base_engagement: 65,
@@ -106,6 +112,8 @@ export const INDUSTRY_CONFIGS: Record<Industry, IndustryConfig> = {
     base_stock_price: 35,
     base_market_share: 14,
     base_profit_margin: 15,
+    // Calibration Proposal v1.0: Financial Services.
+    hr_revenue_multipliers: [0.95, 0.98, 1.0, 1.04, 1.08],
     base_turnover: 10,
     base_satisfaction: 62,
     base_engagement: 58,
@@ -134,6 +142,8 @@ export const INDUSTRY_CONFIGS: Record<Industry, IndustryConfig> = {
     base_stock_price: 18,
     base_market_share: 11,
     base_profit_margin: 6,
+    // Calibration Proposal v1.0: Retail.
+    hr_revenue_multipliers: [0.95, 0.98, 1.0, 1.04, 1.07],
     base_turnover: 25,
     base_satisfaction: 55,
     base_engagement: 50,

@@ -1,9 +1,11 @@
 import { getEconomyMultipliers } from "./simulation-config";
 import { computeRecruitmentCost, computeTrainingSpend } from "./budget";
 import { createDefaultDecision } from "./defaults";
+import { hrRevenueMultiplier } from "./hr-revenue";
 import { computeTurnoverCost } from "./metrics";
 import { CONFLICT_CONFIG, HR_TECH_ANNUAL_COST } from "./programs";
 import { getRoleById, roleHeadcount, totalHires } from "./roles";
+import { preliminaryHrScore } from "./scoring";
 import { withDerivedTrainingBudget } from "./training";
 import type {
   BudgetBreakdown,
@@ -108,15 +110,25 @@ export function computeNonHrExpenses(
   );
 }
 
+/**
+ * Revenue = last round's revenue × HR performance multiplier × economy.
+ *
+ * The HR multiplier is the one link from workforce performance to revenue.
+ * It replaced `(0.5 + productivity) × retention`, which shrank revenue 8–26%
+ * a round even for default decisions in a normal economy.
+ */
 export function computeRevenue(
   prior: PriorState,
-  productivity: number,
-  retention: number,
+  hrPerformanceScore: number,
+  industryConfig: IndustryConfig,
   economy: EconomyCondition
 ): number {
-  const retentionFactor = clamp(retention / 100, 0.5, 1);
   const econ = getEconomyMultipliers()[economy];
-  return prior.revenue * (0.5 + productivity) * retentionFactor * econ.revenue;
+  return (
+    prior.revenue *
+    hrRevenueMultiplier(hrPerformanceScore, industryConfig) *
+    econ.revenue
+  );
 }
 
 export function computeFinancials(
@@ -139,11 +151,12 @@ export function computeFinancials(
     headcount,
     marketSalary
   );
-  const retention = 100 - metrics.turnover_rate;
+  // Workforce metrics → preliminary HR score → revenue. The score uses no
+  // financial inputs, so nothing computed below feeds back into it.
   let revenue = computeRevenue(
     prior,
-    metrics.productivity,
-    retention,
+    preliminaryHrScore(metrics),
+    industryConfig,
     economy
   );
 
