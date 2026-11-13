@@ -105,10 +105,12 @@ export const FORMULA_CATALOG: FormulaCatalogEntry[] = [
     id: "profit",
     category: "Financials",
     name: "Profit",
-    expression: "revenue − operating_costs − hr_spend − turnover_cost",
-    description: "Round profit after HR and turnover costs.",
+    expression:
+      "revenue − payroll − hr_program_costs − turnover_cost − non_hr_expenses, where non_hr_expenses = revenue × (1 − base_margin − baseline_people_cost_share) × economy_expense",
+    description:
+      "Round profit. Payroll and HR costs are deducted once, at what the team actually spends. Non-HR expenses exclude the people costs the industry's base margin already assumes, so a company at its starting state with default decisions earns the base margin.",
     sourceFile: "financials.ts",
-    configKeys: [],
+    configKeys: ["economy_multipliers", "industries"],
   },
   {
     id: "stock-price",

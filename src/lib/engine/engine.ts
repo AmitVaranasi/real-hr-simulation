@@ -1,5 +1,9 @@
 import { computeBudgetBreakdown } from "./budget";
-import { computeFinancials, applyBudgetAdherenceToMetrics } from "./financials";
+import {
+  applyBudgetAdherenceToMetrics,
+  computeFinancials,
+  computeNonHrExpenses,
+} from "./financials";
 import { generateFeedback } from "./feedback";
 import { generateLearningInsights } from "./explainability";
 import { computeAllMetrics } from "./metrics";
@@ -118,8 +122,11 @@ export function runSimulationWithTrace(
       total_compensation: financials.total_compensation,
       turnover_cost: financials.turnover_cost,
       other_hr_costs: budget.relations_spend + budget.org_design_spend,
-      non_hr_expenses:
-        financials.revenue * (1 - industryConfig.base_profit_margin / 100),
+      non_hr_expenses: computeNonHrExpenses(
+        financials.revenue,
+        industryConfig,
+        economy
+      ),
       profit: financials.profit,
     },
     bsc_component_scores: {
