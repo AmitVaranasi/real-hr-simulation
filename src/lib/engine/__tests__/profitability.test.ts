@@ -78,10 +78,11 @@ describe("profitability — payroll is deducted once", () => {
 
       // Before the correction every industry lost 19–46% of revenue here.
       expect(margin).toBeGreaterThan(config.base_profit_margin - 5);
-      // OPEN DESIGN QUESTION: the margin can exceed the base (Retail ≈15% vs
-      // 6%) because default hiring replaces few of the people who leave, so
-      // payroll falls while revenue — which no longer depends on headcount —
-      // holds. No upper bound is asserted until that is decided.
+      // No upper bound, by design (Prof. Cooper, 2026-11-13): the margin can
+      // exceed the base (Retail ≈15% vs 6%) because default hiring replaces
+      // few of the people who leave, so payroll falls while revenue — which
+      // does not scale with headcount — holds. Profit may grow through cost
+      // reduction without revenue growth.
     }
   );
 

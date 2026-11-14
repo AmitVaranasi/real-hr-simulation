@@ -52,7 +52,7 @@ export const INDUSTRY_CONFIGS: Record<Industry, IndustryConfig> = {
     base_stock_price: 20,
     base_market_share: 12,
     base_profit_margin: 10,
-    // Calibration Proposal v1.0: Professional Services row (mapping to be confirmed; Hospitality is the alternative).
+    // Calibration Proposal v1.0: Professional Services row (confirmed by Prof. Cooper, 2026-11-13; may be revisited).
     hr_revenue_multipliers: [0.92, 0.96, 1.0, 1.06, 1.12],
     base_turnover: 18,
     base_satisfaction: 60,

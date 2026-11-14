@@ -293,6 +293,11 @@ export interface FeedbackPayload {
 }
 
 export interface SimulationTrace {
+  /**
+   * Scoring rules that produced this result (see ENGINE_VERSION). Absent on
+   * results stored before the rules were versioned.
+   */
+  engine_version?: number;
   budget_breakdown: BudgetBreakdown;
   raw_metrics: HRMetrics;
   normalized_metrics: Record<string, number>;

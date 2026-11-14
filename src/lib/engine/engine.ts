@@ -11,6 +11,7 @@ import { hrRevenueMultiplier } from "./hr-revenue";
 import { normalizeMetric } from "./normalize";
 import { computeBSCScores, preliminaryHrScore } from "./scoring";
 import { withDerivedTrainingBudget } from "./training";
+import { ENGINE_VERSION } from "./version";
 import type {
   Decision,
   EconomyCondition,
@@ -104,6 +105,7 @@ export function runSimulationWithTrace(
   const retention = 100 - hrMetrics.turnover_rate;
   const hrPerformanceScore = preliminaryHrScore(hrMetrics);
   const trace: SimulationTrace = {
+    engine_version: ENGINE_VERSION,
     budget_breakdown: budget,
     raw_metrics,
     normalized_metrics,
