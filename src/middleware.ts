@@ -1,6 +1,11 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import {
+  isTutorialGatedPath,
+  TUTORIAL_PATH,
+  tutorialStatus,
+} from "@/lib/student/tutorial";
 
 const PUBLIC_PREFIXES = [
   "/",
@@ -138,6 +143,21 @@ export async function middleware(request: NextRequest) {
       path.startsWith("/join"))
   ) {
     return NextResponse.redirect(new URL("/admin", request.url));
+  }
+
+  // First-time students complete (or skip) the tutorial before the portal
+  // unlocks. Instructors and admins are never gated.
+  if (
+    effectiveRole === "student" &&
+    isTutorialGatedPath(path) &&
+    !tutorialStatus(user.user_metadata)
+  ) {
+    const tutorialUrl = new URL(TUTORIAL_PATH, request.url);
+    tutorialUrl.searchParams.set(
+      "next",
+      `${path}${request.nextUrl.search}`
+    );
+    return NextResponse.redirect(tutorialUrl);
   }
 
   return response;

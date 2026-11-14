@@ -153,7 +153,7 @@ export function GettingStarted({
         "Learn how the Real HR Simulation works, including rounds, budgets, decisions, results, and the decision-learning cycle.",
       status: "complete",
       icon: BookOpen,
-      actionHref: "/resources/reference",
+      actionHref: "/tutorial?next=%2Fdashboard%2Fgetting-started",
       actionLabel: "Review Again",
       actionVariant: "outline",
     },

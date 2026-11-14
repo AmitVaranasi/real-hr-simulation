@@ -1,3 +1,5 @@
+import { TutorialReplayCard } from "@/components/student/tutorial/TutorialReplayCard";
+import { tutorialStatus } from "@/lib/student/tutorial";
 import Link from "next/link";
 import { StudentLanding } from "@/components/student/StudentLanding";
 import { createClient } from "@/lib/supabase/server";
@@ -138,47 +140,58 @@ export default async function DashboardPage() {
         null)
       : null;
 
+  const skippedTutorial = tutorialStatus(user.user_metadata) === "skipped";
+
   return (
-    <StudentLanding
-      displayName={profile?.display_name ?? "Student"}
-      sessionName={session?.name ?? "Your session"}
-      announcement={session?.announcement ?? null}
-      team={{
-        id: team.id,
-        name: team.name,
-        industry: team.industry,
-        strategy: team.strategy,
-        headcount: team.headcount,
-        revenue: team.revenue != null ? Number(team.revenue) : null,
-        stock_price: team.stock_price != null ? Number(team.stock_price) : null,
-        budget_carryover: Number(team.budget_carryover ?? 0),
-      }}
-      budgetBase={budgetBase}
-      roundsTotal={roundsTotal}
-      roundsCompleted={roundsCompleted ?? 0}
-      lastScore={
-        lastOutcome?.total_score != null
-          ? Number(lastOutcome.total_score)
-          : null
-      }
-      lastSummary={lastSummary}
-      lastProfit={
-        lastOutcome?.profit != null ? Number(lastOutcome.profit) : null
-      }
-      teamsInClass={teamsInClass ?? null}
-      initialOpenRound={
-        openRound
-          ? {
-              id: openRound.id,
-              round_number: openRound.round_number,
-              round_type: openRound.round_type,
-              status: openRound.status,
-              economy_condition: openRound.economy_condition,
-              decision_deadline: openRound.decision_deadline ?? null,
-            }
-          : null
-      }
-      initialDecision={decisionStatus}
-    />
+    <>
+      {skippedTutorial ? (
+        <TutorialReplayCard
+          status="skipped"
+          returnTo="/dashboard"
+          variant="reminder"
+        />
+      ) : null}
+      <StudentLanding
+        displayName={profile?.display_name ?? "Student"}
+        sessionName={session?.name ?? "Your session"}
+        announcement={session?.announcement ?? null}
+        team={{
+          id: team.id,
+          name: team.name,
+          industry: team.industry,
+          strategy: team.strategy,
+          headcount: team.headcount,
+          revenue: team.revenue != null ? Number(team.revenue) : null,
+          stock_price: team.stock_price != null ? Number(team.stock_price) : null,
+          budget_carryover: Number(team.budget_carryover ?? 0),
+        }}
+        budgetBase={budgetBase}
+        roundsTotal={roundsTotal}
+        roundsCompleted={roundsCompleted ?? 0}
+        lastScore={
+          lastOutcome?.total_score != null
+            ? Number(lastOutcome.total_score)
+            : null
+        }
+        lastSummary={lastSummary}
+        lastProfit={
+          lastOutcome?.profit != null ? Number(lastOutcome.profit) : null
+        }
+        teamsInClass={teamsInClass ?? null}
+        initialOpenRound={
+          openRound
+            ? {
+                id: openRound.id,
+                round_number: openRound.round_number,
+                round_type: openRound.round_type,
+                status: openRound.status,
+                economy_condition: openRound.economy_condition,
+                decision_deadline: openRound.decision_deadline ?? null,
+              }
+            : null
+        }
+        initialDecision={decisionStatus}
+      />
+    </>
   );
 }

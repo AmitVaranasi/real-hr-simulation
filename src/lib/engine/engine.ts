@@ -1,11 +1,17 @@
 import { computeBudgetBreakdown } from "./budget";
-import { computeFinancials, applyBudgetAdherenceToMetrics } from "./financials";
+import {
+  applyBudgetAdherenceToMetrics,
+  computeFinancials,
+  computeNonHrExpenses,
+} from "./financials";
 import { generateFeedback } from "./feedback";
 import { generateLearningInsights } from "./explainability";
 import { computeAllMetrics } from "./metrics";
+import { hrRevenueMultiplier } from "./hr-revenue";
 import { normalizeMetric } from "./normalize";
-import { computeBSCScores } from "./scoring";
+import { computeBSCScores, preliminaryHrScore } from "./scoring";
 import { withDerivedTrainingBudget } from "./training";
+import { ENGINE_VERSION } from "./version";
 import type {
   Decision,
   EconomyCondition,
@@ -97,7 +103,9 @@ export function runSimulationWithTrace(
   }
 
   const retention = 100 - hrMetrics.turnover_rate;
+  const hrPerformanceScore = preliminaryHrScore(hrMetrics);
   const trace: SimulationTrace = {
+    engine_version: ENGINE_VERSION,
     budget_breakdown: budget,
     raw_metrics,
     normalized_metrics,
@@ -114,12 +122,20 @@ export function runSimulationWithTrace(
       total: hrMetrics.productivity,
     },
     financial_cascade: {
+      hr_performance_score: hrPerformanceScore,
+      hr_revenue_multiplier: hrRevenueMultiplier(
+        hrPerformanceScore,
+        industryConfig
+      ),
       revenue: financials.revenue,
       total_compensation: financials.total_compensation,
       turnover_cost: financials.turnover_cost,
       other_hr_costs: budget.relations_spend + budget.org_design_spend,
-      non_hr_expenses:
-        financials.revenue * (1 - industryConfig.base_profit_margin / 100),
+      non_hr_expenses: computeNonHrExpenses(
+        financials.revenue,
+        industryConfig,
+        economy
+      ),
       profit: financials.profit,
     },
     bsc_component_scores: {

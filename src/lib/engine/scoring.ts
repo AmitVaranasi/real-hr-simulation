@@ -133,6 +133,58 @@ function evaluateIndustryPenalties(
   return penalty;
 }
 
+/**
+ * The three scorecard perspectives that describe the workforce and use no
+ * financial inputs. Each is on a 0–25 scale, before strategy weights.
+ */
+function workforcePerspectives(metrics: HRMetrics) {
+  const benchmarkOverrides = getBenchmarkOverrides();
+  const retention = 100 - metrics.turnover_rate;
+  return {
+    employee: perspectiveScore(
+      [
+        metrics.employee_satisfaction,
+        retention,
+        metrics.engagement_level,
+        metrics.dei_score,
+      ],
+      benchmarksForPerspective("employee", benchmarkOverrides)
+    ),
+    process: perspectiveScore(
+      [
+        metrics.time_to_fill,
+        metrics.turnover_rate,
+        metrics.absenteeism_rate,
+        metrics.review_coverage,
+      ],
+      benchmarksForPerspective("process", benchmarkOverrides)
+    ),
+    learning: perspectiveScore(
+      [
+        metrics.training_effectiveness,
+        metrics.succession_pipeline,
+        metrics.hr_tech_score,
+        metrics.dei_score,
+      ],
+      benchmarksForPerspective("learning", benchmarkOverrides)
+    ),
+  };
+}
+
+/**
+ * Preliminary HR performance score, 0–100.
+ *
+ * The average of the Employee, Internal Process and Learning & Growth
+ * perspectives. It deliberately leaves out the Financial perspective and the
+ * strategy weights: it is computed before revenue and decides the HR revenue
+ * multiplier, so it must not depend on revenue or profit (no circularity),
+ * and strategy must not leak into revenue through it.
+ */
+export function preliminaryHrScore(metrics: HRMetrics): number {
+  const p = workforcePerspectives(metrics);
+  return clamp(((p.employee + p.process + p.learning) / 75) * 100, 0, 100);
+}
+
 export function computeBSCScores(
   metrics: HRMetrics,
   financials: FinancialMetrics,
@@ -141,7 +193,6 @@ export function computeBSCScores(
   strategyConfig: StrategyConfig,
   decision: Decision
 ): BSCScores {
-  const retention = 100 - metrics.turnover_rate;
   const metricsWithFinancials: HRMetrics = {
     ...metrics,
     budget_adherence: budget.adherence_pct,
@@ -163,35 +214,11 @@ export function computeBSCScores(
     benchmarksForPerspective("financial", benchmarkOverrides)
   );
 
-  const rawEmployee = perspectiveScore(
-    [
-      metricsWithFinancials.employee_satisfaction,
-      retention,
-      metricsWithFinancials.engagement_level,
-      metricsWithFinancials.dei_score,
-    ],
-    benchmarksForPerspective("employee", benchmarkOverrides)
-  );
-
-  const rawProcess = perspectiveScore(
-    [
-      metricsWithFinancials.time_to_fill,
-      metricsWithFinancials.turnover_rate,
-      metricsWithFinancials.absenteeism_rate,
-      metricsWithFinancials.review_coverage,
-    ],
-    benchmarksForPerspective("process", benchmarkOverrides)
-  );
-
-  const rawLearning = perspectiveScore(
-    [
-      metricsWithFinancials.training_effectiveness,
-      metricsWithFinancials.succession_pipeline,
-      metricsWithFinancials.hr_tech_score,
-      metricsWithFinancials.dei_score,
-    ],
-    benchmarksForPerspective("learning", benchmarkOverrides)
-  );
+  const {
+    employee: rawEmployee,
+    process: rawProcess,
+    learning: rawLearning,
+  } = workforcePerspectives(metricsWithFinancials);
 
   const w = strategyConfig.bsc_weights;
   const score_financial = Math.min(

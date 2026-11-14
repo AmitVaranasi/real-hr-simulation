@@ -1,7 +1,12 @@
 import { getEconomyMultipliers } from "./simulation-config";
 import { computeRecruitmentCost, computeTrainingSpend } from "./budget";
+import { createDefaultDecision } from "./defaults";
+import { hrRevenueMultiplier } from "./hr-revenue";
+import { computeTurnoverCost } from "./metrics";
 import { CONFLICT_CONFIG, HR_TECH_ANNUAL_COST } from "./programs";
 import { getRoleById, roleHeadcount, totalHires } from "./roles";
+import { preliminaryHrScore } from "./scoring";
+import { withDerivedTrainingBudget } from "./training";
 import type {
   BudgetBreakdown,
   Decision,
@@ -32,15 +37,98 @@ export function computeTotalCompensation(
   return totalBasePay + benefitsTotal + bonusPay;
 }
 
-export function computeRevenue(
-  prior: PriorState,
-  productivity: number,
-  retention: number,
+/** HR program costs that are charged to profit besides payroll. */
+function otherHrCosts(d: Decision): number {
+  return (
+    d.engagement_investment +
+    CONFLICT_CONFIG[d.conflict_approach].cost +
+    HR_TECH_ANNUAL_COST[d.hr_tech_level]
+  );
+}
+
+/**
+ * People costs of a company in its starting state: base headcount, base
+ * turnover and the default HR decisions.
+ *
+ * The industry's base profit margin describes this state, so these are the
+ * people costs that margin already assumes.
+ */
+export function baselinePeopleCosts(industryConfig: IndustryConfig) {
+  const d = withDerivedTrainingBudget(createDefaultDecision());
+  const headcount = industryConfig.base_headcount;
+  const payroll = computeTotalCompensation(
+    d,
+    headcount,
+    industryConfig.base_market_salary
+  );
+  const training = computeTrainingSpend(d, headcount);
+  const recruitment = computeRecruitmentCost(d, industryConfig);
+  const turnover = computeTurnoverCost(
+    headcount,
+    industryConfig.base_turnover,
+    industryConfig
+  );
+  const other = otherHrCosts(d);
+  const total = payroll + training + recruitment + turnover + other;
+  return { payroll, training, recruitment, turnover, other, total };
+}
+
+/**
+ * Share of revenue spent on everything except people (materials, facilities,
+ * marketing, and so on).
+ *
+ * Revenue splits into profit, people costs and non-HR expenses. The base
+ * margin and the baseline people costs fix the first two, so non-HR expenses
+ * are the remainder. Payroll and HR costs are then deducted separately, once,
+ * at what the team actually spends.
+ *
+ * Until this correction the engine used `1 - base margin` here, which already
+ * contained payroll, and then deducted payroll again.
+ */
+export function nonHrExpenseRatio(industryConfig: IndustryConfig): number {
+  const peopleShare =
+    industryConfig.base_revenue > 0
+      ? baselinePeopleCosts(industryConfig).total / industryConfig.base_revenue
+      : 0;
+  return clamp(
+    1 - industryConfig.base_profit_margin / 100 - peopleShare,
+    0,
+    1
+  );
+}
+
+/** Non-HR expenses for a round, including the economy's cost pressure. */
+export function computeNonHrExpenses(
+  revenue: number,
+  industryConfig: IndustryConfig,
   economy: EconomyCondition
 ): number {
-  const retentionFactor = clamp(retention / 100, 0.5, 1);
+  return (
+    revenue *
+    nonHrExpenseRatio(industryConfig) *
+    getEconomyMultipliers()[economy].expense
+  );
+}
+
+/**
+ * Revenue = last round's revenue × HR performance multiplier × economy.
+ *
+ * The HR multiplier is the one link from workforce performance to revenue.
+ * It replaced `(0.5 + productivity) × retention`, which shrank revenue 8–26%
+ * a round even for default decisions in a normal economy.
+ */
+export function computeRevenue(
+  prior: PriorState,
+  hrPerformanceScore: number,
+  industryConfig: IndustryConfig,
+  economy: EconomyCondition
+): number {
   const econ = getEconomyMultipliers()[economy];
-  return prior.revenue * (0.5 + productivity) * retentionFactor * econ.revenue;
+  return (
+    prior.revenue *
+    hrRevenueMultiplier(hrPerformanceScore, industryConfig) *
+    econ.revenue
+  );
 }
 
 export function computeFinancials(
@@ -63,11 +151,12 @@ export function computeFinancials(
     headcount,
     marketSalary
   );
-  const retention = 100 - metrics.turnover_rate;
+  // Workforce metrics → preliminary HR score → revenue. The score uses no
+  // financial inputs, so nothing computed below feeds back into it.
   let revenue = computeRevenue(
     prior,
-    metrics.productivity,
-    retention,
+    preliminaryHrScore(metrics),
+    industryConfig,
     economy
   );
 
@@ -83,14 +172,13 @@ export function computeFinancials(
   const trainingCost = computeTrainingSpend(d, headcount);
   const recruitmentCost = computeRecruitmentCost(d, industryConfig);
   const turnover_cost = metrics.turnover_cost;
-  const otherHRCosts =
-    d.engagement_investment +
-    CONFLICT_CONFIG[d.conflict_approach].cost +
-    HR_TECH_ANNUAL_COST[d.hr_tech_level];
+  const otherHRCosts = otherHrCosts(d);
 
-  const non_hr_expenses =
-    revenue * (1 - industryConfig.base_profit_margin / 100);
-  const econ = getEconomyMultipliers()[economy];
+  const non_hr_expenses = computeNonHrExpenses(
+    revenue,
+    industryConfig,
+    economy
+  );
   const profit =
     revenue -
     total_compensation -
@@ -98,7 +186,7 @@ export function computeFinancials(
     recruitmentCost -
     turnover_cost -
     otherHRCosts -
-    non_hr_expenses * econ.expense;
+    non_hr_expenses;
 
   const profit_margin = revenue > 0 ? (profit / revenue) * 100 : 0;
   const depreciationEstimate = revenue * 0.02;

@@ -1,3 +1,5 @@
+import { TutorialReplayCard } from "@/components/student/tutorial/TutorialReplayCard";
+import { tutorialStatus } from "@/lib/student/tutorial";
 import { GettingStarted } from "@/components/student/GettingStarted";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -19,6 +21,13 @@ export default async function GettingStartedPage() {
 
   if (profile?.role === "admin") redirect("/admin");
   if (profile?.role === "instructor") redirect("/sessions");
+
+  const replayCard = (
+    <TutorialReplayCard
+      status={tutorialStatus(user.user_metadata)}
+      returnTo="/dashboard/getting-started"
+    />
+  );
 
   const displayName = profile?.display_name ?? "Student";
   const firstName = displayName.trim().split(/\s+/)[0] || "Student";
@@ -46,21 +55,24 @@ export default async function GettingStartedPage() {
 
   if (!team) {
     return (
-      <GettingStarted
-        displayName={displayName}
-        firstName={firstName}
-        hasTeam={false}
-        teamName={null}
-        courseLabel="—"
-        industry={null}
-        strategy={null}
-        openRoundId={null}
-        openRoundNumber={null}
-        openRoundLabel="Not Open — Waiting for Instructor"
-        decisionDraft={false}
-        decisionSubmitted={false}
-        roundsCompleted={0}
-      />
+      <>
+        {replayCard}
+        <GettingStarted
+          displayName={displayName}
+          firstName={firstName}
+          hasTeam={false}
+          teamName={null}
+          courseLabel="—"
+          industry={null}
+          strategy={null}
+          openRoundId={null}
+          openRoundNumber={null}
+          openRoundLabel="Not Open — Waiting for Instructor"
+          decisionDraft={false}
+          decisionSubmitted={false}
+          roundsCompleted={0}
+        />
+      </>
     );
   }
 
@@ -100,24 +112,27 @@ export default async function GettingStartedPage() {
     .eq("team_id", team.id);
 
   return (
-    <GettingStarted
-      displayName={displayName}
-      firstName={firstName}
-      hasTeam
-      teamName={team.name}
-      courseLabel={courseLabel || team.sessions?.name || "—"}
-      industry={team.industry}
-      strategy={team.strategy}
-      openRoundId={openRound?.id ?? null}
-      openRoundNumber={openRound?.round_number ?? null}
-      openRoundLabel={
-        openRound
-          ? `Round ${openRound.round_number} — ${openRound.status.toUpperCase()}`
-          : "Not Open — Waiting for Instructor"
-      }
-      decisionDraft={decisionDraft}
-      decisionSubmitted={decisionSubmitted}
-      roundsCompleted={roundsCompleted ?? 0}
-    />
+    <>
+      {replayCard}
+      <GettingStarted
+        displayName={displayName}
+        firstName={firstName}
+        hasTeam
+        teamName={team.name}
+        courseLabel={courseLabel || team.sessions?.name || "—"}
+        industry={team.industry}
+        strategy={team.strategy}
+        openRoundId={openRound?.id ?? null}
+        openRoundNumber={openRound?.round_number ?? null}
+        openRoundLabel={
+          openRound
+            ? `Round ${openRound.round_number} — ${openRound.status.toUpperCase()}`
+            : "Not Open — Waiting for Instructor"
+        }
+        decisionDraft={decisionDraft}
+        decisionSubmitted={decisionSubmitted}
+        roundsCompleted={roundsCompleted ?? 0}
+      />
+    </>
   );
 }
