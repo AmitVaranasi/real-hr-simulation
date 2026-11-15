@@ -105,15 +105,35 @@ export function ResourcesInfoBanner({ children }: { children: React.ReactNode })
   );
 }
 
-export function ResourcesBreadcrumb({ current }: { current: string }) {
+export function ResourcesBreadcrumb({
+  current,
+  trail = [],
+}: {
+  current: string;
+  /** Pages between Resources and the current page. */
+  trail?: Array<{ label: string; href: string }>;
+}) {
   return (
-    <p className="text-xs font-semibold text-[var(--portal-muted)]">
+    <nav
+      aria-label="Breadcrumb"
+      className="text-xs font-semibold text-[var(--portal-muted)]"
+    >
       <Link href="/resources" className="text-[var(--portal-primary)] hover:underline">
         Resources
       </Link>
+      {trail.map((t) => (
+        <span key={t.href}>
+          <span className="mx-1.5">›</span>
+          <Link href={t.href} className="text-[var(--portal-primary)] hover:underline">
+            {t.label}
+          </Link>
+        </span>
+      ))}
       <span className="mx-1.5">›</span>
-      <span className="text-[var(--portal-title)]">{current}</span>
-    </p>
+      <span className="text-[var(--portal-title)]" aria-current="page">
+        {current}
+      </span>
+    </nav>
   );
 }
 
@@ -263,6 +283,7 @@ export const REFERENCE_CARDS = [
     ],
     icon: Gauge,
     color: "bg-[var(--portal-primary-soft)] text-[var(--portal-primary)]",
+    href: "/resources/reference/balanced-scorecard",
   },
   {
     title: "Understanding Industry Guidance & Suggested Ranges",
