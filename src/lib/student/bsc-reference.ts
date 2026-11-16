@@ -404,12 +404,12 @@ export const DECISION_AREA_LINKS: DecisionAreaLink[] = [
   {
     area: "Org Design & Change",
     moves: [],
-    note: "In the current version these choices affect your budget only; they do not yet change other scored metrics.",
+    note: "These choices change your budget, and different designs can raise or lower costs. Weigh what each choice costs against the value you expect it to bring.",
   },
   {
     area: "DEI Initiatives",
     moves: [],
-    note: "In the current version these initiative levels affect your budget only; they do not yet change other scored metrics.",
+    note: "These initiative levels change your budget. Weigh their cost against the value you expect them to bring to your workforce and culture.",
   },
 ];
 
