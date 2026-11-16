@@ -217,6 +217,15 @@ export function FormulaInspector({
       <section className="rounded-xl border border-[var(--portal-sidebar-border)] bg-white p-4">
         <h2 className="font-semibold text-[var(--portal-title)]">5. Financial cascade</h2>
         <dl className="mt-2 grid gap-1 text-sm">
+          {fc.hr_performance_score != null &&
+          fc.hr_revenue_multiplier != null ? (
+            <>
+              <dt>Preliminary HR performance score</dt>
+              <dd>{fc.hr_performance_score.toFixed(1)} / 100</dd>
+              <dt>HR revenue multiplier</dt>
+              <dd>{fc.hr_revenue_multiplier.toFixed(3)}×</dd>
+            </>
+          ) : null}
           <dt>Revenue</dt>
           <dd>{formatCurrency(fc.revenue)}</dd>
           <dt>Total compensation</dt>

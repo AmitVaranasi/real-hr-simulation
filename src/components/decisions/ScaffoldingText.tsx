@@ -1,4 +1,4 @@
-const MODULE_SCAFFOLDING: Record<string, string> = {
+export const MODULE_SCAFFOLDING: Record<string, string> = {
   Recruitment:
     "Decide which roles to fill, how rigorously to screen candidates, and how much to invest in diversity sourcing and onboarding. These choices drive cost per hire, time to fill, and hiring quality.",
   Performance:

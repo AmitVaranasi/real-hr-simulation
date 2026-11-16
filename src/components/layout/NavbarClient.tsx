@@ -20,6 +20,7 @@ const PORTAL_PREFIXES = [
   "/help",
   "/leaderboard",
   "/join",
+  "/tutorial",
   "/sessions",
   "/admin",
 ];

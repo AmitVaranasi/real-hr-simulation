@@ -3,6 +3,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { decisionToRow } from "@/lib/db/decisions";
 import { loadRoundStart } from "@/lib/db/compute";
 import { processRound } from "@/lib/db/process-round";
+import { ENGINE_VERSION } from "@/lib/engine/version";
+import type { SimulationTrace } from "@/lib/engine/types";
 import { priorStateFromIndustry } from "@/lib/engine/config";
 import { createDefaultDecision } from "@/lib/engine/defaults";
 import type { Team } from "@/lib/engine/types";
@@ -138,6 +140,80 @@ describe("processRound", () => {
       { team_id: "t3", team_name: "Absent", reason: "no_decision" },
     ]);
     expect(tables.outcomes.map((o) => o.team_id)).toEqual(["t1"]);
+  });
+});
+
+describe("processRound — scoring rule changes apply going forward", () => {
+  /** Rewrites a stored result so it looks scored before versioning existed. */
+  function asEarlierRules(outcome: Row) {
+    const trace = { ...(outcome.trace_json as SimulationTrace) };
+    delete trace.engine_version;
+    outcome.trace_json = trace;
+    outcome.total_score = 41.5;
+    outcome.revenue = 12_345_678;
+  }
+
+  it("stamps new results with the current rules version", async () => {
+    const tables: Record<string, Row[]> = {
+      rounds: rounds.map((r) => ({ ...r })),
+      teams: [freshTeam("t1", "Alpha")],
+      decisions: [submitted("t1", "r1")],
+      outcomes: [],
+    };
+    await processRound(fakeDb(tables), SESSION, rounds[0]);
+    expect(
+      (tables.outcomes[0].trace_json as SimulationTrace).engine_version
+    ).toBe(ENGINE_VERSION);
+  });
+
+  it("keeps a result stored under earlier rules when its round is re-processed", async () => {
+    const tables: Record<string, Row[]> = {
+      rounds: rounds.map((r) => ({ ...r })),
+      teams: [freshTeam("t1", "Alpha"), freshTeam("t2", "Late")],
+      decisions: [submitted("t1", "r1")],
+      outcomes: [],
+    };
+    const db = fakeDb(tables);
+    await processRound(db, SESSION, rounds[0]);
+    asEarlierRules(tables.outcomes[0]);
+    const original = structuredClone(tables.outcomes[0]);
+    const teamBefore = { ...tables.teams[0] };
+
+    // A second team submits late; the round is processed again.
+    tables.decisions.push(submitted("t2", "r1"));
+    const { results, preserved } = await processRound(db, SESSION, rounds[0]);
+
+    expect(preserved).toEqual([
+      { team_id: "t1", team_name: "Alpha", total_score: 41.5 },
+    ]);
+    expect(results.map((r) => r.team_id)).toEqual(["t2"]);
+    expect(tables.outcomes.find((o) => o.team_id === "t1")).toEqual(original);
+    expect(tables.teams[0]).toEqual(teamBefore);
+  });
+
+  it("scores the next round with the current rules, starting from the kept result", async () => {
+    const tables: Record<string, Row[]> = {
+      rounds: rounds.map((r) => ({ ...r })),
+      teams: [freshTeam("t1", "Alpha")],
+      decisions: [submitted("t1", "r1"), submitted("t1", "r2")],
+      outcomes: [],
+    };
+    const db = fakeDb(tables);
+    await processRound(db, SESSION, rounds[0]);
+    asEarlierRules(tables.outcomes[0]);
+
+    const { results, preserved } = await processRound(db, SESSION, rounds[1]);
+
+    expect(preserved).toEqual([]);
+    expect(results.map((r) => r.team_id)).toEqual(["t1"]);
+    const r2 = tables.outcomes.find((o) => o.round_id === "r2")!;
+    const trace = r2.trace_json as SimulationTrace;
+    expect(trace.engine_version).toBe(ENGINE_VERSION);
+    // Round 2 revenue builds on the stored round 1 revenue, not a re-scored one.
+    expect(Number(r2.revenue)).toBeCloseTo(
+      12_345_678 * (trace.financial_cascade.hr_revenue_multiplier ?? NaN),
+      0
+    );
   });
 });
 

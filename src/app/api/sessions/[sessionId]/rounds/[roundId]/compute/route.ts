@@ -35,8 +35,17 @@ export async function POST(
   }
 
   try {
-    const { results, skipped } = await processRound(admin, sessionId, round);
-    return NextResponse.json({ computed: results.length, results, skipped });
+    const { results, skipped, preserved } = await processRound(
+      admin,
+      sessionId,
+      round
+    );
+    return NextResponse.json({
+      computed: results.length,
+      results,
+      skipped,
+      preserved,
+    });
   } catch (e) {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Round processing failed" },

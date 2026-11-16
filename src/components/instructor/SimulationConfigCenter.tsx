@@ -546,9 +546,14 @@ export function SimulationConfigCenter({
       }),
     });
     const data = await res.json();
+    const kept = Array.isArray(data.preserved) ? data.preserved.length : 0;
     setMessage(
       res.ok
-        ? `Processed ${data.computed} team(s).`
+        ? `Processed ${data.computed} team(s).${
+            kept
+              ? ` ${kept} team(s) already had results under the earlier scoring rules; those were kept unchanged.`
+              : ""
+          }`
         : (data.error ?? "Process failed")
     );
   }

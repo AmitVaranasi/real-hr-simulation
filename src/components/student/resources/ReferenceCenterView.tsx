@@ -72,12 +72,18 @@ export function ReferenceCenterView({ context }: { context: ResourcesContext }) 
                   ))}
                 </ul>
               </div>
-              <Link
-                href="/resources/reference"
-                className="mt-5 inline-flex text-sm font-semibold text-[var(--portal-primary)] hover:underline"
-              >
-                View Reference →
-              </Link>
+              {"href" in card ? (
+                <Link
+                  href={card.href}
+                  className="mt-5 inline-flex text-sm font-semibold text-[var(--portal-primary)] hover:underline"
+                >
+                  View Reference →
+                </Link>
+              ) : (
+                <p className="mt-5 text-sm font-semibold text-[var(--portal-muted)]">
+                  Coming soon
+                </p>
+              )}
             </article>
           );
         })}
