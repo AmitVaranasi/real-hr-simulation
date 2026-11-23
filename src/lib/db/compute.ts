@@ -31,6 +31,8 @@ export function priorMetricsFromOutcome(
     training_roi: Number(row.training_roi),
     engagement_level: Number(row.engagement_level),
     dei_score: Number(row.dei_score),
+    // Not stored as a column; outcomes before engine v3 have none.
+    dei_capability: Number(row.dei_capability ?? row.dei_score),
     absenteeism_rate: Number(row.absenteeism_rate),
     review_coverage: Number(row.review_coverage),
     training_effectiveness: Number(row.training_effectiveness),

@@ -135,7 +135,7 @@ function evaluateIndustryPenalties(
 
 /**
  * The three scorecard perspectives that describe the workforce and use no
- * financial inputs. Each is on a 0–25 scale, before strategy weights.
+ * financial inputs. Each is on a 0–25 scale, before perspective weights.
  */
 function workforcePerspectives(metrics: HRMetrics) {
   const benchmarkOverrides = getBenchmarkOverrides();
@@ -164,7 +164,9 @@ function workforcePerspectives(metrics: HRMetrics) {
         metrics.training_effectiveness,
         metrics.succession_pipeline,
         metrics.hr_tech_score,
-        metrics.dei_score,
+        // DEI Capability, not the DEI Score: the Employee perspective already
+        // counts the DEI Score, so Learning & Growth uses separate decisions.
+        metrics.dei_capability ?? metrics.dei_score,
       ],
       benchmarksForPerspective("learning", benchmarkOverrides)
     ),

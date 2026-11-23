@@ -17,8 +17,9 @@
  *
  * Scale: every value is a PERCENT OF ATTAINABLE (0-100) for that perspective,
  * matching the doc's own example ("High-Tech ... Employee Perspective: 74").
- * Percent is the only strategy-independent scale: a perspective's raw maximum
- * is the team's strategy weight, which differs from 20 to 35 across strategies.
+ * Percent is the only weight-independent scale: a perspective's raw maximum
+ * is its BSC weight (25 for every strategy since engine v3; instructor
+ * overrides can still change it).
  * `toDisplayScale()` converts back to whatever raw scale a page is showing.
  */
 import type { Industry, Strategy } from "./types";

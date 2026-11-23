@@ -341,10 +341,10 @@ export function MetricsReferenceView({ rail }: { rail: CourseRailState }) {
 const SCORING_COMPONENTS = [
   { name: "Raw Perspective Score", body: "Benchmark-scored result for each Balanced Scorecard perspective.", formula: "score(metric) → 0–25 per benchmark band", impact: "Base Score", tone: "bg-[var(--portal-accent-blue-soft)] text-[var(--portal-accent-blue)]", Icon: Scale },
   { name: "Balanced Scorecard (BSC)", body: "Performance across four perspectives: Financial, Employee, Internal Process, Learning & Growth.", formula: "BSC = Financial + Employee + Process + Learning", impact: "Core Driver", tone: "bg-emerald-50 text-emerald-700", Icon: PieChart },
-  { name: "Strategy Weighting", body: "Each strategy re-weights the four perspectives.", formula: "score = raw × (strategy weight ÷ 25)", impact: "High Impact", tone: "bg-violet-50 text-violet-700", Icon: Target },
+  { name: "Perspective Weighting", body: "All four perspectives count equally (25% each) for every strategy.", formula: "score = raw × (25 ÷ 25)", impact: "High Impact", tone: "bg-violet-50 text-violet-700", Icon: Target },
   { name: "Industry Multiplier", body: "Per-module multipliers set by the chosen industry.", formula: "metric × industry module_multiplier", impact: "High Impact", tone: "bg-orange-50 text-[var(--portal-brand)]", Icon: BarChart3 },
   { name: "Economic Factor", body: "Boom, Normal or Recession multipliers on revenue and expenses.", formula: "revenue × economy.revenue, expense × economy.expense", impact: "Variable", tone: "bg-rose-50 text-rose-700", Icon: TrendingUp },
-  { name: "Bonus Conditions", body: "Strategy-specific bonuses added when conditions are met.", formula: "+3 pts to the named perspective", impact: "Final Result", tone: "bg-[var(--portal-accent-blue-soft)] text-[var(--portal-accent-blue)]", Icon: Settings2 },
+  { name: "Strategic Alignment Bonus", body: "Each strategy earns a bonus when both of its alignment targets are met.", formula: "+3 pts (maximum)", impact: "Final Result", tone: "bg-[var(--portal-accent-blue-soft)] text-[var(--portal-accent-blue)]", Icon: Settings2 },
 ];
 
 export function ScoringFormulasView({ rail }: { rail: CourseRailState }) {

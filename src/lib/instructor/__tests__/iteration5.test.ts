@@ -138,8 +138,8 @@ describe("industry benchmarks (Iteration 5 §3)", () => {
   });
 
   it("converts a stored percent onto the strategy's own scale", () => {
-    // Customer Intimacy weights Employee at 35, Focus at 25.
-    expect(toDisplayScale(74, attainableFor("employee", "Customer Intimacy"))).toBeCloseTo(25.9);
+    // Every strategy weights Employee at 25 (engine v3).
+    expect(toDisplayScale(74, attainableFor("employee", "Customer Intimacy"))).toBeCloseTo(18.5);
     expect(toDisplayScale(74, attainableFor("employee", "Focus"))).toBeCloseTo(18.5);
     expect(attainableFor("overall", "Focus")).toBe(100);
   });

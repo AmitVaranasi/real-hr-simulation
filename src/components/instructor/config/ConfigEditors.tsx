@@ -854,7 +854,7 @@ export function ConfigStrategyPanel({
         <ConfigStep
           n={2}
           title="BSC Perspective Weights by Strategy"
-          body="Set the emphasis each strategy places on the four BSC perspectives. Percentages must total 100%."
+          body="By design every strategy weights the four perspectives equally (25% each); strategy acts through its +3 alignment bonus. Change these only with design approval. Percentages must total 100%."
         />
         <div className="mt-4 grid gap-4">
           <div className="overflow-x-auto rounded-xl border border-[var(--portal-sidebar-border)]">
@@ -1050,8 +1050,8 @@ export function ConfigStrategyPanel({
             </table>
             <p className="flex items-start gap-2 border-t border-[var(--portal-sidebar-border)] bg-[#f4f7fb] px-3 py-2.5 text-[0.8125rem] text-[var(--portal-muted)]">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} />
-              Per-strategy HR impact multipliers are not stored by the engine
-              yet — strategy emphasis is applied through the BSC weights above.
+              Per-strategy HR impact multipliers are not stored by the engine —
+              strategy acts through its +3 alignment bonus, not the weights.
             </p>
           </div>
 
@@ -1064,7 +1064,7 @@ export function ConfigStrategyPanel({
               {[
                 "Higher multipliers amplify the effect of decisions in that area.",
                 "Lower multipliers reduce the effect.",
-                "Balance your strategy weights to create distinct strategy experiences.",
+                "Keep BSC weights equal across strategies unless the design changes.",
               ].map((tip) => (
                 <li key={tip} className="flex items-start gap-2">
                   <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />

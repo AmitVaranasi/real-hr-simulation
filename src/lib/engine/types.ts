@@ -148,7 +148,7 @@ export interface Decision {
   change_management_capability: InvestmentLevel;
   collaboration_enablement: CollaborationEnablement;
 
-  /** DEI Initiatives (Decision 7) — portfolio levels; scoring later */
+  /** DEI Initiatives (Decision 7) — feed the DEI Score and DEI Capability (engine v3+) */
   dei_diverse_recruitment: InvestmentLevel;
   dei_equity_practices: InvestmentLevel;
   dei_inclusion_initiatives: InvestmentLevel;
@@ -221,7 +221,10 @@ export interface HRMetrics {
   employee_satisfaction: number;
   training_roi: number;
   engagement_level: number;
+  /** DEI Score, 0–100 — Employee perspective. */
   dei_score: number;
+  /** DEI Capability, 0–100 — Learning & Growth perspective (engine v3+). */
+  dei_capability: number;
   absenteeism_rate: number;
   review_coverage: number;
   training_effectiveness: number;
