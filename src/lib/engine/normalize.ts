@@ -13,6 +13,7 @@ export function normalizeMetric(value: number, metricName: string): number {
     employee_satisfaction: { max: 100, inverse: false },
     engagement_level: { max: 100, inverse: false },
     dei_score: { max: 100, inverse: false },
+    dei_capability: { max: 100, inverse: false },
     review_coverage: { max: 100, inverse: false },
     training_effectiveness: { max: 40, inverse: false },
     succession_pipeline: { max: 100, inverse: false },

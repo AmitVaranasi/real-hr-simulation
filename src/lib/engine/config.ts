@@ -166,10 +166,49 @@ export const INDUSTRY_CONFIGS: Record<Industry, IndustryConfig> = {
   },
 };
 
+/**
+ * Every strategy weights the four BSC perspectives equally (engine v3, per
+ * Prof. Cooper 2026-11-23). Strategy acts only through its +3 strategic
+ * alignment bonus, never through the perspective weights.
+ */
+export const EQUAL_BSC_WEIGHTS: StrategyConfig["bsc_weights"] = {
+  financial: 25,
+  employee: 25,
+  process: 25,
+  learning: 25,
+};
+
+/**
+ * Perspective weights used before engine v3. Results scored then keep these
+ * maximums (e.g. Employee out of 30 for Differentiation), so pages showing an
+ * old result must use them rather than today's equal weights.
+ */
+export const PRE_V3_BSC_WEIGHTS: Record<Strategy, StrategyConfig["bsc_weights"]> = {
+  "Cost Leadership": { financial: 30, employee: 20, process: 30, learning: 20 },
+  Differentiation: { financial: 20, employee: 30, process: 20, learning: 30 },
+  Innovation: { financial: 20, employee: 20, process: 25, learning: 35 },
+  "Customer Intimacy": { financial: 20, employee: 35, process: 25, learning: 20 },
+  Focus: { financial: 25, employee: 25, process: 25, learning: 25 },
+};
+
+/**
+ * Perspective weights a stored result was scored with. `engineVersion` is the
+ * result's trace_json.engine_version (absent on the oldest results).
+ */
+export function bscWeightsForResult(
+  strategy: Strategy,
+  engineVersion: number | null | undefined
+): StrategyConfig["bsc_weights"] {
+  if ((engineVersion ?? 1) < 3) {
+    return { ...(PRE_V3_BSC_WEIGHTS[strategy] ?? PRE_V3_BSC_WEIGHTS.Focus) };
+  }
+  return { ...getStrategyConfig(strategy).bsc_weights };
+}
+
 export const STRATEGY_CONFIGS: Record<Strategy, StrategyConfig> = {
   "Cost Leadership": {
     strategy: "Cost Leadership",
-    bsc_weights: { financial: 30, employee: 20, process: 30, learning: 20 },
+    bsc_weights: EQUAL_BSC_WEIGHTS,
     bonus_conditions: [
       {
         condition: "budget_adherence > 95 AND compensation_ratio < 30",
@@ -180,7 +219,7 @@ export const STRATEGY_CONFIGS: Record<Strategy, StrategyConfig> = {
   },
   Differentiation: {
     strategy: "Differentiation",
-    bsc_weights: { financial: 20, employee: 30, process: 20, learning: 30 },
+    bsc_weights: EQUAL_BSC_WEIGHTS,
     bonus_conditions: [
       {
         condition: "training_roi > 15 AND retention > 88",
@@ -191,7 +230,7 @@ export const STRATEGY_CONFIGS: Record<Strategy, StrategyConfig> = {
   },
   Innovation: {
     strategy: "Innovation",
-    bsc_weights: { financial: 20, employee: 20, process: 25, learning: 35 },
+    bsc_weights: EQUAL_BSC_WEIGHTS,
     bonus_conditions: [
       {
         condition: "hr_tech_level == 2 AND succession_pipeline > 70",
@@ -202,7 +241,7 @@ export const STRATEGY_CONFIGS: Record<Strategy, StrategyConfig> = {
   },
   "Customer Intimacy": {
     strategy: "Customer Intimacy",
-    bsc_weights: { financial: 20, employee: 35, process: 25, learning: 20 },
+    bsc_weights: EQUAL_BSC_WEIGHTS,
     bonus_conditions: [
       {
         condition: "engagement_level > 80 AND employee_satisfaction > 80",
@@ -213,7 +252,7 @@ export const STRATEGY_CONFIGS: Record<Strategy, StrategyConfig> = {
   },
   Focus: {
     strategy: "Focus",
-    bsc_weights: { financial: 25, employee: 25, process: 25, learning: 25 },
+    bsc_weights: EQUAL_BSC_WEIGHTS,
     bonus_conditions: [
       {
         condition: "cost_per_hire < 5000 AND training_effectiveness > 15",

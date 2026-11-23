@@ -13,6 +13,7 @@ import {
   metricNamesMovedBy,
   perspectivesMovedBy,
   PERSPECTIVES,
+  STRATEGY_BONUS_TARGETS,
   type BscReferenceData,
   type PerspectiveWeights,
 } from "@/lib/student/bsc-reference";
@@ -146,46 +147,46 @@ export function HowItWorksTab({ data }: { data: BscReferenceData }) {
           <SectionTitle
             icon={Scale}
             title="How the BSC Score Is Calculated"
-            subtitle="Your overall score combines the four perspective scores. How much each perspective counts depends on your strategy."
+            subtitle="Your overall score combines the four perspective scores. All four perspectives count equally, at 25% each, whatever your strategy."
           />
           <div className="mt-4 flex flex-col items-center gap-5 sm:flex-row sm:items-start">
             <PerspectiveDonut
               weights={own}
-              label={own ? `${data.strategy} weights` : "Perspective weights"}
+              label="Perspective weights"
             />
             {own ? (
               <WeightList weights={own} />
             ) : (
               <p className="text-sm text-[var(--portal-ink)]">
-                Join a team to see the weights for your strategy.
+                Join a team to see your perspective weights.
               </p>
             )}
           </div>
 
           <details className="mt-4 rounded-lg border border-[var(--portal-sidebar-border)] p-3">
             <summary className="cursor-pointer text-sm font-semibold text-[var(--portal-primary)]">
-              Weights for every strategy
+              Strategic alignment bonus for every strategy
             </summary>
+            <p className="mt-2 text-xs leading-relaxed text-[var(--portal-ink)]">
+              Your strategy does not change the weights. It earns up to 3 bonus
+              points when your results reach both of its targets.
+            </p>
             <div className="mt-2 overflow-x-auto">
               <table className="w-full min-w-[420px] text-left text-xs">
                 <thead>
                   <tr className="text-[var(--portal-muted)]">
                     <th className="py-1 pr-2 font-bold">Strategy</th>
-                    {PERSPECTIVES.map((p) => (
-                      <th key={p.id} className="py-1 pr-2 font-bold">{p.title}</th>
-                    ))}
+                    <th className="py-1 pr-2 font-bold">Targets for the +3 bonus</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {ALL_STRATEGIES.filter((s) => data.strategyWeights[s]).map((s) => (
+                  {ALL_STRATEGIES.map((s) => (
                     <tr
                       key={s}
                       className={s === data.strategy ? "font-bold text-[var(--portal-title)]" : "text-[var(--portal-ink)]"}
                     >
-                      <td className="py-1 pr-2">{s}</td>
-                      {PERSPECTIVES.map((p) => (
-                        <td key={p.id} className="py-1 pr-2">{data.strategyWeights[s]![p.id]}%</td>
-                      ))}
+                      <td className="py-1 pr-2 align-top">{s}</td>
+                      <td className="py-1 pr-2">{STRATEGY_BONUS_TARGETS[s]}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -201,8 +202,8 @@ export function HowItWorksTab({ data }: { data: BscReferenceData }) {
             <li>
               Your industry, strategy, and economic conditions adjust results:
               industry conditions shift some metric values and industry rules can deduct points, meeting your strategy&apos;s
-              targets can earn a small bonus, and the economy mainly affects
-              revenue and costs.
+              two targets earns a bonus of up to 3 points, and the economy
+              mainly affects revenue and costs.
             </li>
             <li>
               Results carry forward: each round starts from where your company

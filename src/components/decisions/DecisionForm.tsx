@@ -46,8 +46,10 @@ import { runSimulation } from "@/lib/engine/engine";
 import { computeBudgetBreakdown, computeRecruitmentCost } from "@/lib/engine/budget";
 import {
   computeCostPerHire,
+  computeDEICapability,
   computeReviewCoverage,
   computeTimeToFill,
+  deiScoreParts,
 } from "@/lib/engine/metrics";
 import { generateWarnings } from "@/lib/engine/validation";
 import {
@@ -594,25 +596,21 @@ function DecisionFormInner({
         ? 0.6
         : 0.2);
 
-    const deiLevelScore = (level: InvestmentLevel) =>
-      ({ Minimal: 0, Basic: 0.8, Moderate: 1.6, Strong: 2.5, Advanced: 3.4 })[
-        level
-      ] ?? 0;
-    const talentAttractionImpact =
-      deiLevelScore(decision.dei_diverse_recruitment) * 1.1 +
-      deiLevelScore(decision.dei_inclusion_initiatives) * 0.4;
-    const employeeExperienceImpact =
-      deiLevelScore(decision.dei_inclusion_initiatives) * 1.1 +
-      deiLevelScore(decision.dei_equity_practices) * 0.7 +
-      deiLevelScore(decision.dei_accessibility_support) * 0.5;
-    const deiRetentionImpact =
-      deiLevelScore(decision.dei_equity_practices) * 0.8 +
-      deiLevelScore(decision.dei_inclusion_initiatives) * 0.6 +
-      deiLevelScore(decision.dei_accessibility_support) * 0.4;
-    const innovationImpact =
-      deiLevelScore(decision.dei_training_education) * 0.9 +
-      deiLevelScore(decision.dei_diverse_recruitment) * 0.6 +
-      deiLevelScore(decision.dei_inclusion_initiatives) * 0.5;
+    // DEI estimates use the engine's own formulas. The final DEI Score also
+    // depends on how evenly turnover falls across roles, which is only known
+    // after the round; the estimate assumes it is even.
+    const deiIndustryFactor = 0.5 + industryConfig.module_multipliers.dei * 0.5;
+    const deiParts = deiScoreParts(decision, 1);
+    const deiScoreEstimate =
+      Math.min(
+        deiParts.representation +
+          deiParts.equity +
+          deiParts.inclusion +
+          deiParts.support,
+        100
+      ) * deiIndustryFactor;
+    const deiCapabilityEstimate =
+      computeDEICapability(decision) * deiIndustryFactor;
 
     return {
       costPerHire: computeCostPerHire(decision, industryConfig),
@@ -639,10 +637,12 @@ function DecisionFormInner({
       agilityImpact,
       collaborationImpact,
       changeReadinessImpact,
-      talentAttractionImpact,
-      employeeExperienceImpact,
-      deiRetentionImpact,
-      innovationImpact,
+      deiScoreEstimate,
+      deiCapabilityEstimate,
+      deiRepresentationEquity:
+        (deiParts.representation + deiParts.equity) * deiIndustryFactor,
+      deiInclusionSupport:
+        (deiParts.inclusion + deiParts.support) * deiIndustryFactor,
     };
   }, [decision, industryConfig, prior.headcount, budget.training_spend, budget.compensation_spend]);
 
@@ -2250,34 +2250,31 @@ function DecisionFormInner({
 
             <MetricPreview
               showCalcLink
-              calcTitle="Estimates update live from your DEI portfolio across pipelines, equity, inclusion, education, and accessibility."
+              calcTitle="Estimated from your DEI Initiatives, diversity hiring goal, Employee Relations choices, and training programs. The final DEI Score also reflects how evenly turnover falls across roles."
               items={[
                 {
-                  label: "Talent Attraction Impact",
-                  value: formatSigned(liveMetrics.talentAttractionImpact, " pts"),
-                  icon: UsersRound,
+                  label: "DEI Score (Employee)",
+                  value: `${liveMetrics.deiScoreEstimate.toFixed(0)} / 100`,
+                  icon: HeartHandshake,
                   accent: "emerald",
                 },
                 {
-                  label: "Employee Experience Impact",
-                  value: formatSigned(
-                    liveMetrics.employeeExperienceImpact,
-                    " pts"
-                  ),
-                  icon: HeartHandshake,
+                  label: "DEI Capability (Learning & Growth)",
+                  value: `${liveMetrics.deiCapabilityEstimate.toFixed(0)} / 100`,
+                  icon: GraduationCap,
+                  accent: "orange",
+                },
+                {
+                  label: "Representation & Equity",
+                  value: `${liveMetrics.deiRepresentationEquity.toFixed(0)} / 50`,
+                  icon: UsersRound,
                   accent: "blue",
                 },
                 {
-                  label: "Retention Impact",
-                  value: formatSigned(liveMetrics.deiRetentionImpact, " pts"),
-                  icon: Smile,
+                  label: "Inclusion & Support",
+                  value: `${liveMetrics.deiInclusionSupport.toFixed(0)} / 50`,
+                  icon: Accessibility,
                   accent: "violet",
-                },
-                {
-                  label: "Innovation Impact",
-                  value: formatSigned(liveMetrics.innovationImpact, " pts"),
-                  icon: Sparkles,
-                  accent: "orange",
                 },
               ]}
             />

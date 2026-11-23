@@ -116,7 +116,7 @@ describe("engine golden path", () => {
     expect(Object.keys(trace.normalized_metrics).length).toBeGreaterThan(5);
   });
 
-  it("strategy weights change relative BSC composition", () => {
+  it("strategy does not change the perspective scores (equal weights)", () => {
     const decision = createDefaultDecision();
     const industry = getIndustryConfig("Banking");
     const prior = priorStateFromIndustry("Banking");
@@ -136,11 +136,19 @@ describe("engine golden path", () => {
       "normal"
     );
 
-    // Scores should both be valid; at least one perspective should differ.
-    const perspectivesDiffer =
-      cost.bsc_scores.score_financial !== innov.bsc_scores.score_financial ||
-      cost.bsc_scores.score_learning !== innov.bsc_scores.score_learning ||
-      cost.bsc_scores.total_score !== innov.bsc_scores.total_score;
-    expect(perspectivesDiffer).toBe(true);
+    // Every strategy weights the perspectives 25/25/25/25 (engine v3), so the
+    // same decisions give the same perspective scores; strategy can only add
+    // its +3 alignment bonus.
+    for (const k of [
+      "score_financial",
+      "score_employee",
+      "score_process",
+      "score_learning",
+    ] as const) {
+      expect(cost.bsc_scores[k]).toBeCloseTo(innov.bsc_scores[k], 9);
+    }
+    expect(
+      Math.abs(cost.bsc_scores.total_score - innov.bsc_scores.total_score)
+    ).toBeLessThanOrEqual(3);
   });
 });

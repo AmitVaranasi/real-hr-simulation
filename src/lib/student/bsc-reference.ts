@@ -174,7 +174,8 @@ const SCORED_COPY: Record<
   },
   dei_score_employee: {
     name: "DEI Score",
-    definition: "Progress toward a more inclusive and equitable workplace.",
+    definition:
+      "Representation, equity, inclusion, and support in your workplace. It is driven by your DEI Initiatives, your diversity hiring goal, your Employee Relations choices, and how evenly turnover falls across roles.",
     whyItMatters:
       "Reflects whether employees across groups share in a fair experience.",
   },
@@ -222,8 +223,9 @@ const SCORED_COPY: Record<
       "Better systems speed up HR processes and support the employee experience.",
   },
   dei_score_learning: {
-    name: "DEI Score",
-    definition: "Progress toward a more inclusive and equitable workplace.",
+    name: "DEI Capability",
+    definition:
+      "How much inclusive capability the organization is building, through DEI Training & Education and the Leadership Development and Compliance programs.",
     whyItMatters:
       "Inclusive practices widen the talent the organization can develop.",
   },
@@ -361,7 +363,7 @@ export type DecisionAreaLink = {
 export const DECISION_AREA_LINKS: DecisionAreaLink[] = [
   {
     area: "Recruitment & Selection",
-    moves: ["cost_per_hire", "time_to_fill"],
+    moves: ["cost_per_hire", "time_to_fill", "dei_score_employee"],
   },
   {
     area: "Performance Management",
@@ -377,6 +379,7 @@ export const DECISION_AREA_LINKS: DecisionAreaLink[] = [
       "engagement_level",
       "retention",
       "turnover_rate",
+      "dei_score_learning",
     ],
   },
   {
@@ -387,6 +390,7 @@ export const DECISION_AREA_LINKS: DecisionAreaLink[] = [
       "retention",
       "turnover_rate",
       "absenteeism_rate",
+      "dei_score_employee",
     ],
   },
   {
@@ -408,10 +412,27 @@ export const DECISION_AREA_LINKS: DecisionAreaLink[] = [
   },
   {
     area: "DEI Initiatives",
-    moves: [],
-    note: "These initiative levels change your budget. Weigh their cost against the value you expect them to bring to your workforce and culture.",
+    moves: ["dei_score_employee", "dei_score_learning"],
+    note: "Higher levels raise the DEI Score and DEI Capability, but each step up adds less than the one before while costing more. Weigh the cost against the value you expect.",
   },
 ];
+
+/**
+ * The targets that earn a strategy its +3 strategic alignment bonus, in plain
+ * language. Mirrors evaluateStrategyBonus in the engine's scoring.
+ */
+export const STRATEGY_BONUS_TARGETS: Record<Strategy, string> = {
+  "Cost Leadership": "Budget Adherence above 95% and Compensation Ratio below 30%",
+  Differentiation: "Training ROI above 15% and Retention above 88%",
+  Innovation: "HR Technology at level 2 and Succession Pipeline above 70",
+  "Customer Intimacy": "Engagement above 80 and Employee Satisfaction above 80",
+  Focus: "Cost per Hire below $5,000 and Training Effectiveness above 15",
+};
+
+export function strategyBonusTarget(strategy: string | null | undefined): string | null {
+  if (!strategy) return null;
+  return STRATEGY_BONUS_TARGETS[strategy as Strategy] ?? null;
+}
 
 /** Perspectives an area moves, in scorecard order. */
 export function perspectivesMovedBy(link: DecisionAreaLink): PerspectiveId[] {

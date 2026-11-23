@@ -68,7 +68,15 @@ export interface WorkforceBriefData {
   productivityIndex: number;
   budgetAdherence: number;
   deiScore: number;
+  /** DEI Capability (Learning & Growth); null for results before engine v3. */
+  deiCapability?: number | null;
   hrTechScore: number;
+  /**
+   * Preliminary HR performance score (0–100) that sets revenue growth, and the
+   * resulting revenue multiplier. Null for results that did not record them.
+   */
+  hrPerformanceScore?: number | null;
+  hrRevenueMultiplier?: number | null;
 
   rounds?: RoundListItem[];
   /** Rounds in the session; the round list shows exactly this many slots. */
@@ -164,8 +172,9 @@ function metricTone(
     return "poor";
   }
   if (kind === "dei") {
-    if (value >= 70) return "excellent";
-    if (value >= 40) return "moderate";
+    // Matches the engine's DEI benchmarks (excellent 80, moderate 55).
+    if (value >= 80) return "excellent";
+    if (value >= 55) return "moderate";
     return "critical";
   }
   // budget
@@ -238,6 +247,67 @@ function padRounds(
       }
     );
   });
+}
+
+/**
+ * The preliminary HR performance score that drives revenue, with what it did
+ * to revenue this round. It averages the Employee, Internal Process and
+ * Learning & Growth perspectives; revenue starts to grow at 75.
+ */
+function RevenueDriver({
+  score,
+  multiplier,
+}: {
+  score: number;
+  multiplier: number | null;
+}) {
+  const pct = multiplier != null ? (multiplier - 1) * 100 : null;
+  const effect =
+    pct == null
+      ? null
+      : Math.abs(pct) < 0.05
+        ? "Revenue held steady from HR performance this round."
+        : pct > 0
+          ? `HR performance raised revenue by ${pct.toFixed(1)}% this round.`
+          : `HR performance lowered revenue by ${Math.abs(pct).toFixed(1)}% this round.`;
+  const next =
+    score < 75
+      ? `Reach 75 to start growing revenue (${(75 - score).toFixed(1)} points to go).`
+      : score < 95
+        ? "Higher scores grow revenue further, up to the maximum at 95."
+        : "You are at the top of the revenue range.";
+  return (
+    <section>
+      <h2 className="mb-2 text-[0.75rem] font-bold uppercase tracking-wider text-[var(--portal-primary)]">
+        Revenue Driver: HR Performance Score
+      </h2>
+      <div className="flex flex-wrap items-center gap-4 rounded-xl border border-[var(--portal-sidebar-border)] bg-white px-4 py-3">
+        <div className="shrink-0">
+          <p className="text-2xl font-bold tabular-nums text-[var(--portal-title)]">
+            {score.toFixed(1)}
+            <span className="text-sm font-semibold text-[var(--portal-muted)]"> / 100</span>
+          </p>
+        </div>
+        <div className="min-w-[220px] flex-1">
+          <div className="relative h-2 overflow-hidden rounded-full bg-[#eef1f4]">
+            <div
+              className="h-full rounded-full bg-[var(--portal-primary)]"
+              style={{ width: `${Math.min(100, Math.max(0, score))}%` }}
+            />
+            <div
+              className="absolute top-0 h-full w-0.5 bg-[var(--portal-title)]"
+              style={{ left: "75%" }}
+              aria-hidden
+            />
+          </div>
+          <p className="mt-1.5 text-xs leading-relaxed text-[var(--portal-ink)]">
+            The average of your Employee, Internal Process, and Learning &amp;
+            Growth perspectives. {effect} {next}
+          </p>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export function WorkforceBriefView({
@@ -461,6 +531,14 @@ export function WorkforceBriefView({
       header: "bg-red-600",
       rows: [
         { label: "DEI Score", value: `${brief.deiScore.toFixed(1)} / 100` },
+        ...(brief.deiCapability != null
+          ? [
+              {
+                label: "DEI Capability",
+                value: `${brief.deiCapability.toFixed(1)} / 100`,
+              },
+            ]
+          : []),
       ],
     },
     {
@@ -706,6 +784,13 @@ export function WorkforceBriefView({
               })}
             </div>
           </section>
+
+          {brief.hrPerformanceScore != null ? (
+            <RevenueDriver
+              score={brief.hrPerformanceScore}
+              multiplier={brief.hrRevenueMultiplier ?? null}
+            />
+          ) : null}
 
           <section>
             <h2 className="mb-2 text-[0.75rem] font-bold uppercase tracking-wider text-[var(--portal-title)]">

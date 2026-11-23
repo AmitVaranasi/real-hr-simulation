@@ -53,16 +53,19 @@ describe("scored metrics match the engine", () => {
         name: "Turnover (as Retention and Turnover Rate)",
         perspectives: ["employee", "process"],
       },
-      { name: "DEI Score", perspectives: ["employee", "learning"] },
     ]);
   });
 });
 
 describe("strategy weights", () => {
-  it("are known for every strategy and total 100", () => {
+  it("are 25/25/25/25 for every strategy", () => {
     for (const s of ALL_STRATEGIES) {
-      const w = strategyWeights(s)!;
-      expect(w.financial + w.employee + w.process + w.learning, s).toBe(100);
+      expect(strategyWeights(s), s).toEqual({
+        financial: 25,
+        employee: 25,
+        process: 25,
+        learning: 25,
+      });
     }
     expect(strategyWeights("Focus")).toEqual({
       financial: 25,
@@ -171,7 +174,7 @@ function scoredValues(decision: Decision, industry: Industry) {
     training_effectiveness: m.training_effectiveness,
     succession_pipeline: m.succession_pipeline,
     hr_tech_score: m.hr_tech_score,
-    dei_score_learning: m.dei_score,
+    dei_score_learning: m.dei_capability,
   };
   return values;
 }

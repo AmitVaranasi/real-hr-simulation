@@ -76,8 +76,10 @@ export const FORMULA_CATALOG: FormulaCatalogEntry[] = [
     id: "dei-score",
     category: "HR Metrics",
     name: "DEI score",
-    expression: "f(turnover_by_role variance, ER programs, hiring mix)",
-    description: "Diversity / equity / inclusion composite.",
+    expression:
+      "representation + equity + inclusion + support (each 0–25; DEI Initiatives, diversity goal, ER choices, turnover-by-role variance)",
+    description:
+      "Diversity / equity / inclusion composite (Employee perspective). DEI Capability (training & education, Leadership Development / Compliance) is scored separately in Learning & Growth.",
     sourceFile: "metrics.ts",
     configKeys: ["benchmarks"],
   },
@@ -148,7 +150,7 @@ export const FORMULA_CATALOG: FormulaCatalogEntry[] = [
     category: "Strategy",
     name: "Strategy alignment bonus",
     expression:
-      "bonus when metrics match strategy.bsc_weights / focus rules",
+      "+3 when both of the strategy's alignment targets are met (weights are 25/25/25/25 for every strategy)",
     description:
       "Extra points when HR outcomes align with chosen strategy.",
     sourceFile: "scoring.ts",

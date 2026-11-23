@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { MODULE_SCAFFOLDING } from "@/components/decisions/ScaffoldingText";
 import { DECISION_TABS } from "@/components/portal/portal-nav";
+import { strategyBonusTarget } from "@/lib/student/bsc-reference";
 import { formatCurrency } from "@/lib/utils";
 
 export type TutorialCompany = {
@@ -252,6 +253,10 @@ export function GoalStep({ company }: { company: TutorialCompany | null }) {
     },
   ];
   const top = Math.max(...perspectives.map((p) => p.value ?? 0));
+  // Weights are equal for every strategy (engine v3); only flag a "highest"
+  // perspective if an instructor has configured unequal weights.
+  const unequal = new Set(perspectives.map((p) => p.value)).size > 1;
+  const bonusTarget = strategyBonusTarget(company?.strategy);
 
   return (
     <>
@@ -264,7 +269,7 @@ export function GoalStep({ company }: { company: TutorialCompany | null }) {
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         {perspectives.map((p) => {
-          const isTop = p.value != null && p.value === top;
+          const isTop = unequal && p.value != null && p.value === top;
           return (
             <div
               key={p.label}
@@ -305,9 +310,20 @@ export function GoalStep({ company }: { company: TutorialCompany | null }) {
       {company ? (
         <div>
           <p>
-            The point weights are set by your{" "}
-            <strong>{company.strategy}</strong> strategy — they tell you what
-            your company values most. To execute it well:
+            {unequal ? (
+              <>
+                The point weights are set for your{" "}
+                <strong>{company.strategy}</strong> strategy.
+              </>
+            ) : (
+              <>
+                All four perspectives count equally. Your{" "}
+                <strong>{company.strategy}</strong> strategy guides your
+                priorities and can earn up to <strong>3 bonus points</strong>
+                {bonusTarget ? <> when you reach {bonusTarget}</> : null}.
+              </>
+            )}{" "}
+            To execute it well:
           </p>
           <ul className="mt-2 grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
             {company.strategyPoints.map((pt) => (
@@ -320,8 +336,8 @@ export function GoalStep({ company }: { company: TutorialCompany | null }) {
         </div>
       ) : (
         <p>
-          How many points each perspective is worth depends on your
-          company&apos;s strategy.
+          All four perspectives are worth 25 points each. Your strategy can
+          add up to 3 bonus points.
         </p>
       )}
       <Callout>

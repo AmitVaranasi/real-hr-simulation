@@ -2,7 +2,7 @@ import type {
   RoundListItem,
   WorkforceBriefData,
 } from "@/components/results/WorkforceBriefView";
-import { getStrategyConfig } from "@/lib/engine/config";
+import { bscWeightsForResult } from "@/lib/engine/config";
 import type { Strategy } from "@/lib/engine/types";
 
 /**
@@ -18,10 +18,22 @@ export function outcomeToBriefData(
   outcome: Record<string, unknown>,
   roundNumber: number
 ): Omit<WorkforceBriefData, "rounds" | "roundsTotal" | "selectedRoundId"> {
-  const weights = getStrategyConfig(
-    (team.strategy || "Focus") as Strategy
-  ).bsc_weights;
+  const trace = (outcome.trace_json ?? null) as {
+    engine_version?: number;
+    financial_cascade?: {
+      hr_performance_score?: number;
+      hr_revenue_multiplier?: number;
+    };
+    industry_adjusted_metrics?: { dei_capability?: number };
+  } | null;
+  // Old results keep the weights they were scored with.
+  const weights = bscWeightsForResult(
+    (team.strategy || "Focus") as Strategy,
+    trace?.engine_version
+  );
   const n = (key: string) => Number(outcome[key] ?? 0);
+  const opt = (v: unknown) =>
+    typeof v === "number" && Number.isFinite(v) ? v : null;
 
   return {
     teamName: team.name,
@@ -62,7 +74,10 @@ export function outcomeToBriefData(
     productivityIndex: n("productivity"),
     budgetAdherence: n("budget_adherence"),
     deiScore: n("dei_score"),
+    deiCapability: opt(trace?.industry_adjusted_metrics?.dei_capability),
     hrTechScore: n("hr_tech_score"),
+    hrPerformanceScore: opt(trace?.financial_cascade?.hr_performance_score),
+    hrRevenueMultiplier: opt(trace?.financial_cascade?.hr_revenue_multiplier),
   };
 }
 

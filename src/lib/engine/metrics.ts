@@ -12,7 +12,13 @@ import {
   totalHires,
   weightedAvgSalaryBand,
 } from "./roles";
-import type { Decision, HRMetrics, IndustryConfig, PriorState } from "./types";
+import type {
+  Decision,
+  HRMetrics,
+  IndustryConfig,
+  InvestmentLevel,
+  PriorState,
+} from "./types";
 import { clamp } from "../utils";
 
 const SCREENING_SLOW: Record<1 | 2 | 3, number> = { 1: -5, 2: 0, 3: 8 };
@@ -216,27 +222,87 @@ export function computeHiringQuality(d: Decision, turnoverRate: number): number 
   return (selectionAccuracy + trainingReadiness + retentionProbability) / 3;
 }
 
-export function computeDEIScore(
-  d: Decision,
-  turnoverByRole: number[]
-): number {
-  const targets = clamp((d.diversity_goal_pct / 50) * 25, 0, 25);
-  const deiPrograms = d.developmental_programs.filter((p) =>
-    ["Leadership Development", "Compliance"].includes(p)
-  ).length;
-  const programs = clamp((deiPrograms / 2) * 25, 0, 25);
+/**
+ * Effect of a DEI Initiatives investment level, 0–1. Returns diminish at the
+ * top, so the highest level is not automatically the best use of budget.
+ */
+export const DEI_LEVEL_EFFECT: Record<InvestmentLevel, number> = {
+  Minimal: 0,
+  Basic: 0.4,
+  Moderate: 0.65,
+  Strong: 0.85,
+  Advanced: 1,
+};
+
+/** Diversity hiring goal (%) at which the goal earns its full share. */
+const DIVERSITY_GOAL_FULL = 40;
+
+/**
+ * The four parts of the DEI Score, each 0–25, before the industry adjustment.
+ *
+ * - Representation: diversity hiring goal and Diverse Recruitment & Pipelines.
+ * - Equity: Equity Practices and how evenly turnover falls across roles.
+ * - Inclusion: Inclusion Initiatives and leadership support from Employee
+ *   Relations (coaching, voice mechanisms, engagement investment).
+ * - Support: Accessibility & Support and workplace flexibility.
+ *
+ * `retentionEquity` is 0–1: 1 when turnover is spread evenly across roles.
+ */
+export function deiScoreParts(d: Decision, retentionEquity: number) {
+  const level = (l: InvestmentLevel) => DEI_LEVEL_EFFECT[l] ?? 0;
+  const goal = clamp(d.diversity_goal_pct / DIVERSITY_GOAL_FULL, 0, 1);
 
   let leadershipSupport = 0;
   if (d.conflict_approach === "coaching") leadershipSupport += 10;
   if (d.voice_mechanisms >= 1) leadershipSupport += 8;
   if (d.engagement_investment > 3000) leadershipSupport += 7;
-  leadershipSupport = clamp(leadershipSupport, 0, 25);
+  const leadership = clamp(leadershipSupport, 0, 25) / 25;
 
-  const variance = computeVariance(turnoverByRole);
-  const retentionEquity = clamp(25 - variance * 5, 0, 25);
+  const equityShare = clamp(retentionEquity, 0, 1);
+  const flexibility = d.flexibility_level / 2;
 
+  return {
+    representation: 25 * (0.5 * goal + 0.5 * level(d.dei_diverse_recruitment)),
+    equity: 25 * (0.6 * level(d.dei_equity_practices) + 0.4 * equityShare),
+    inclusion:
+      25 * (0.5 * level(d.dei_inclusion_initiatives) + 0.5 * leadership),
+    support:
+      25 * (0.7 * level(d.dei_accessibility_support) + 0.3 * flexibility),
+  };
+}
+
+/** How evenly turnover falls across roles, 0–1 (1 = perfectly even). */
+export function retentionEquityShare(turnoverByRole: number[]): number {
+  return clamp(1 - computeVariance(turnoverByRole) / 5, 0, 1);
+}
+
+/**
+ * DEI Score, 0–100 (Employee perspective). The sum of the four parts in
+ * deiScoreParts. Engine v3: the parts are no longer multiplied by 4 (which
+ * saturated the score at 100 for nearly every decision), and the DEI
+ * Initiatives decisions now feed the score.
+ */
+export function computeDEIScore(
+  d: Decision,
+  turnoverByRole: number[]
+): number {
+  const p = deiScoreParts(d, retentionEquityShare(turnoverByRole));
+  return clamp(p.representation + p.equity + p.inclusion + p.support, 0, 100);
+}
+
+/**
+ * DEI Capability, 0–100 (Learning & Growth perspective): the organization's
+ * investment in building inclusive capability — DEI Training & Education and
+ * the Leadership Development and Compliance programs. It uses different
+ * decisions from the DEI Score, so the same choice is not counted twice.
+ */
+export function computeDEICapability(d: Decision): number {
+  const deiPrograms = d.developmental_programs.filter((p) =>
+    ["Leadership Development", "Compliance"].includes(p)
+  ).length;
   return clamp(
-    (targets + programs + leadershipSupport + retentionEquity) * 4,
+    60 * (DEI_LEVEL_EFFECT[d.dei_training_education] ?? 0) +
+      40 * Math.min(deiPrograms / 2, 1),
     0,
     100
   );
@@ -337,6 +403,7 @@ export function applyIndustryMultipliers(
     engagement_level: metrics.engagement_level * (0.5 + m.relations * 0.5),
     turnover_rate: metrics.turnover_rate / m.compensation,
     dei_score: metrics.dei_score * (0.5 + m.dei * 0.5),
+    dei_capability: metrics.dei_capability * (0.5 + m.dei * 0.5),
   };
 }
 
@@ -379,6 +446,7 @@ export function computeAllMetrics(
     training_roi: computeTrainingROI(d, prior, headcount, productivity),
     engagement_level: engagement,
     dei_score,
+    dei_capability: computeDEICapability(d),
     absenteeism_rate: computeAbsenteeism(satisfaction, engagement, d),
     review_coverage: computeReviewCoverage(d),
     training_effectiveness,
